@@ -20,3 +20,5 @@ print("The query data:")
 for row in query_job:
     # Row values can be accessed by field name or index.
     print("name={}, count={}".format(row[0], row["total_people"]))
+
+# XXX: export to pandas?

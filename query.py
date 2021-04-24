@@ -3,6 +3,8 @@ from google.cloud import bigquery
 # Construct a BigQuery client object.
 client = bigquery.Client()
 
+# Bigquery REST API: https://cloud.google.com/bigquery/docs/reference/rest
+
 # XXX: should be part of API
 # export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/service-account-file.json"
 

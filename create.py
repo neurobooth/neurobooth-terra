@@ -10,7 +10,7 @@ key_path = "/Users/mainak/neurobooth-sandbox-358a72a54a08.json"
 dataset_id = 'register'
 project = 'neurobooth-sandbox'
 
-data_dir = ('/Users/mainak/Documents/github_repos/neurobooth-terra/'
+data_dir = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
             'register/')
 schema_fname = op.join(data_dir, 'schema.json')
 csv_fname = op.join(data_dir,

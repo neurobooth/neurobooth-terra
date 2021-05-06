@@ -32,7 +32,7 @@ for column in df.columns:
 # Convert to fields that SchemaField expects
 for k, v in dtypes.items():
     dtypes[k] = {
-        "name": v,
+        "name": k,
         "type": v,
         "mode": "REQUIRED"
     }

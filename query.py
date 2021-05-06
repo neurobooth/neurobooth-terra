@@ -1,30 +1,28 @@
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-key_path = "~/neurobooth-sandbox-358a72a54a08.json"
+scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+key_path = "/Users/mainak/neurobooth-sandbox-358a72a54a08.json"
+project = 'neurobooth-sandbox'
+dataset_id = 'register'
+table_id = 'consent'
 
 credentials = service_account.Credentials.from_service_account_file(
-    key_path, scopes=["https://www.googleapis.com/auth/cloud-platform"],
-)
+    key_path, scopes=scopes)
 
-# Construct a BigQuery client object.
-client = bigquery.Client(credentials=credentials)
+client = bigquery.Client(credentials=credentials, project=project)
+table_id_full = f"{project}.{dataset_id}.{table_id}"
 
 # Bigquery REST API: https://cloud.google.com/bigquery/docs/reference/rest
 
-query = """
-    SELECT name, SUM(number) as total_people
-    FROM `bigquery-public-data.usa_names.usa_1910_2013`
-    WHERE state = 'TX'
-    GROUP BY name, state
-    ORDER BY total_people DESC
+query = f"""
+    SELECT *
+    FROM `{table_id_full}`
     LIMIT 20
 """
 query_job = client.query(query)  # Make an API request.
 
-print("The query data:")
-for row in query_job:
-    # Row values can be accessed by field name or index.
-    print("name={}, count={}".format(row[0], row["total_people"]))
-
-# XXX: export to pandas?
+for idx, row in enumerate(query_job):
+    if idx == 0:
+        print(row.keys())
+    print(row.values())

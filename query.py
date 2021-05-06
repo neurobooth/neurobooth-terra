@@ -1,12 +1,16 @@
 from google.cloud import bigquery
+from google.oauth2 import service_account
+
+key_path = "~/neurobooth-sandbox-358a72a54a08.json"
+
+credentials = service_account.Credentials.from_service_account_file(
+    key_path, scopes=["https://www.googleapis.com/auth/cloud-platform"],
+)
 
 # Construct a BigQuery client object.
-client = bigquery.Client()
+client = bigquery.Client(credentials=credentials)
 
 # Bigquery REST API: https://cloud.google.com/bigquery/docs/reference/rest
-
-# XXX: should be part of API
-# export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/service-account-file.json"
 
 query = """
     SELECT name, SUM(number) as total_people

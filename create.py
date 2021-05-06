@@ -1,3 +1,5 @@
+import json
+import os.path as op
 import pandas as pd
 
 from google.cloud import bigquery
@@ -7,23 +9,16 @@ scopes = ["https://www.googleapis.com/auth/cloud-platform"]
 key_path = "/Users/mainak/neurobooth-sandbox-358a72a54a08.json"
 dataset_id = 'register'
 project = 'neurobooth-sandbox'
-csv_fname = ('/Users/mainak/Documents/github_repos/neurobooth-terra/'
-             'register/consent.csv')
+
+data_dir = ('/Users/mainak/Documents/github_repos/neurobooth-terra/'
+            'register/')
+schema_fname = op.join(data_dir, 'schema.json')
+csv_fname = op.join(data_dir,
+                    'Neurobooth-ConsentExport_DATA_2021-05-05_1409.csv')
 table_id = 'consent'
 
-schema_json = {
-    "subject_id": {
-        "name": "string",
-        "type": "string",
-        "mode": "REQUIRED",
-    },
-    "study_id": {
-        "name": "integer",
-        "type": "integer",
-        "mode": "REQUIRED"
-    }
-}
-
+with open(schema_fname, 'r') as fp:
+    schema_json = json.load(fp)[table_id]
 schema =[bigquery.SchemaField(v['name'], v['type'], v['mode'])
          for k, v in schema_json.items()]
 
@@ -35,6 +30,7 @@ client = bigquery.Client(credentials=credentials, project=project)
 dataset_id_full = f'{client.project}.{dataset_id}'
 table_id_full = f"{project}.{dataset_id}.{table_id}"
 
+# Create dataset
 datasets = list(client.list_datasets())
 if len(datasets) == 0:
     dataset = bigquery.Dataset(dataset_id_full)
@@ -42,6 +38,7 @@ if len(datasets) == 0:
 elif datasets[0].dataset_id == dataset_id:
     dataset = datasets[0]
 
+# Create table in dataset
 tables = list(client.list_tables(dataset_id_full))
 
 if len(tables) == 0:

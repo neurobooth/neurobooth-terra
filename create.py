@@ -10,10 +10,22 @@ project = 'neurobooth-sandbox'
 csv_fname = ('/Users/mainak/Documents/github_repos/neurobooth-terra/'
              'register/consent.csv')
 table_id = 'consent'
-schema = [
-    bigquery.SchemaField("subject_id", "STRING", mode="REQUIRED"),
-    bigquery.SchemaField("study_id", "INTEGER", mode="REQUIRED"),
-]
+
+schema_json = {
+    "subject_id": {
+        "name": "string",
+        "type": "string",
+        "mode": "REQUIRED",
+    },
+    "study_id": {
+        "name": "integer",
+        "type": "integer",
+        "mode": "REQUIRED"
+    }
+}
+
+schema =[bigquery.SchemaField(v['name'], v['type'], v['mode'])
+         for k, v in schema_json.items()]
 
 credentials = service_account.Credentials.from_service_account_file(
     key_path, scopes=scopes)

@@ -16,6 +16,7 @@ schema_fname = op.join(data_dir, 'schema.json')
 csv_fname = op.join(data_dir,
                     'Neurobooth-ConsentExport_DATA_2021-05-05_1409.csv')
 table_id = 'consent'
+operation = 'append'
 
 with open(schema_fname, 'r') as fp:
     schema_json = json.load(fp)[table_id]
@@ -41,11 +42,27 @@ elif datasets[0].dataset_id == dataset_id:
 # Create table in dataset
 tables = list(client.list_tables(dataset_id_full))
 
-if len(tables) == 0:
+if operation == 'create':
+    assert len(tables) == 0
     table = bigquery.Table(table_id_full, schema=schema)
     table = client.create_table(table)  # Make an API request.
     print(f'Created table {table.project}.{table.dataset_id}.{table.table_id}')
-elif tables[0].table_id == table_id:
+elif operation == 'append':
+    assert tables[0].table_id == table_id
     df = pd.read_csv(csv_fname)
+    df = df.where(~df.isna(), None)
+    # make sure order in schema is same as in df
+    df = df[[this_schema.name for this_schema in schema]]
+
     table = tables[0]
-    client.insert_rows_from_dataframe(table, df, schema)
+    # data = [tuple(this_df[1].tolist()) for this_df in df.iterrows()]
+    # errors = client.insert_rows(table, data, schema)
+    # df.to_gbq(table_id_full, table_schema=list(schema_json.values()),
+    #           credentials=credentials, if_exists='replace')
+
+    errors = client.insert_rows_from_dataframe(table, df, schema)
+    print(errors)
+
+elif operation == 'delete':
+    errors = client.delete_table(table_id_full)
+    print('deleted table')

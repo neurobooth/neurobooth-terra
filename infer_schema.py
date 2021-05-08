@@ -26,15 +26,16 @@ for column in df.columns:
         val = df[column].dropna().iloc[0]
         try:
             pd.Timestamp(val)
-        except:
             dtypes[column] = 'timestamp'
+        except:
+            pass
 
 # Convert to fields that SchemaField expects
 for k, v in dtypes.items():
     dtypes[k] = {
         "name": k,
         "type": v,
-        "mode": "REQUIRED"
+        "mode": "NULLABLE"
     }
 
 print(json.dumps(dtypes, indent=4, sort_keys=True))

@@ -20,8 +20,6 @@ operation = 'append'
 
 with open(schema_fname, 'r') as fp:
     schema_json = json.load(fp)[table_id]
-schema =[bigquery.SchemaField(v['name'], v['type'], v['mode'])
-         for k, v in schema_json.items()]
 
 credentials = service_account.Credentials.from_service_account_file(
     key_path, scopes=scopes)
@@ -42,6 +40,20 @@ elif datasets[0].dataset_id == dataset_id:
 # Create table in dataset
 tables = list(client.list_tables(dataset_id_full))
 
+# hardcode in schema for now
+for key in schema_json:
+    if key.startswith('date'):  # hardcode for now
+        schema_json[key]['type'] = 'DATETIME'
+
+# sort schema_json in same order as df columns
+df = pd.read_csv(csv_fname)
+schema = list()
+for key in df.columns:
+    val = schema_json[key]
+    schema.append(
+        bigquery.SchemaField(val['name'], val['type'], val['mode'])
+    )
+
 if operation == 'create':
     assert len(tables) == 0
     table = bigquery.Table(table_id_full, schema=schema)
@@ -49,7 +61,6 @@ if operation == 'create':
     print(f'Created table {table.project}.{table.dataset_id}.{table.table_id}')
 elif operation == 'append':
     assert tables[0].table_id == table_id
-    df = pd.read_csv(csv_fname)
     df = df.where(~df.isna(), None)
     # make sure order in schema is same as in df
     df = df[[this_schema.name for this_schema in schema]]

@@ -55,11 +55,6 @@ elif datasets[0].dataset_id == dataset_id:
 # Create table in dataset
 tables = list(client.list_tables(dataset_id_full))
 
-# hardcode in schema for now
-for key in schema_json:
-    if key.startswith('date'):  # hardcode for now
-        schema_json[key]['type'] = 'DATETIME'
-
 # sort schema_json in same order as df columns
 df = pd.read_csv(csv_fname)
 schema = list()

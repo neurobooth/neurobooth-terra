@@ -7,7 +7,7 @@ scopes = ["https://www.googleapis.com/auth/cloud-platform"]
 key_path = "/Users/mainak/neurobooth-sandbox-358a72a54a08.json"
 project = 'neurobooth-sandbox'
 dataset_id = 'register'
-table_id = 'consent'
+table_id = 'contact'
 
 credentials = service_account.Credentials.from_service_account_file(
     key_path, scopes=scopes)

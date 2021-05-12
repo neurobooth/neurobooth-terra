@@ -82,19 +82,17 @@ def _get_schema(schema_fname, csv_fname, table_id):
 
 tables = list(client.list_tables(dataset_id_full))
 if operation == 'create':
-    assert len(tables) == 0
     schema = _get_schema(schema_fname, csv_fname, table_id)
     table = bigquery.Table(table_id_full, schema=schema)
     table = client.create_table(table)  # Make an API request.
     print(f'Created table {table.project}.{table.dataset_id}.{table.table_id}')
+
 elif operation == 'append':
-    assert tables[0].table_id == table_id
     schema = _get_schema(schema_fname, csv_fname, table_id)
     df = pd.read_csv(csv_fname)
     df = df.where(~df.isna(), None)
 
-    table = tables[0]
-    errors = client.insert_rows_from_dataframe(table, df, schema)
+    errors = client.insert_rows_from_dataframe(table_id_full, df, schema)
     if errors != [[]]:
         raise ValueError(errors)
 

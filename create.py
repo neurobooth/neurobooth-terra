@@ -94,11 +94,6 @@ elif operation == 'append':
     df = df.where(~df.isna(), None)
 
     table = tables[0]
-    # data = [tuple(this_df[1].tolist()) for this_df in df.iterrows()]
-    # errors = client.insert_rows(table, data, schema)
-    # df.to_gbq(table_id_full, table_schema=list(schema_json.values()),
-    #           credentials=credentials, if_exists='replace')
-
     errors = client.insert_rows_from_dataframe(table, df, schema)
     if errors != [[]]:
         raise ValueError(errors)

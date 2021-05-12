@@ -1,3 +1,5 @@
+# Authors: Mainak Jas <mjas@mgh.harvard.edu>
+
 from google.cloud import bigquery
 from google.oauth2 import service_account
 

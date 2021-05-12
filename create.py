@@ -1,5 +1,13 @@
+"""
+In [1]: %run create.py create
+"""
+
+# Authors: Mainak Jas <mjas@mgh.harvard.edu>
+
 import json
 import os.path as op
+from optparse import OptionParser
+
 import pandas as pd
 
 from google.cloud import bigquery
@@ -16,7 +24,14 @@ schema_fname = op.join(data_dir, 'schema.json')
 csv_fname = op.join(data_dir,
                     'Neurobooth-ConsentExport_DATA_2021-05-05_1409.csv')
 table_id = 'consent'
-operation = 'append'
+
+parser = OptionParser()
+(options, args) = parser.parse_args()
+
+operation = args[0]
+
+if operation not in ('create', 'append', 'delete'):
+    raise ValueError('Please supply one of create/delete/append as an argument')
 
 with open(schema_fname, 'r') as fp:
     schema_json = json.load(fp)[table_id]
@@ -62,8 +77,6 @@ if operation == 'create':
 elif operation == 'append':
     assert tables[0].table_id == table_id
     df = df.where(~df.isna(), None)
-    # make sure order in schema is same as in df
-    df = df[[this_schema.name for this_schema in schema]]
 
     table = tables[0]
     # data = [tuple(this_df[1].tolist()) for this_df in df.iterrows()]
@@ -72,7 +85,8 @@ elif operation == 'append':
     #           credentials=credentials, if_exists='replace')
 
     errors = client.insert_rows_from_dataframe(table, df, schema)
-    print(errors)
+    if errors != [[]]:
+        raise ValueError(errors)
 
 elif operation == 'delete':
     errors = client.delete_table(table_id_full)

@@ -32,11 +32,6 @@ for table_name, csv_fname in csv_table.items():
         dtypes[column] = mapping[dtypes[column]]
         if dtypes[column] == 'string':
             val = df[column].dropna().iloc[0]
-            try:
-                pd.Timestamp(val)
-                dtypes[column] = 'timestamp'
-            except:
-                pass
         if column.startswith('date'):  # hardcode for now
             dtypes[column] = 'datetime'
 

@@ -40,8 +40,8 @@ table_id = options.table_id
 
 #### Input validation
 
-if table_id not in ('consent', 'contact'):
-    raise ValueError('Table ID must be one of consent/contact')
+if table_id not in ('consent', 'contact', 'demographics'):
+    raise ValueError('Table ID must be one of consent/contact/demographics')
 
 if operation not in ('create', 'append', 'delete'):
     raise ValueError('Please supply one of create/delete/append as an argument')

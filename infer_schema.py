@@ -12,8 +12,9 @@ data_dir = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
             'register/')
 schema_fname = op.join(data_dir, 'schema.json')
 csv_table = {
-    'consent': 'Neurobooth-ConsentExport_DATA_2021-05-05_1409.csv',
-    'contact': 'Neurobooth-ContactInfo_DATA_2021-05-06_1438.csv'
+    'consent': 'Neurobooth-ConsentScreeningAndC_DATA_2021-05-18_1213.csv',
+    'contact': 'Neurobooth-ContactInfo_DATA_2021-05-18_1215.csv',
+    'demographics': 'Neurobooth-Demographics_DATA_2021-05-18_1217.csv'
 }
 
 # pandas to bigquery datatype mapping
@@ -27,7 +28,7 @@ for table_name, csv_fname in csv_table.items():
 
     dtypes = df.dtypes.to_dict()
     for column in df.columns:
-        dtypes[column] = infer_dtype(df[column])
+        dtypes[column] = infer_dtype(df[column], skipna=True)
         dtypes[column] = mapping[dtypes[column]]
         if dtypes[column] == 'string':
             val = df[column].dropna().iloc[0]

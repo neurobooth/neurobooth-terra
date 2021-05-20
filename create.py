@@ -1,8 +1,8 @@
 """Create Bigquery tables
 
-In [1]: %run create.py create -s /Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/
-        register/Neurobooth-ConsentExport_DATA_2021-05-05_1409.csv --table-id consent
-In [2]: %run create.py delete --table-id consent
+In [1]: %run create.py create -s '/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/
+        register/Neurobooth-ConsentScreeningAndC_DATA_2021-05-18_1213.csv' --table-id 'consent'
+In [2]: %run create.py delete --table-id 'consent'
 """
 
 # Authors: Mainak Jas <mjas@mgh.harvard.edu>
@@ -87,7 +87,7 @@ if operation == 'create':
     table = client.create_table(table)  # Make an API request.
     print(f'Created table {table.project}.{table.dataset_id}.{table.table_id}')
 
-elif operation == 'append':
+if operation in ('create', 'append'):
     schema = _get_schema(schema_fname, csv_fname, table_id)
     df = pd.read_csv(csv_fname)
     df = df.where(~df.isna(), None)
@@ -96,6 +96,6 @@ elif operation == 'append':
     if errors != [[]]:
         raise ValueError(errors)
 
-elif operation == 'delete':
+if operation == 'delete':
     errors = client.delete_table(table_id_full)
     print('deleted table')

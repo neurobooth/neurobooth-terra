@@ -3,10 +3,13 @@
 # Authors: Mainak Jas <mjas@mgh.harvard.edu>
 
 import json
-
+import os
 import os.path as op
+
 import pandas as pd
 from pandas.api.types import infer_dtype
+
+from redcap import Project, RedcapError
 
 data_dir = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
             'register/')
@@ -16,6 +19,21 @@ csv_table = {
     'contact': 'Neurobooth-ContactInfo_DATA_2021-05-18_1215.csv',
     'demographics': 'Neurobooth-Demographics_DATA_2021-05-18_1217.csv'
 }
+
+URL = 'https://redcap.partners.org/redcap/api/'
+API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
+metadata_fields = ['field_label', 'form_name', 'section_header',
+                   'field_type', 'field_label', 'select_choices_or_calculations',
+                   'required_field']
+
+if API_KEY is None:
+    raise ValueError('Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first')
+
+project = Project(URL, API_KEY, lazy=True)
+print('Fetching metadata ...')
+metadata = project.export_metadata(format='df')
+metadata = metadata[metadata_fields]
+print('[Done]')
 
 # pandas to bigquery datatype mapping
 # https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#tablefieldschema

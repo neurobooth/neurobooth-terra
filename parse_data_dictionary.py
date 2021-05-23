@@ -15,3 +15,5 @@ is_required = df[df['Variable / Field Name'] == field]['Required Field?']
 print(is_required)
 
 # XXX: div in Field Label
+
+# What fields to add in schema.json?

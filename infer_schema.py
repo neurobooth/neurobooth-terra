@@ -48,4 +48,3 @@ json_schema = json.dumps(json_schema, indent=4, sort_keys=True)
 print(json_schema)
 with open(schema_fname, 'w') as fp:
     fp.write(json_schema)
-

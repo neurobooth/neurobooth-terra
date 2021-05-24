@@ -19,7 +19,7 @@ survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429}
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
 metadata_fields = ['field_label', 'form_name', 'section_header',
-                   'field_type', 'field_label', 'select_choices_or_calculations',
+                   'field_type', 'select_choices_or_calculations',
                    'required_field']
 
 if API_KEY is None:
@@ -29,6 +29,7 @@ project = Project(URL, API_KEY, lazy=True)
 print('Fetching metadata ...')
 metadata = project.export_metadata(format='df')
 metadata = metadata[metadata_fields]
+metadata.to_csv(op.join(data_dir, 'data_dictionary.csv'))
 print('[Done]')
 
 # pandas to bigquery datatype mapping
@@ -49,8 +50,18 @@ for survey_name, survey_id in survey_ids.items():
     for column in df.columns:
 
         choice = dict()
+        question = ''
+        field_type = ''
         if column in metadata.index:
-            choices = metadata.loc[column]['select_choices_or_calculations']
+            row = metadata.loc[column]
+
+            question = row['field_label']
+            if question.startswith('<'): # html
+                question = ''
+
+            field_type = row['field_type']
+
+            choices = row['select_choices_or_calculations']
             if not pd.isnull(choices):
                 choices = choices.split('|')
                 for c in choices:
@@ -70,7 +81,9 @@ for survey_name, survey_id in survey_ids.items():
             'name': column,
             'type': dtype,
             'mode': 'NULLABLE',
-            'choices': choice
+            'choices': choice,
+            'question': question,
+            'field_type': field_type
         }
 
     json_schema[survey_name] = schema

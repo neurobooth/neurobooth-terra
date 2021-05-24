@@ -14,11 +14,7 @@ from redcap import Project, RedcapError
 data_dir = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
             'register/')
 schema_fname = op.join(data_dir, 'schema.json')
-csv_table = {
-    'consent': 'Neurobooth-ConsentScreeningAndC_DATA_2021-05-18_1213.csv',
-    'contact': 'Neurobooth-ContactInfo_DATA_2021-05-18_1215.csv',
-    'demographics': 'Neurobooth-Demographics_DATA_2021-05-18_1217.csv'
-}
+survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -40,27 +36,44 @@ print('[Done]')
 mapping = dict(floating='float', integer='integer', string='string')
 
 json_schema = dict()
-for table_name, csv_fname in csv_table.items():
-    csv_fname_full = op.join(data_dir, csv_fname)
-    df = pd.read_csv(csv_fname_full, parse_dates=True)
+for survey_name, survey_id in survey_ids.items():
+    print(f'Fetching report {survey_name} from Redcap')
+    data = project.export_reports(report_id=survey_id)
+    # format = 'df' didn't work
+    df = pd.DataFrame(data)
+    df.to_csv(op.join(data_dir, survey_name + '.csv'))
+    print('[Done]')
 
     dtypes = df.dtypes.to_dict()
+    schema = dict()
     for column in df.columns:
-        dtypes[column] = infer_dtype(df[column], skipna=True)
-        dtypes[column] = mapping[dtypes[column]]
-        if dtypes[column] == 'string':
+
+        choice = dict()
+        if column in metadata.index:
+            choices = metadata.loc[column]['select_choices_or_calculations']
+            if not pd.isnull(choices):
+                choices = choices.split('|')
+                for c in choices:
+                    k, v = c.strip().split(', ')
+                    choice[k] = v
+        else:
+            print(f'Skipping {survey_name}::{column}')
+
+        dtype = infer_dtype(df[column], skipna=True)
+        dtype = mapping[dtype]
+        if dtype == 'string':
             val = df[column].dropna().iloc[0]
         if column.startswith('date'):  # hardcode for now
-            dtypes[column] = 'datetime'
+            dtype = 'datetime'
 
-    # Convert to fields that SchemaField expects
-    for k, v in dtypes.items():
-        dtypes[k] = {
-            "name": k,
-            "type": v,
-            "mode": "NULLABLE"
+        schema[column] = {
+            'name': column,
+            'type': dtype,
+            'mode': 'NULLABLE',
+            'choices': choice
         }
-    json_schema[table_name] = dtypes
+
+    json_schema[survey_name] = schema
 
 json_schema = json.dumps(json_schema, indent=4, sort_keys=True)
 print(json_schema)

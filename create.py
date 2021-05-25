@@ -1,7 +1,7 @@
 """Create Bigquery tables
 
 In [1]: %run create.py create -s '/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/
-        register/Neurobooth-ConsentScreeningAndC_DATA_2021-05-18_1213.csv' --table-id 'consent'
+        register/consent.csv' --table-id 'consent'
 In [2]: %run create.py delete --table-id 'consent'
 """
 

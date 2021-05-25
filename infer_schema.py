@@ -29,7 +29,7 @@ project = Project(URL, API_KEY, lazy=True)
 print('Fetching metadata ...')
 metadata = project.export_metadata(format='df')
 metadata = metadata[metadata_fields]
-metadata.to_csv(op.join(data_dir, 'data_dictionary.csv'))
+metadata.to_csv(op.join(data_dir, 'data_dictionary.csv'), index=False)
 print('[Done]')
 
 # pandas to bigquery datatype mapping
@@ -42,7 +42,7 @@ for survey_name, survey_id in survey_ids.items():
     data = project.export_reports(report_id=survey_id)
     # format = 'df' didn't work
     df = pd.DataFrame(data)
-    df.to_csv(op.join(data_dir, survey_name + '.csv'))
+    df.to_csv(op.join(data_dir, survey_name + '.csv'), index=False)
     print('[Done]')
 
     dtypes = df.dtypes.to_dict()

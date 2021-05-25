@@ -43,7 +43,10 @@ for survey_name, survey_id in survey_ids.items():
     data = project.export_reports(report_id=survey_id)
     # format = 'df' didn't work
     df = pd.DataFrame(data)
-    df.to_csv(op.join(data_dir, survey_name + '.csv'), index=False)
+    csv_fname = op.join(data_dir, survey_name + '.csv')
+    df.to_csv(csv_fname, index=False)
+    # XXX: read back again so pandas casts data to right type
+    df = pd.read_csv(csv_fname)
     print('[Done]')
 
     dtypes = df.dtypes.to_dict()

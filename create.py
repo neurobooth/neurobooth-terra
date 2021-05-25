@@ -100,3 +100,4 @@ if operation in ('create', 'append'):
 if operation == 'delete':
     errors = client.delete_table(table_id_full)
     print('deleted table')
+    # XXX: create a delete --all option

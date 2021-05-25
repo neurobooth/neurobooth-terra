@@ -18,9 +18,11 @@ table_id_full = f"{project}.{dataset_id}.{table_id}"
 # Bigquery REST API: https://cloud.google.com/bigquery/docs/reference/rest
 
 query = f"""
-    SELECT *
-    FROM `{table_id_full}`
-    LIMIT 20
+    SELECT contact_first_name, contact_last_name, contact_email, n_falls_6_mo
+    FROM `neurobooth-sandbox.register.contact` as contact
+    JOIN `neurobooth-sandbox.register.falls` as falls
+    ON contact.record_id = falls.record_id
+    WHERE falls.n_falls_6_mo >= 2
 """
 query_job = client.query(query)  # Make an API request.
 

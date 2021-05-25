@@ -14,7 +14,8 @@ from redcap import Project, RedcapError
 data_dir = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
             'register/')
 schema_fname = op.join(data_dir, 'schema.json')
-survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429}
+survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
+              'clinical': 84431, 'falls': 85031}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')

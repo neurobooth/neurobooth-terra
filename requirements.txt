@@ -1,5 +1,6 @@
 pandas
 google-cloud-bigquery
+google-cloud-storage
 pandas-gbq
 firecloud
 PyCap

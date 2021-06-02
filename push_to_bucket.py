@@ -4,6 +4,7 @@
 
 import os
 import os.path as op
+from datetime import datetime, timezone
 
 from tqdm import tqdm
 
@@ -26,6 +27,14 @@ storage_client = storage.Client(credentials=credentials, project=project)
 bucket_names = [bucket.name for bucket in storage_client.list_buckets()]
 
 bucket = storage_client.bucket(bucket_name)
+
+"""
+expiration = datetime(2021, 6, 15, tzinfo=timezone.utc)
+blob = list(bucket.list_blobs())[0]
+url = blob.generate_signed_url(expiration=expiration)
+print(url)
+"""
+
 if bucket_name not in bucket_names:
     bucket.storage_class = "STANDARD"
     new_bucket = storage_client.create_bucket(bucket, location="us")

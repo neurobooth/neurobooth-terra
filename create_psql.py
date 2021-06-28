@@ -1,11 +1,10 @@
 import psycopg2
 
 try:
-    connect_str = "dbname='testpython' user='matt' host='localhost' " + \
-                  "password='myOwnPassword'"
+    connect_str = "dbname='neurobooth' user='neuroboother' host='localhost' " + \
+                  "password='neuroboothrocks'"
     # use our connection values to establish a connection
     conn = psycopg2.connect(connect_str)
-    # create a psycopg2 cursor that can execute queries
     cursor = conn.cursor()
     # create a new table with a single column called "name"
     cursor.execute("""CREATE TABLE tutorials (name char(40));""")

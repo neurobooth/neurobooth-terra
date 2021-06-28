@@ -5,3 +5,4 @@ tqdm
 firecloud
 PyCap
 mysql-connector-python
+psycopg2

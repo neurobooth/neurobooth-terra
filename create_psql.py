@@ -47,6 +47,11 @@ def df_to_psql(conn, cursor, df, table_id):
     cmd = f'INSERT INTO {table_id}({cols}) VALUES({schema})'
     execute_batch(conn, cursor, cmd, tuples)
 
+def psql_to_df(conn, cursor, query, column_names):
+    """Tranform a SELECT query into a pandas dataframe"""
+    data = execute(conn, cursor, query)
+    df = pd.DataFrame(data, columns=column_names)
+    return df
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                "password='neuroboothrocks'")
@@ -60,6 +65,11 @@ cursor = conn.cursor()
 df = pd.read_csv(csv_fname)
 df = df.where(~df.isna(), None)
 df_to_psql(conn, cursor, df, table_id)
+
+# DROP TABLE "consent";
+query = f'SELECT * FROM "{table_id}"'
+column_names = df.columns  # XXX: hack
+df_read = psql_to_df(conn, cursor, query, column_names)
 
 cursor.close()
 conn.close()

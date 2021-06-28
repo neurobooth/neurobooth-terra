@@ -21,24 +21,31 @@ def safe_close(func):
     return wrapper
 
 @safe_close
-def execute(cursor, cmd, fetch=False):
+def execute(conn, cursor, cmd, fetch=False):
     cursor.execute(cmd)
-    cursor.commit()
+    conn.commit()
     if fetch:
         return cursor.fetchall()
 
 @safe_close
-def execute_batch(cursor, cmd, tuples, page_size=100):
+def execute_batch(conn, cursor, cmd, tuples, page_size=100):
     extras.execute_batch(cursor, cmd, tuples, page_size)
-    cursor.commit()
+    conn.commit()
 
-def df_to_psql(cursor, df, table_id):
+def df_to_psql(conn, cursor, df, table_id):
     tuples = [tuple(x) for x in df.to_numpy()]
     # Comma-separated dataframe columns
     cols = ','.join(list(df.columns))
     schema = ','.join(len(df.columns) * ['%s'])
+
+    cmd = f'CREATE TABLE {table_id}('
+    for col in df.columns[:-1]:
+        cmd += f'{col} VARCHAR( 255 ), '
+    cmd += f'{df.columns[-1]} VARCHAR ( 255 )'
+    cmd += ');'
+    execute(conn, cursor, cmd)
     cmd = f'INSERT INTO {table_id}({cols}) VALUES({schema})'
-    execute_batch(cursor, cmd, tuples)
+    execute_batch(conn, cursor, cmd, tuples)
 
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
@@ -52,7 +59,7 @@ cursor = conn.cursor()
 
 df = pd.read_csv(csv_fname)
 df = df.where(~df.isna(), None)
-df_to_psql(cursor, df, table_id)
+df_to_psql(conn, cursor, df, table_id)
 
 cursor.close()
 conn.close()

@@ -14,7 +14,7 @@ import psycopg2.extras as extras
 def safe_close(func):
     def wrapper(*args, **kwargs):
         try:
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except Exception as e:
             cursor.close()
             raise Exception(e)
@@ -36,7 +36,7 @@ def df_to_psql(conn, cursor, df, table_id):
     tuples = [tuple(x) for x in df.to_numpy()]
     # Comma-separated dataframe columns
     cols = ','.join(list(df.columns))
-    schema = ','.join(len(df.columns) * ['%s'])
+    vals = ','.join(len(df.columns) * ['%s'])
 
     cmd = f'CREATE TABLE IF NOT EXISTS {table_id}('
     for col in df.columns[:-1]:
@@ -44,12 +44,12 @@ def df_to_psql(conn, cursor, df, table_id):
     cmd += f'{df.columns[-1]} VARCHAR ( 255 )'
     cmd += ');'
     execute(conn, cursor, cmd)
-    cmd = f'INSERT INTO {table_id}({cols}) VALUES({schema})'
+    cmd = f'INSERT INTO {table_id}({cols}) VALUES({vals})'
     execute_batch(conn, cursor, cmd, tuples)
 
 def psql_to_df(conn, cursor, query, column_names):
     """Tranform a SELECT query into a pandas dataframe"""
-    data = execute(conn, cursor, query)
+    data = execute(conn, cursor, query, fetch=True)
     df = pd.DataFrame(data, columns=column_names)
     return df
 
@@ -66,7 +66,7 @@ df = pd.read_csv(csv_fname)
 df = df.where(~df.isna(), None)
 df_to_psql(conn, cursor, df, table_id)
 
-query = f'SELECT * FROM "{table_id}"'
+query = f'SELECT * FROM {table_id};'
 column_names = df.columns  # XXX: hack
 df_read = psql_to_df(conn, cursor, query, column_names)
 

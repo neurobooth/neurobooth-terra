@@ -9,7 +9,7 @@ import psycopg2.extras as extras
 # pg_ctl -D /usr/local/var/postgres start  --> start server
 # psql mydatabasename
 
-#### Monkeypatch psycopg2 functions
+#### Monkeypatch psycopg2 functions ####
 
 def safe_close(func):
     def wrapper(*args, **kwargs):
@@ -28,30 +28,93 @@ def execute(conn, cursor, cmd, fetch=False):
         return cursor.fetchall()
 
 @safe_close
-def execute_batch(conn, cursor, cmd, tuples, page_size=100):
+def _execute_batch(conn, cursor, cmd, tuples, page_size=100):
     extras.execute_batch(cursor, cmd, tuples, page_size)
     conn.commit()
 
+#### Neurobooth related comands #####
+
 def df_to_psql(conn, cursor, df, table_id):
+    """Convert a dataframe to a Postgres SQL table
+
+    Parameters
+    ----------
+    conn : instance of psycopg2.Postgres
+        The connection object
+    cursor : instance of psycopg2.cursor
+        The cursor object
+    df : instance of pd.Dataframe
+        The dataframe to insert into the table
+    table_id : str
+        The table_id to create
+    """
     tuples = [tuple(x) for x in df.to_numpy()]
     # Comma-separated dataframe columns
     cols = ','.join(list(df.columns))
     vals = ','.join(len(df.columns) * ['%s'])
 
-    cmd = f'CREATE TABLE IF NOT EXISTS {table_id}('
+    create_cmd = f'CREATE TABLE IF NOT EXISTS {table_id}('
     for col in df.columns[:-1]:
-        cmd += f'{col} VARCHAR( 255 ), '
-    cmd += f'{df.columns[-1]} VARCHAR ( 255 )'
-    cmd += ');'
-    execute(conn, cursor, cmd)
-    cmd = f'INSERT INTO {table_id}({cols}) VALUES({vals})'
-    execute_batch(conn, cursor, cmd, tuples)
+        create_cmd += f'{col} VARCHAR( 255 ), '
+    create_cmd += f'{df.columns[-1]} VARCHAR ( 255 )'
+    create_cmd += ');'
+    execute(conn, cursor, create_cmd)
+
+    insert_cmd = f'INSERT INTO {table_id}({cols}) VALUES({vals})'
+    _execute_batch(conn, cursor, insert_cmd, tuples)
 
 def psql_to_df(conn, cursor, query, column_names):
     """Tranform a SELECT query into a pandas dataframe"""
     data = execute(conn, cursor, query, fetch=True)
     df = pd.DataFrame(data, columns=column_names)
     return df
+
+
+class Table:
+    """Table class that is a wrapper around Postgres SQL table.
+
+    Parameters
+    ----------
+    conn : instance of psycopg2.Postgres
+        The connection object
+    cursor : instance of psycopg2.cursor
+        The cursor object
+    table_id : str
+        The table ID
+    column_names : list of str
+        The columns to create
+    dtypes : list of str
+        The datatypes
+    """
+    def __init__(self, conn, cursor, table_id, column_names, dtypes):
+        self.conn = conn
+        self.cursor = cursor
+        self.table_id = table_id
+        self.column_names = column_names
+
+        create_cmd = f'CREATE TABLE "{table_id}" ('
+    
+        if len(column_names) != len(dtypes):
+            raise ValueError('Column names and data types should have equal lengths')
+
+        for column_name, dtype in zip(column_names, dtypes):
+            create_cmd += f'"{column_name}" {dtype},'
+        create_cmd += ');'
+
+    def insert(self, cols, vals):
+        """Manual insertion into tables"""
+        cols = ','.join(cols)
+        str_format = ','.join(len(vals) * ['%s'])
+        insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format})'
+        _execute_batch(self.conn, self.cursor, insert_cmd, vals)
+
+    def query(self, cmd):
+        data = execute(self.conn, self.cursor, cmd, fetch=True)
+        return pd.DataFrame(data, columns=self.column_names)
+
+    def __del__(self):
+        cmd = f'DROP TABLE "{table_id}";'
+        execute(self.conn, self.cursor, cmd)
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                "password='neuroboothrocks'")
@@ -64,6 +127,12 @@ cursor = conn.cursor()
 
 df = pd.read_csv(csv_fname)
 df = df.where(~df.isna(), None)
+
+"""
+cols = execute(conn, cursor, get_columns_cmd, fetch=True)
+cols = [c for c in cols]
+"""
+
 df_to_psql(conn, cursor, df, table_id)
 
 query = f'SELECT * FROM {table_id};'

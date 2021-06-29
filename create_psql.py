@@ -71,7 +71,7 @@ def psql_to_df(conn, cursor, query, column_names):
     return df
 
 def drop_table(conn, cursor, table_id):
-    cmd = f'DROP TABLE "{table_id}";'
+    cmd = f'DROP TABLE IF EXISTS "{table_id}";'
     execute(conn, cursor, cmd)
 
 class Table:
@@ -135,7 +135,6 @@ class Table:
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                "password='neuroboothrocks'")
-table_id = 'consent'
 csv_fname = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
              'register/consent.csv')
 
@@ -149,30 +148,35 @@ cols = execute(conn, cursor, get_columns_cmd, fetch=True)
 cols = [c for c in cols]
 """
 
-# Automatic creation of table
-"""
-df_to_psql(conn, cursor, df, table_id)
-query = f'SELECT * FROM {table_id};'
-column_names = df.columns  # XXX: hack
-df_read = psql_to_df(conn, cursor, query, column_names)
-"""
-
-# Alternative manual method
+# drop tables if they already exist
+# this is just for convenience so we can re-run this script
+# even when changing some columns
 drop_table(conn, cursor, 'subject')
+drop_table(conn, cursor, 'contact')
 drop_table(conn, cursor, 'consent')
 
-table_subject = Table(conn, cursor, 'subject',
+# Automatic creation of table
+table_id = 'consent'
+df_to_psql(conn, cursor, df, table_id=table_id)
+query = f'SELECT * FROM "{table_id}";'
+column_names = df.columns  # XXX: hack
+df_consent = psql_to_df(conn, cursor, query, column_names)
+
+# Alternative manual method
+table_id = 'subject'
+table_subject = Table(conn, cursor, table_id,
                       ['subject_id', 'first_name_birth', 'last_name_birth'],
                       ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)'])
 table_subject.insert([('x5dc', 'mainak', 'jas'),
                       ('y5d3', 'anoopum', 'gupta')])
-df_subject = table_subject.query('SELECT * FROM "subject"')
+df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
 
-table = Table(conn, cursor, 'consent',
-              column_names=['subject_id', 'age'],
+table_id = 'contact'
+table = Table(conn, cursor, table_id,
+              column_names=['subject_id', 'email'],
               dtypes=['VARCHAR (255)', 'VARCHAR (255)'])
 table.insert([('x5dc',), ('y5d3',)], ['subject_id'])
-df_consent = table.query('SELECT * FROM "consent";')
+df_contact = table.query(f'SELECT * FROM "{table_id}";')
 
 cursor.close()
 conn.close()

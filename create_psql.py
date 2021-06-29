@@ -48,6 +48,7 @@ def df_to_psql(conn, cursor, df, table_id):
     table_id : str
         The table_id to create
     """
+    df = df.where(~df.isna(), None)
     tuples = [tuple(x) for x in df.to_numpy()]
     # Comma-separated dataframe columns
     cols = ','.join(list(df.columns))
@@ -126,7 +127,6 @@ conn = psycopg2.connect(connect_str)
 cursor = conn.cursor()
 
 df = pd.read_csv(csv_fname)
-df = df.where(~df.isna(), None)
 
 """
 cols = execute(conn, cursor, get_columns_cmd, fetch=True)

@@ -93,19 +93,30 @@ class Table:
         self.table_id = table_id
         self.column_names = column_names
 
-        create_cmd = f'CREATE TABLE "{table_id}" ('
+        # XXX: add check for columns if table already exists
+        create_cmd = f'CREATE TABLE IF NOT EXISTS "{table_id}" ('
     
         if len(column_names) != len(dtypes):
             raise ValueError('Column names and data types should have equal lengths')
 
         for column_name, dtype in zip(column_names, dtypes):
             create_cmd += f'"{column_name}" {dtype},'
-        create_cmd += ');'
+        create_cmd = create_cmd[:-1] + ');'  # remove last comma
+        execute(conn, cursor, create_cmd)
 
     def insert(self, cols, vals):
-        """Manual insertion into tables"""
+        """Manual insertion into tables
+
+        Parameters
+        ----------
+        cols : list of str
+            The columns to insert into
+        vals : list of tuple
+            The records to insert. Each tuple
+            is one row.
+        """
+        str_format = ','.join(len(cols) * ['%s'])
         cols = ','.join(cols)
-        str_format = ','.join(len(vals) * ['%s'])
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format})'
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)
 
@@ -114,7 +125,7 @@ class Table:
         return pd.DataFrame(data, columns=self.column_names)
 
     def __del__(self):
-        cmd = f'DROP TABLE "{table_id}";'
+        cmd = f'DROP TABLE "{self.table_id}";'
         execute(self.conn, self.cursor, cmd)
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
@@ -133,11 +144,19 @@ cols = execute(conn, cursor, get_columns_cmd, fetch=True)
 cols = [c for c in cols]
 """
 
+# Automatic creation of table
+"""
 df_to_psql(conn, cursor, df, table_id)
-
 query = f'SELECT * FROM {table_id};'
 column_names = df.columns  # XXX: hack
 df_read = psql_to_df(conn, cursor, query, column_names)
+"""
+
+# Alternative manual method
+table = Table(conn, cursor, 'consent', ['subject_id', 'age'],
+              ['VARCHAR (255)', 'VARCHAR (255)'])
+table.insert(['subject_id'], [('mainak',), ('anoopum',)])
+df_manual = table.query('SELECT * FROM "consent";')
 
 cursor.close()
 conn.close()

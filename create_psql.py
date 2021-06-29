@@ -89,12 +89,24 @@ class Table:
         The columns to create
     dtypes : list of str
         The datatypes
+    primary_key : str | None
+        The primary key. If None, the first column name is used
+        as primary key.
+    foreign_key : dict
+        Foreign key referring to another table. The key is the
+        name of the foreign key and value is the table it refers to.
     """
-    def __init__(self, conn, cursor, table_id, column_names, dtypes):
+    def __init__(self, conn, cursor, table_id, column_names, dtypes,
+                 primary_key=None, foreign_key=None):
         self.conn = conn
         self.cursor = cursor
         self.table_id = table_id
         self.column_names = column_names
+        if primary_key is None:
+            primary_key = column_names[0]
+        self.primary_key = primary_key
+        if foreign_key is None:
+            foreign_key = dict()
 
         # XXX: add check for columns if table already exists
         create_cmd = f'CREATE TABLE IF NOT EXISTS "{table_id}" ('
@@ -104,6 +116,12 @@ class Table:
 
         for column_name, dtype in zip(column_names, dtypes):
             create_cmd += f'"{column_name}" {dtype},'
+        create_cmd += f'PRIMARY KEY({primary_key}),'
+        for key in foreign_key:
+            create_cmd += f"""FOREIGN KEY ({key})
+                              REFERENCES {foreign_key[key]}({key})
+                              ON DELETE CASCADE
+            """
         create_cmd = create_cmd[:-1] + ');'  # remove last comma
         execute(conn, cursor, create_cmd)
 
@@ -128,7 +146,8 @@ class Table:
 
     def query(self, cmd):
         data = execute(self.conn, self.cursor, cmd, fetch=True)
-        return pd.DataFrame(data, columns=self.column_names)
+        df = pd.DataFrame(data, columns=self.column_names)
+        df.set_index(self.primary_key)
 
     def drop(self):
         drop_table(self.conn, self.cursor, self.table_id)
@@ -174,7 +193,8 @@ df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
 table_id = 'contact'
 table = Table(conn, cursor, table_id,
               column_names=['subject_id', 'email'],
-              dtypes=['VARCHAR (255)', 'VARCHAR (255)'])
+              dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
+              foreign_key=dict(subject_id='subject'))
 table.insert([('x5dc',), ('y5d3',)], ['subject_id'])
 df_contact = table.query(f'SELECT * FROM "{table_id}";')
 

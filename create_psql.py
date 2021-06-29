@@ -70,6 +70,9 @@ def psql_to_df(conn, cursor, query, column_names):
     df = pd.DataFrame(data, columns=column_names)
     return df
 
+def drop_table(conn, cursor, table_id):
+    cmd = f'DROP TABLE "{table_id}";'
+    execute(conn, cursor, cmd)
 
 class Table:
     """Table class that is a wrapper around Postgres SQL table.
@@ -104,17 +107,20 @@ class Table:
         create_cmd = create_cmd[:-1] + ');'  # remove last comma
         execute(conn, cursor, create_cmd)
 
-    def insert(self, cols, vals):
+    def insert(self, vals, cols=None):
         """Manual insertion into tables
 
         Parameters
         ----------
-        cols : list of str
-            The columns to insert into
+        cols : list of str | None
+            The columns to insert into. If None, use
+            all columns
         vals : list of tuple
             The records to insert. Each tuple
             is one row.
         """
+        if cols is None:
+            cols = self.column_names
         str_format = ','.join(len(cols) * ['%s'])
         cols = ','.join(cols)
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format})'
@@ -124,9 +130,8 @@ class Table:
         data = execute(self.conn, self.cursor, cmd, fetch=True)
         return pd.DataFrame(data, columns=self.column_names)
 
-    def __del__(self):
-        cmd = f'DROP TABLE "{self.table_id}";'
-        execute(self.conn, self.cursor, cmd)
+    def drop(self):
+        drop_table(self.conn, self.cursor, self.table_id)
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                "password='neuroboothrocks'")
@@ -153,10 +158,21 @@ df_read = psql_to_df(conn, cursor, query, column_names)
 """
 
 # Alternative manual method
-table = Table(conn, cursor, 'consent', ['subject_id', 'age'],
-              ['VARCHAR (255)', 'VARCHAR (255)'])
-table.insert(['subject_id'], [('mainak',), ('anoopum',)])
-df_manual = table.query('SELECT * FROM "consent";')
+drop_table(conn, cursor, 'subject')
+drop_table(conn, cursor, 'consent')
+
+table_subject = Table(conn, cursor, 'subject',
+                      ['subject_id', 'first_name_birth', 'last_name_birth'],
+                      ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)'])
+table_subject.insert([('x5dc', 'mainak', 'jas'),
+                      ('y5d3', 'anoopum', 'gupta')])
+df_subject = table_subject.query('SELECT * FROM "subject"')
+
+table = Table(conn, cursor, 'consent',
+              column_names=['subject_id', 'age'],
+              dtypes=['VARCHAR (255)', 'VARCHAR (255)'])
+table.insert([('x5dc',), ('y5d3',)], ['subject_id'])
+df_consent = table.query('SELECT * FROM "consent";')
 
 cursor.close()
 conn.close()

@@ -38,7 +38,7 @@ def df_to_psql(conn, cursor, df, table_id):
     cols = ','.join(list(df.columns))
     schema = ','.join(len(df.columns) * ['%s'])
 
-    cmd = f'CREATE TABLE {table_id}('
+    cmd = f'CREATE TABLE IF NOT EXISTS {table_id}('
     for col in df.columns[:-1]:
         cmd += f'{col} VARCHAR( 255 ), '
     cmd += f'{df.columns[-1]} VARCHAR ( 255 )'
@@ -66,7 +66,6 @@ df = pd.read_csv(csv_fname)
 df = df.where(~df.isna(), None)
 df_to_psql(conn, cursor, df, table_id)
 
-# DROP TABLE "consent";
 query = f'SELECT * FROM "{table_id}"'
 column_names = df.columns  # XXX: hack
 df_read = psql_to_df(conn, cursor, query, column_names)

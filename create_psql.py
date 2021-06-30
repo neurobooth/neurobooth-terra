@@ -71,7 +71,7 @@ def psql_to_df(conn, cursor, query, column_names):
     return df
 
 def drop_table(conn, cursor, table_id):
-    cmd = f'DROP TABLE IF EXISTS "{table_id}";'
+    cmd = f'DROP TABLE IF EXISTS "{table_id}" CASCADE;'
     execute(conn, cursor, cmd)
 
 class Table:
@@ -120,7 +120,6 @@ class Table:
         for key in foreign_key:
             create_cmd += f"""FOREIGN KEY ({key})
                               REFERENCES {foreign_key[key]}({key})
-                              ON DELETE CASCADE
             """
         create_cmd = create_cmd[:-1] + ');'  # remove last comma
         execute(conn, cursor, create_cmd)
@@ -147,7 +146,12 @@ class Table:
     def query(self, cmd):
         data = execute(self.conn, self.cursor, cmd, fetch=True)
         df = pd.DataFrame(data, columns=self.column_names)
-        df.set_index(self.primary_key)
+        df = df.set_index(self.primary_key)
+        return df
+
+    def delete(self, condition):
+        delete_cmd = f'DELETE FROM {self.table_id} WHERE {condition};'
+        execute(self.conn, self.cursor, delete_cmd)
 
     def drop(self):
         drop_table(self.conn, self.cursor, self.table_id)
@@ -197,6 +201,11 @@ table = Table(conn, cursor, table_id,
               foreign_key=dict(subject_id='subject'))
 table.insert([('x5dc',), ('y5d3',)], ['subject_id'])
 df_contact = table.query(f'SELECT * FROM "{table_id}";')
+print(df_contact)
+
+table.delete(condition="subject_id = 'x5dc'")
+df_contact = table.query(f'SELECT * FROM "{table_id}";')
+print(df_contact)
 
 cursor.close()
 conn.close()

@@ -49,3 +49,15 @@ html_dev-pattern:
 	BUILD_DEV_HTML=1 $(SPHINXBUILD) -D sphinx_gallery_conf.filename_pattern=$(PATTERN) -D sphinx_gallery_conf.run_stale_examples=True -b html $(ALLSPHINXOPTS) _build/html
 	@echo
 	@echo "Build finished. The HTML pages are in _build/html"
+
+install:
+	rm -rf _build/doctrees _build/neurobooth-terra.github.io
+	git clone -b gh-pages --single-branch --no-checkout --depth 1 https://github.com/neurobooth/neurobooth-terra _build/neurobooth-terra.github.io
+	touch _build/neurobooth-terra.github.io/.nojekyll
+	cd _build/ && \
+	cp -r html/* neurobooth-terra.github.io && \
+	cd neurobooth-terra.github.io && \
+	git add * && \
+	git add .nojekyll && \
+	git commit -a -m 'Make install' && \
+	git push

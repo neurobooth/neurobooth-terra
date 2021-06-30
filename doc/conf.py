@@ -103,8 +103,7 @@ html_theme_options = {
         ("Examples", "auto_examples/index"),
         ("API", "api"),
         ("Whats new", "whats_new"),
-        ("GitHub", "https://github.com/neurobooth/neurobooth-terra", True),
-        ("Roadmap", "roadmap")
+        ("GitHub", "https://github.com/neurobooth/neurobooth-terra", True)
     ],
     'bootswatch_theme': "yeti"
 }

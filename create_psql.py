@@ -1,4 +1,4 @@
-from functools import partial
+# Authors: Mainak Jas <mjas@mgh.harvard.edu>
 
 import pandas as pd
 

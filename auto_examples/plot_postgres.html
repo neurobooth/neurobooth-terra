@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Create Postgres table using Neurobooth-terra. &#8212; neurobooth-terra  documentation</title>
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -49,7 +50,6 @@
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../whats_new.html">Whats new</a></li>
                 <li><a href="https://github.com/neurobooth/neurobooth-terra">GitHub</a></li>
-                <li><a href="../roadmap.html">Roadmap</a></li>
             
             
               <li class="dropdown globaltoc-container">
@@ -111,32 +111,99 @@
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
 <p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-postgres-py"><span class="std std-ref">here</span></a>
-to download the full example code or to run this example in your browser via Binder</p>
+to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="create-postgres-table-using-neurobooth-terra">
+<section class="sphx-glr-example-title" id="create-postgres-table-using-neurobooth-terra">
 <span id="sphx-glr-auto-examples-plot-postgres-py"></span><h1>Create Postgres table using Neurobooth-terra.<a class="headerlink" href="#create-postgres-table-using-neurobooth-terra" title="Permalink to this headline">¶</a></h1>
 <p>This example demonstrates how to create postgres table with neurobooth-terra.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Mainak Jas &lt;mjas@harvard.mgh.edu&gt;</span>
-
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">op</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
 </pre></div>
 </div>
-<p>Let us import <code class="docutils literal notranslate"><span class="pre">neurobooth-terra</span></code>.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.001 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-py">
-<div class="binder-badge docutils container">
-<a class="reference external image-reference" href="https://mybinder.org/v2/gh/jonescompneurolab/hnn-core/gh-pages?filepath=dev/notebooks/auto_examples/plot_postgres.ipynb"><img alt="Launch binder" src="../_images/binder_badge_logo.svg" width="150px" /></a>
+<p>Let us first import the necessary functions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">drop_table</span>
+
+<span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
 </div>
+<p>Then, we will create a connection using <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
+               <span class="s2">&quot;password=&#39;neuroboothrocks&#39;&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">csv_fname</span></a> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/&#39;</span>
+             <span class="s1">&#39;register/consent.csv&#39;</span><span class="p">)</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a><span class="p">)</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We will drop tables if they already exist
+this is just for convenience so we can re-run this script
+even when changing some columns</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">drop_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="s1">&#39;subject&#39;</span><span class="p">)</span>
+<span class="n">drop_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">)</span>
+<span class="n">drop_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="s1">&#39;consent&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we define the Table</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="o">=</span> <span class="s1">&#39;subject&#39;</span>
+<span class="n">table_subject</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span>
+                      <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;first_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name_birth&#39;</span><span class="p">],</span>
+                      <span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>and insert some data and retrieve the table as a dataframe</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span><span class="o">.</span><span class="n">insert</span><span class="p">([(</span><span class="s1">&#39;x5dc&#39;</span><span class="p">,</span> <span class="s1">&#39;mainak&#39;</span><span class="p">,</span> <span class="s1">&#39;jas&#39;</span><span class="p">),</span>
+                      <span class="p">(</span><span class="s1">&#39;y5d3&#39;</span><span class="p">,</span> <span class="s1">&#39;anoopum&#39;</span><span class="p">,</span> <span class="s1">&#39;gupta&#39;</span><span class="p">)])</span>
+<span class="n">df_subject</span> <span class="o">=</span> <span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can create another table and relate it to the other table using
+a foreign key</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="o">=</span> <span class="s1">&#39;contact&#39;</span>
+<span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span>
+              <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">],</span>
+              <span class="n">dtypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">],</span>
+              <span class="n">foreign_key</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">subject_id</span><span class="o">=</span><span class="s1">&#39;subject&#39;</span><span class="p">))</span>
+<span class="n">table</span><span class="o">.</span><span class="n">insert</span><span class="p">([(</span><span class="s1">&#39;x5dc&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;y5d3&#39;</span><span class="p">,)],</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">])</span>
+<span class="n">df_contact</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_contact</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           email
+subject_id
+x5dc        None
+y5d3        None
+</pre></div>
+</div>
+<p>Finally, we can also delete rows in our table</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="s2">&quot;subject_id = &#39;x5dc&#39;&quot;</span><span class="p">)</span>
+<span class="n">df_contact</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_contact</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           email
+subject_id
+y5d3        None
+</pre></div>
+</div>
+<p>Don’t forget to close the connection once done!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.997 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/e93de21546d292f2b19be1e516cf605e/plot_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../_downloads/d7f6b1c1accfe75c32c35dfe6b733449/plot_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/c4ed0ef91c6e8ddf0086713826559d12/plot_postgres.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_postgres.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../_downloads/c37c935fb20627268822130ffb26e11a/plot_postgres.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_postgres.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</div>
+</section>
 
 
     </div>
@@ -151,7 +218,7 @@ to download the full example code or to run this example in your browser via Bin
     </p>
     <p>
         &copy; Copyright 2021, Neurobooth Developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

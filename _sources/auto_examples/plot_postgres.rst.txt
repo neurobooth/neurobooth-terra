@@ -11,7 +11,7 @@
         :class: sphx-glr-download-link-note
 
         Click :ref:`here <sphx_glr_download_auto_examples_plot_postgres.py>`
-        to download the full example code or to run this example in your browser via Binder
+        to download the full example code
 
 .. rst-class:: sphx-glr-example-title
 
@@ -24,15 +24,33 @@ Create Postgres table using Neurobooth-terra.
 
 This example demonstrates how to create postgres table with neurobooth-terra.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-14
+.. GENERATED FROM PYTHON SOURCE LINES 8-11
 
 .. code-block:: default
 
 
     # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
-    import os.path as op
-    import tempfile
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 12-13
+
+Let us first import the necessary functions.
+
+.. GENERATED FROM PYTHON SOURCE LINES 13-19
+
+.. code-block:: default
+
+
+    from neurobooth_terra import Table, drop_table
+
+    import psycopg2
+    import pandas as pd
 
 
 
@@ -41,14 +59,175 @@ This example demonstrates how to create postgres table with neurobooth-terra.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-15
+.. GENERATED FROM PYTHON SOURCE LINES 20-21
 
-Let us import ``neurobooth-terra``.
+Then, we will create a connection using ``psycopg2``.
+
+.. GENERATED FROM PYTHON SOURCE LINES 21-29
+
+.. code-block:: default
+
+    connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
+                   "password='neuroboothrocks'")
+    csv_fname = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
+                 'register/consent.csv')
+
+    conn = psycopg2.connect(connect_str)
+    cursor = conn.cursor()
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 30-33
+
+We will drop tables if they already exist
+this is just for convenience so we can re-run this script
+even when changing some columns
+
+.. GENERATED FROM PYTHON SOURCE LINES 33-37
+
+.. code-block:: default
+
+    drop_table(conn, cursor, 'subject')
+    drop_table(conn, cursor, 'contact')
+    drop_table(conn, cursor, 'consent')
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 38-39
+
+Now we define the Table
+
+.. GENERATED FROM PYTHON SOURCE LINES 39-44
+
+.. code-block:: default
+
+    table_id = 'subject'
+    table_subject = Table(conn, cursor, table_id,
+                          ['subject_id', 'first_name_birth', 'last_name_birth'],
+                          ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)'])
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 45-46
+
+and insert some data and retrieve the table as a dataframe
+
+.. GENERATED FROM PYTHON SOURCE LINES 46-50
+
+.. code-block:: default
+
+    table_subject.insert([('x5dc', 'mainak', 'jas'),
+                          ('y5d3', 'anoopum', 'gupta')])
+    df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 51-53
+
+We can create another table and relate it to the other table using
+a foreign key
+
+.. GENERATED FROM PYTHON SOURCE LINES 53-62
+
+.. code-block:: default
+
+    table_id = 'contact'
+    table = Table(conn, cursor, table_id,
+                  column_names=['subject_id', 'email'],
+                  dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
+                  foreign_key=dict(subject_id='subject'))
+    table.insert([('x5dc',), ('y5d3',)], ['subject_id'])
+    df_contact = table.query(f'SELECT * FROM "{table_id}";')
+    print(df_contact)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+               email
+    subject_id      
+    x5dc        None
+    y5d3        None
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 63-64
+
+Finally, we can also delete rows in our table
+
+.. GENERATED FROM PYTHON SOURCE LINES 64-68
+
+.. code-block:: default
+
+    table.delete(condition="subject_id = 'x5dc'")
+    df_contact = table.query(f'SELECT * FROM "{table_id}";')
+    print(df_contact)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+               email
+    subject_id      
+    y5d3        None
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 69-70
+
+Don't forget to close the connection once done!
+
+.. GENERATED FROM PYTHON SOURCE LINES 70-72
+
+.. code-block:: default
+
+    cursor.close()
+    conn.close()
+
+
+
+
+
+
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.001 seconds)
+   **Total running time of the script:** ( 0 minutes  0.997 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:
@@ -59,13 +238,6 @@ Let us import ``neurobooth-terra``.
  .. container:: sphx-glr-footer
     :class: sphx-glr-footer-example
 
-
-  .. container:: binder-badge
-
-    .. image:: images/binder_badge_logo.svg
-      :target: https://mybinder.org/v2/gh/jonescompneurolab/hnn-core/gh-pages?filepath=dev/notebooks/auto_examples/plot_postgres.ipynb
-      :alt: Launch binder
-      :width: 150 px
 
 
   .. container:: sphx-glr-download sphx-glr-download-python

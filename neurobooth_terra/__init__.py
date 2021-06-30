@@ -2,4 +2,4 @@
 
 __version__ = '0.1.dev0'
 
-from .create_psql import Table
+from .create_psql import Table, drop_table

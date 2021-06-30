@@ -1,0 +1,26 @@
+﻿neurobooth\_terra.Table
+=======================
+
+.. currentmodule:: neurobooth_terra
+
+.. autoclass:: Table
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Table.__init__
+      ~Table.delete
+      ~Table.drop
+      ~Table.insert
+      ~Table.query
+   
+   
+
+   
+   
+   

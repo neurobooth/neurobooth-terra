@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>&lt;no title&gt; &#8212; neurobooth-terra  documentation</title>
+    <title>neurobooth-terra &#8212; neurobooth-terra  documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery.css" />
@@ -71,7 +71,13 @@
      href="#">Page <b class="caret"></b></a>
   <ul class="dropdown-menu localtoc"
       role="menu"
-      aria-labelledby="dLabelLocalToc"><ul class="simple">
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">neurobooth-terra</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bug-reports">Bug reports</a></li>
 </ul>
 </ul>
 </li>
@@ -107,7 +113,36 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  
+  <div class="section" id="neurobooth-terra">
+<h1>neurobooth-terra<a class="headerlink" href="#neurobooth-terra" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>psycopg2</p></li>
+<li><p>pandas</p></li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>We recommend the <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda Python distribution</a>.
+To install <code class="docutils literal notranslate"><span class="pre">neurobooth-terra</span></code>, simply do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install --upgrade https://api.github.com/repos/neurobooth/neurobooth-terra/zipball/master
+</pre></div>
+</div>
+<p>and it will install <code class="docutils literal notranslate"><span class="pre">hnn-core</span></code> along with the dependencies which are not already installed.</p>
+<p>To check if everything worked fine, you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -c &#39;import hnn_core&#39;
+</pre></div>
+</div>
+<p>and it should not give any error messages.</p>
+</div>
+</div>
+<div class="section" id="bug-reports">
+<h1>Bug reports<a class="headerlink" href="#bug-reports" title="Permalink to this headline">¶</a></h1>
+<p>Use the <a class="reference external" href="https://github.com/neurobooth/neurobooth-terra/issues">github issue tracker</a> to
+report bugs.</p>
+</div>
+
 
     </div>
       

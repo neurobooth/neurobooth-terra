@@ -213,12 +213,5 @@ sphinx_gallery_conf = {
     },
     'within_subsection_order': ExampleTitleSortKey,
     'subsection_order': ExplicitOrder(['../examples/workflows/',
-                                       '../examples/howto/']),
-    'binder': {'org': 'jonescompneurolab',
-               'repo': 'hnn-core',
-               'branch': 'gh-pages',
-               'binderhub_url': 'https://mybinder.org',
-               'notebooks_dir': f'{filepath_prefix}/notebooks',
-               'dependencies': 'Dockerfile'
-               }
+                                       '../examples/howto/'])
 }

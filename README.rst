@@ -15,11 +15,11 @@ To install ``neurobooth-terra``, simply do::
 
    $ pip install --upgrade https://api.github.com/repos/neurobooth/neurobooth-terra/zipball/master
 
-and it will install ``hnn-core`` along with the dependencies which are not already installed.
+and it will install ``neurobooth-terra`` along with the dependencies which are not already installed.
 
 To check if everything worked fine, you can do::
 
-	$ python -c 'import hnn_core'
+	$ python -c 'import neurobooth_terra'
 
 and it should not give any error messages.
 

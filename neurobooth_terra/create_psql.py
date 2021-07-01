@@ -76,7 +76,27 @@ def drop_table(conn, cursor, table_id):
 
 def create_table(conn, cursor, table_id, column_names, dtypes,
                  primary_key=None, foreign_key=None):
-    """Create a table."""
+    """Create a table.
+
+    Paramters
+    ---------
+    conn : instance of psycopg2.Postgres
+        The connection object
+    cursor : instance of psycopg2.cursor
+        The cursor object
+    table_id : str
+        The table ID
+    column_names : list of str
+        The columns to create
+    dtypes : list of str
+        The datatypes
+    primary_key : str | None
+        The primary key. If None, the first column name is used
+        as primary key.
+    foreign_key : dict
+        Foreign key referring to another table. The key is the
+        name of the foreign key and value is the table it refers to.
+    """
     # XXX: add check for columns if table already exists
     create_cmd = f'CREATE TABLE IF NOT EXISTS "{table_id}" ('
 
@@ -119,9 +139,6 @@ class Table:
     primary_key : str | None
         The primary key. If None, the first column name is used
         as primary key.
-    foreign_key : dict
-        Foreign key referring to another table. The key is the
-        name of the foreign key and value is the table it refers to.
     """
     def __init__(self, conn, cursor, table_id, column_names, dtypes,
                  primary_key=None):
@@ -132,7 +149,15 @@ class Table:
         self.primary_key = primary_key
 
     def add_column(self, col, dtype):
-        """Add a new column to the table."""
+        """Add a new column to the table.
+
+        Parameters
+        ----------
+        col : str
+            The column name.
+        dtype : str
+            The data type of the column.
+        """
         cmd = f'ALTER TABLE {self.table_id} '
         cmd += f'ADD COLUMN {col} {dtype};'
         execute(self.conn, self.cursor, cmd)

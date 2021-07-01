@@ -127,27 +127,69 @@ Now we define the Table
 
 and insert some data and retrieve the table as a dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-50
+.. GENERATED FROM PYTHON SOURCE LINES 46-51
 
 .. code-block:: default
 
     table_subject.insert([('x5dc', 'mainak', 'jas'),
                           ('y5d3', 'anoopum', 'gupta')])
     df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
+    print(df_subject)
 
 
 
 
 
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+               first_name_birth last_name_birth
+    subject_id                                 
+    x5dc                 mainak             jas
+    y5d3                anoopum           gupta
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-53
+
+.. GENERATED FROM PYTHON SOURCE LINES 52-53
+
+we can also add a new column
+
+.. GENERATED FROM PYTHON SOURCE LINES 53-57
+
+.. code-block:: default
+
+    table_subject.add_column('dob', 'VARCHAR (255)')
+    df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
+    print(df_subject)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+               first_name_birth last_name_birth   dob
+    subject_id                                       
+    x5dc                 mainak             jas  None
+    y5d3                anoopum           gupta  None
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 58-60
 
 We can create another table and relate it to the other table using
 a foreign key
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-62
+.. GENERATED FROM PYTHON SOURCE LINES 60-69
 
 .. code-block:: default
 
@@ -178,11 +220,11 @@ a foreign key
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-64
+.. GENERATED FROM PYTHON SOURCE LINES 70-71
 
 Finally, we can also delete rows in our table
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-68
+.. GENERATED FROM PYTHON SOURCE LINES 71-75
 
 .. code-block:: default
 
@@ -207,11 +249,11 @@ Finally, we can also delete rows in our table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-70
+.. GENERATED FROM PYTHON SOURCE LINES 76-77
 
 Don't forget to close the connection once done!
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-72
+.. GENERATED FROM PYTHON SOURCE LINES 77-79
 
 .. code-block:: default
 
@@ -227,7 +269,7 @@ Don't forget to close the connection once done!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.190 seconds)
+   **Total running time of the script:** ( 0 minutes  0.617 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

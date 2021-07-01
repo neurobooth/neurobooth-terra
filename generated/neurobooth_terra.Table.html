@@ -142,7 +142,10 @@ name of the foreign key and value is the table it refers to.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert" title="neurobooth_terra.Table.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(vals[, cols])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.add_column" title="neurobooth_terra.Table.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(col, dtype)</p></td>
+<td><p>Add a new column to the table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert" title="neurobooth_terra.Table.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(vals[, cols])</p></td>
 <td><p>Manual insertion into tables</p></td>
 </tr>
 </tbody>
@@ -180,20 +183,29 @@ name of the foreign key and value is the table it refers to.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.__init__" title="neurobooth_terra.Table.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(conn, cursor, table_id, …[, …])</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(condition)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.add_column" title="neurobooth_terra.Table.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(col, dtype)</p></td>
+<td><p>Add a new column to the table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(condition)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert" title="neurobooth_terra.Table.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(vals[, cols])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert" title="neurobooth_terra.Table.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(vals[, cols])</p></td>
 <td><p>Manual insertion into tables</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>(cmd)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>(cmd)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt class="sig sig-object py" id="neurobooth_terra.Table.add_column">
+<span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.add_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new column to the table.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="neurobooth_terra.Table.insert">
 <span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.insert" title="Permalink to this definition">¶</a></dt>

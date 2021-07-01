@@ -154,6 +154,27 @@ even when changing some columns</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span><span class="o">.</span><span class="n">insert</span><span class="p">([(</span><span class="s1">&#39;x5dc&#39;</span><span class="p">,</span> <span class="s1">&#39;mainak&#39;</span><span class="p">,</span> <span class="s1">&#39;jas&#39;</span><span class="p">),</span>
                       <span class="p">(</span><span class="s1">&#39;y5d3&#39;</span><span class="p">,</span> <span class="s1">&#39;anoopum&#39;</span><span class="p">,</span> <span class="s1">&#39;gupta&#39;</span><span class="p">)])</span>
 <span class="n">df_subject</span> <span class="o">=</span> <span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_subject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           first_name_birth last_name_birth
+subject_id
+x5dc                 mainak             jas
+y5d3                anoopum           gupta
+</pre></div>
+</div>
+<p>we can also add a new column</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;dob&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">)</span>
+<span class="n">df_subject</span> <span class="o">=</span> <span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_subject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           first_name_birth last_name_birth   dob
+subject_id
+x5dc                 mainak             jas  None
+y5d3                anoopum           gupta  None
 </pre></div>
 </div>
 <p>We can create another table and relate it to the other table using
@@ -192,7 +213,7 @@ y5d3        None
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.190 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.617 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d7f6b1c1accfe75c32c35dfe6b733449/plot_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres.py</span></code></a></p>

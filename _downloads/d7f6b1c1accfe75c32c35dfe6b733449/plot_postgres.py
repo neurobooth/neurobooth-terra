@@ -46,6 +46,13 @@ table_subject = create_table(conn, cursor, table_id,
 table_subject.insert([('x5dc', 'mainak', 'jas'),
                       ('y5d3', 'anoopum', 'gupta')])
 df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
+print(df_subject)
+
+###############################################################################
+# we can also add a new column
+table_subject.add_column('dob', 'VARCHAR (255)')
+df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
+print(df_subject)
 
 ###############################################################################
 # We can create another table and relate it to the other table using

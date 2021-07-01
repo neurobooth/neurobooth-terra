@@ -129,9 +129,6 @@
 <dt><strong>primary_key</strong><span class="classifier">str | None</span></dt><dd><p>The primary key. If None, the first column name is used
 as primary key.</p>
 </dd>
-<dt><strong>foreign_key</strong><span class="classifier">dict</span></dt><dd><p>Foreign key referring to another table. The key is the
-name of the foreign key and value is the table it refers to.</p>
-</dd>
 </dl>
 </dd>
 </dl>
@@ -204,6 +201,16 @@ name of the foreign key and value is the table it refers to.</p>
 <dt class="sig sig-object py" id="neurobooth_terra.Table.add_column">
 <span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.add_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new column to the table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>col</strong><span class="classifier">str</span></dt><dd><p>The column name.</p>
+</dd>
+<dt><strong>dtype</strong><span class="classifier">str</span></dt><dd><p>The data type of the column.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

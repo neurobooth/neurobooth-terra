@@ -178,7 +178,27 @@
 
 <div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.create_table.html#neurobooth_terra.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
                  <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create a table.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Create a table.</span>
+
+<span class="sd">    Paramters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    conn : instance of psycopg2.Postgres</span>
+<span class="sd">        The connection object</span>
+<span class="sd">    cursor : instance of psycopg2.cursor</span>
+<span class="sd">        The cursor object</span>
+<span class="sd">    table_id : str</span>
+<span class="sd">        The table ID</span>
+<span class="sd">    column_names : list of str</span>
+<span class="sd">        The columns to create</span>
+<span class="sd">    dtypes : list of str</span>
+<span class="sd">        The datatypes</span>
+<span class="sd">    primary_key : str | None</span>
+<span class="sd">        The primary key. If None, the first column name is used</span>
+<span class="sd">        as primary key.</span>
+<span class="sd">    foreign_key : dict</span>
+<span class="sd">        Foreign key referring to another table. The key is the</span>
+<span class="sd">        name of the foreign key and value is the table it refers to.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># XXX: add check for columns if table already exists</span>
     <span class="n">create_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;CREATE TABLE IF NOT EXISTS &quot;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; (&#39;</span>
 
@@ -221,9 +241,6 @@
 <span class="sd">    primary_key : str | None</span>
 <span class="sd">        The primary key. If None, the first column name is used</span>
 <span class="sd">        as primary key.</span>
-<span class="sd">    foreign_key : dict</span>
-<span class="sd">        Foreign key referring to another table. The key is the</span>
-<span class="sd">        name of the foreign key and value is the table it refers to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
                  <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -234,7 +251,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_key</span></div>
 
 <div class="viewcode-block" id="Table.add_column"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.add_column">[docs]</a>    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a new column to the table.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Add a new column to the table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        col : str</span>
+<span class="sd">            The column name.</span>
+<span class="sd">        dtype : str</span>
+<span class="sd">            The data type of the column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;ALTER TABLE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s1"> &#39;</span>
         <span class="n">cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;ADD COLUMN </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s1">;&#39;</span>
         <span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>

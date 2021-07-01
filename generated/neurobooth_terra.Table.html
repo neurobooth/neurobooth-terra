@@ -142,24 +142,24 @@ as primary key.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.add_column" title="neurobooth_terra.Table.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(col, dtype)</p></td>
 <td><p>Add a new column to the table.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert" title="neurobooth_terra.Table.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(vals[, cols])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert_rows" title="neurobooth_terra.Table.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(vals[, cols])</p></td>
 <td><p>Manual insertion into tables</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(cmd)</p></td>
+<td><p>Run a query.</p></td>
 </tr>
 </tbody>
 </table>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
+<col style="width: 58%" />
+<col style="width: 42%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>delete</strong></p></td>
+<tr class="row-odd"><td><p><strong>delete_row</strong></p></td>
 <td></td>
 </tr>
 <tr class="row-even"><td><p><strong>drop</strong></p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p><strong>query</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -183,17 +183,17 @@ as primary key.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.add_column" title="neurobooth_terra.Table.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(col, dtype)</p></td>
 <td><p>Add a new column to the table.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(condition)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_row</span></code>(condition)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert" title="neurobooth_terra.Table.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(vals[, cols])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert_rows" title="neurobooth_terra.Table.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(vals[, cols])</p></td>
 <td><p>Manual insertion into tables</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>(cmd)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(cmd)</p></td>
+<td><p>Run a query.</p></td>
 </tr>
 </tbody>
 </table>
@@ -214,8 +214,8 @@ as primary key.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="neurobooth_terra.Table.insert">
-<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.insert" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="neurobooth_terra.Table.insert_rows">
+<span class="sig-name descname"><span class="pre">insert_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.insert_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.insert_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manual insertion into tables</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -225,6 +225,20 @@ all columns</p>
 </dd>
 <dt><strong>vals</strong><span class="classifier">list of tuple</span></dt><dd><p>The records to insert. Each tuple
 is one row.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neurobooth_terra.Table.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">instance of pd.Dataframe</span></dt><dd><p>A pandas dataframe object.</p>
 </dd>
 </dl>
 </dd>

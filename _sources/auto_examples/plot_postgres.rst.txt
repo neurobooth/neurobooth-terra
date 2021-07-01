@@ -131,8 +131,8 @@ and insert some data and retrieve the table as a dataframe
 
 .. code-block:: default
 
-    table_subject.insert([('x5dc', 'mainak', 'jas'),
-                          ('y5d3', 'anoopum', 'gupta')])
+    table_subject.insert_rows([('x5dc', 'mainak', 'jas'),
+                               ('y5d3', 'anoopum', 'gupta')])
     df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
     print(df_subject)
 
@@ -198,7 +198,7 @@ a foreign key
                          column_names=['subject_id', 'email'],
                          dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
                          foreign_key=dict(subject_id='subject'))
-    table.insert([('x5dc',), ('y5d3',)], ['subject_id'])
+    table.insert_rows([('x5dc',), ('y5d3',)], ['subject_id'])
     df_contact = table.query(f'SELECT * FROM "{table_id}";')
     print(df_contact)
 
@@ -228,7 +228,7 @@ Finally, we can also delete rows in our table
 
 .. code-block:: default
 
-    table.delete(condition="subject_id = 'x5dc'")
+    table.delete_row(condition="subject_id = 'x5dc'")
     df_contact = table.query(f'SELECT * FROM "{table_id}";')
     print(df_contact)
 
@@ -269,7 +269,7 @@ Don't forget to close the connection once done!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.617 seconds)
+   **Total running time of the script:** ( 0 minutes  1.229 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

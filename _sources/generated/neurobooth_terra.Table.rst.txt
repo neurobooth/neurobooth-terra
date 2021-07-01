@@ -15,9 +15,9 @@
    
       ~Table.__init__
       ~Table.add_column
-      ~Table.delete
+      ~Table.delete_row
       ~Table.drop
-      ~Table.insert
+      ~Table.insert_rows
       ~Table.query
    
    

@@ -43,8 +43,8 @@ table_subject = create_table(conn, cursor, table_id,
 
 ###############################################################################
 # and insert some data and retrieve the table as a dataframe
-table_subject.insert([('x5dc', 'mainak', 'jas'),
-                      ('y5d3', 'anoopum', 'gupta')])
+table_subject.insert_rows([('x5dc', 'mainak', 'jas'),
+                           ('y5d3', 'anoopum', 'gupta')])
 df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
 print(df_subject)
 
@@ -62,13 +62,13 @@ table = create_table(conn, cursor, table_id,
                      column_names=['subject_id', 'email'],
                      dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
                      foreign_key=dict(subject_id='subject'))
-table.insert([('x5dc',), ('y5d3',)], ['subject_id'])
+table.insert_rows([('x5dc',), ('y5d3',)], ['subject_id'])
 df_contact = table.query(f'SELECT * FROM "{table_id}";')
 print(df_contact)
 
 ###############################################################################
 # Finally, we can also delete rows in our table
-table.delete(condition="subject_id = 'x5dc'")
+table.delete_row(condition="subject_id = 'x5dc'")
 df_contact = table.query(f'SELECT * FROM "{table_id}";')
 print(df_contact)
 

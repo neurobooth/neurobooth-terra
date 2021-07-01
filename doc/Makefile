@@ -50,7 +50,7 @@ html_dev-pattern:
 	@echo
 	@echo "Build finished. The HTML pages are in _build/html"
 
-install:
+install: html
 	rm -rf _build/doctrees _build/neurobooth-terra.github.io
 	git clone -b gh-pages --single-branch --no-checkout --depth 1 https://github.com/neurobooth/neurobooth-terra _build/neurobooth-terra.github.io
 	touch _build/neurobooth-terra.github.io/.nojekyll

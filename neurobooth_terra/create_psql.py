@@ -74,6 +74,33 @@ def drop_table(conn, cursor, table_id):
     cmd = f'DROP TABLE IF EXISTS "{table_id}" CASCADE;'
     execute(conn, cursor, cmd)
 
+def create_table(conn, cursor, table_id, column_names, dtypes,
+                 primary_key=None, foreign_key=None):
+    """Create a table."""
+    # XXX: add check for columns if table already exists
+    create_cmd = f'CREATE TABLE IF NOT EXISTS "{table_id}" ('
+
+    if len(column_names) != len(dtypes):
+        raise ValueError('Column names and data types should have equal lengths')
+
+    if primary_key is None:
+        primary_key = column_names[0]
+    for column_name, dtype in zip(column_names, dtypes):
+        create_cmd += f'"{column_name}" {dtype},'
+    create_cmd += f'PRIMARY KEY({primary_key}),'
+
+    if foreign_key is None:
+        foreign_key = dict()
+    for key in foreign_key:
+        create_cmd += f"""FOREIGN KEY ({key})
+                            REFERENCES {foreign_key[key]}({key})
+        """
+    create_cmd = create_cmd[:-1] + ');'  # remove last comma
+    execute(conn, cursor, create_cmd)
+    return Table(conn, cursor, table_id, column_names, dtypes,
+                 primary_key=primary_key)
+
+
 class Table:
     """Table class that is a wrapper around Postgres SQL table.
 
@@ -97,32 +124,14 @@ class Table:
         name of the foreign key and value is the table it refers to.
     """
     def __init__(self, conn, cursor, table_id, column_names, dtypes,
-                 primary_key=None, foreign_key=None):
+                 primary_key=None):
         self.conn = conn
         self.cursor = cursor
         self.table_id = table_id
         self.column_names = column_names
-        if primary_key is None:
-            primary_key = column_names[0]
         self.primary_key = primary_key
-        if foreign_key is None:
-            foreign_key = dict()
+        self.primary_key = primary_key
 
-        # XXX: add check for columns if table already exists
-        create_cmd = f'CREATE TABLE IF NOT EXISTS "{table_id}" ('
-    
-        if len(column_names) != len(dtypes):
-            raise ValueError('Column names and data types should have equal lengths')
-
-        for column_name, dtype in zip(column_names, dtypes):
-            create_cmd += f'"{column_name}" {dtype},'
-        create_cmd += f'PRIMARY KEY({primary_key}),'
-        for key in foreign_key:
-            create_cmd += f"""FOREIGN KEY ({key})
-                              REFERENCES {foreign_key[key]}({key})
-            """
-        create_cmd = create_cmd[:-1] + ');'  # remove last comma
-        execute(conn, cursor, create_cmd)
 
     def insert(self, vals, cols=None):
         """Manual insertion into tables

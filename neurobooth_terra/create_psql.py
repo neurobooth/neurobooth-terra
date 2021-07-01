@@ -163,7 +163,7 @@ class Table:
         execute(self.conn, self.cursor, cmd)
         self.column_names.append(col)
 
-    def insert(self, vals, cols=None):
+    def insert_rows(self, vals, cols=None):
         """Manual insertion into tables
 
         Parameters
@@ -183,12 +183,19 @@ class Table:
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)
 
     def query(self, cmd):
+        """Run a query.
+
+        Returns
+        -------
+        df : instance of pd.Dataframe
+            A pandas dataframe object.
+        """
         data = execute(self.conn, self.cursor, cmd, fetch=True)
         df = pd.DataFrame(data, columns=self.column_names)
         df = df.set_index(self.primary_key)
         return df
 
-    def delete(self, condition):
+    def delete_row(self, condition):
         delete_cmd = f'DELETE FROM {self.table_id} WHERE {condition};'
         execute(self.conn, self.cursor, delete_cmd)
 

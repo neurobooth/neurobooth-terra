@@ -119,7 +119,7 @@ to download the full example code</p>
 </pre></div>
 </div>
 <p>Let us first import the necessary functions.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">drop_table</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">create_table</span><span class="p">,</span> <span class="n">drop_table</span>
 
 <span class="kn">import</span> <span class="nn">psycopg2</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -145,9 +145,9 @@ even when changing some columns</p>
 </div>
 <p>Now we define the Table</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="o">=</span> <span class="s1">&#39;subject&#39;</span>
-<span class="n">table_subject</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span>
-                      <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;first_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name_birth&#39;</span><span class="p">],</span>
-                      <span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">])</span>
+<span class="n">table_subject</span> <span class="o">=</span> <span class="n">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span>
+                             <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;first_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name_birth&#39;</span><span class="p">],</span>
+                             <span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>and insert some data and retrieve the table as a dataframe</p>
@@ -159,10 +159,10 @@ even when changing some columns</p>
 <p>We can create another table and relate it to the other table using
 a foreign key</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="o">=</span> <span class="s1">&#39;contact&#39;</span>
-<span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span>
-              <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">],</span>
-              <span class="n">dtypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">],</span>
-              <span class="n">foreign_key</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">subject_id</span><span class="o">=</span><span class="s1">&#39;subject&#39;</span><span class="p">))</span>
+<span class="n">table</span> <span class="o">=</span> <span class="n">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span>
+                     <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">],</span>
+                     <span class="n">dtypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">],</span>
+                     <span class="n">foreign_key</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">subject_id</span><span class="o">=</span><span class="s1">&#39;subject&#39;</span><span class="p">))</span>
 <span class="n">table</span><span class="o">.</span><span class="n">insert</span><span class="p">([(</span><span class="s1">&#39;x5dc&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;y5d3&#39;</span><span class="p">,)],</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">])</span>
 <span class="n">df_contact</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df_contact</span><span class="p">)</span>
@@ -192,7 +192,7 @@ y5d3        None
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.997 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.190 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d7f6b1c1accfe75c32c35dfe6b733449/plot_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres.py</span></code></a></p>

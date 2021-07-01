@@ -15,4 +15,5 @@ Tables (:py:mod:`neurobooth_terra`):
    :toctree: generated/
 
    Table
+   create_table
    drop_table

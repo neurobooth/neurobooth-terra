@@ -47,7 +47,6 @@
             
                 <li><a href="../../auto_examples/index.html">Examples</a></li>
                 <li><a href="../../api.html">API</a></li>
-                <li><a href="../../whats_new.html">Whats new</a></li>
                 <li><a href="https://github.com/neurobooth/neurobooth-terra">GitHub</a></li>
             
             
@@ -177,6 +176,33 @@
     <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DROP TABLE IF EXISTS &quot;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; CASCADE;&#39;</span>
     <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.create_table.html#neurobooth_terra.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
+                 <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a table.&quot;&quot;&quot;</span>
+    <span class="c1"># XXX: add check for columns if table already exists</span>
+    <span class="n">create_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;CREATE TABLE IF NOT EXISTS &quot;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; (&#39;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtypes</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Column names and data types should have equal lengths&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">):</span>
+        <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s1">&quot; </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s1">,&#39;</span>
+    <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;PRIMARY KEY(</span><span class="si">{</span><span class="n">primary_key</span><span class="si">}</span><span class="s1">),&#39;</span>
+
+    <span class="k">if</span> <span class="n">foreign_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">foreign_key</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">foreign_key</span><span class="p">:</span>
+        <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;FOREIGN KEY (</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">                            REFERENCES </span><span class="si">{</span><span class="n">foreign_key</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+    <span class="n">create_cmd</span> <span class="o">=</span> <span class="n">create_cmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;);&#39;</span>  <span class="c1"># remove last comma</span>
+    <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">create_cmd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
+                 <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Table"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table">[docs]</a><span class="k">class</span> <span class="nc">Table</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Table class that is a wrapper around Postgres SQL table.</span>
 
@@ -200,32 +226,14 @@
 <span class="sd">        name of the foreign key and value is the table it refers to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
-                 <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">conn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">cursor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_id</span> <span class="o">=</span> <span class="n">table_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span> <span class="o">=</span> <span class="n">column_names</span>
-        <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">primary_key</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_key</span>
-        <span class="k">if</span> <span class="n">foreign_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">foreign_key</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_key</span></div>
 
-        <span class="c1"># XXX: add check for columns if table already exists</span>
-        <span class="n">create_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;CREATE TABLE IF NOT EXISTS &quot;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; (&#39;</span>
-    
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtypes</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Column names and data types should have equal lengths&#39;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">):</span>
-            <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s1">&quot; </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s1">,&#39;</span>
-        <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;PRIMARY KEY(</span><span class="si">{</span><span class="n">primary_key</span><span class="si">}</span><span class="s1">),&#39;</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">foreign_key</span><span class="p">:</span>
-            <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;FOREIGN KEY (</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">)</span>
-<span class="s2">                              REFERENCES </span><span class="si">{</span><span class="n">foreign_key</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">)</span>
-<span class="s2">            &quot;&quot;&quot;</span>
-        <span class="n">create_cmd</span> <span class="o">=</span> <span class="n">create_cmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;);&#39;</span>  <span class="c1"># remove last comma</span>
-        <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">create_cmd</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Table.insert"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Manual insertion into tables</span>

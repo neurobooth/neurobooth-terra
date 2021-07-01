@@ -130,8 +130,13 @@ class Table:
         self.table_id = table_id
         self.column_names = column_names
         self.primary_key = primary_key
-        self.primary_key = primary_key
 
+    def add_column(self, col, dtype):
+        """Add a new column to the table."""
+        cmd = f'ALTER TABLE {self.table_id} '
+        cmd += f'ADD COLUMN {col} {dtype};'
+        execute(self.conn, self.cursor, cmd)
+        self.column_names.append(col)
 
     def insert(self, vals, cols=None):
         """Manual insertion into tables

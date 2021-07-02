@@ -111,7 +111,7 @@
 <h1>neurobooth_terra.Table<a class="headerlink" href="#neurobooth-terra-table" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="neurobooth_terra.Table">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">neurobooth_terra.</span></span><span class="sig-name descname"><span class="pre">Table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cursor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">neurobooth_terra.</span></span><span class="sig-name descname"><span class="pre">Table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cursor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Table class that is a wrapper around Postgres SQL table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -122,9 +122,8 @@
 </dd>
 <dt><strong>table_id</strong><span class="classifier">str</span></dt><dd><p>The table ID</p>
 </dd>
-<dt><strong>column_names</strong><span class="classifier">list of str</span></dt><dd><p>The columns to create</p>
-</dd>
-<dt><strong>dtypes</strong><span class="classifier">list of str</span></dt><dd><p>The datatypes</p>
+<dt><strong>column_names</strong><span class="classifier">list of str | None</span></dt><dd><p>The columns to create. If None, a query is made
+to get the column names</p>
 </dd>
 <dt><strong>primary_key</strong><span class="classifier">str | None</span></dt><dd><p>The primary key. If None, the first column name is used
 as primary key.</p>
@@ -166,7 +165,7 @@ as primary key.</p>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="neurobooth_terra.Table.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cursor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cursor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -177,7 +176,7 @@ as primary key.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.__init__" title="neurobooth_terra.Table.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(conn, cursor, table_id, …[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.__init__" title="neurobooth_terra.Table.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(conn, cursor, table_id[, …])</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.add_column" title="neurobooth_terra.Table.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(col, dtype)</p></td>

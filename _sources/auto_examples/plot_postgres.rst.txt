@@ -47,7 +47,7 @@ Let us first import the necessary functions.
 .. code-block:: default
 
 
-    from neurobooth_terra import create_table, drop_table
+    from neurobooth_terra import create_table, drop_table, Table
 
     import psycopg2
     import pandas as pd
@@ -63,14 +63,12 @@ Let us first import the necessary functions.
 
 Then, we will create a connection using ``psycopg2``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-29
+.. GENERATED FROM PYTHON SOURCE LINES 21-27
 
 .. code-block:: default
 
     connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                    "password='neuroboothrocks'")
-    csv_fname = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
-                 'register/consent.csv')
 
     conn = psycopg2.connect(connect_str)
     cursor = conn.cursor()
@@ -82,13 +80,13 @@ Then, we will create a connection using ``psycopg2``.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 30-33
+.. GENERATED FROM PYTHON SOURCE LINES 28-31
 
 We will drop tables if they already exist
 this is just for convenience so we can re-run this script
 even when changing some columns
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-37
+.. GENERATED FROM PYTHON SOURCE LINES 31-35
 
 .. code-block:: default
 
@@ -103,11 +101,11 @@ even when changing some columns
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 38-39
+.. GENERATED FROM PYTHON SOURCE LINES 36-37
 
 Now we define the Table
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-44
+.. GENERATED FROM PYTHON SOURCE LINES 37-42
 
 .. code-block:: default
 
@@ -123,11 +121,11 @@ Now we define the Table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-46
+.. GENERATED FROM PYTHON SOURCE LINES 43-44
 
 and insert some data and retrieve the table as a dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-51
+.. GENERATED FROM PYTHON SOURCE LINES 44-49
 
 .. code-block:: default
 
@@ -154,11 +152,38 @@ and insert some data and retrieve the table as a dataframe
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-53
+.. GENERATED FROM PYTHON SOURCE LINES 50-52
 
-we can also add a new column
+If we know a table already exists and we want to make modifications to it,
+we can create a Table object first.
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-57
+.. GENERATED FROM PYTHON SOURCE LINES 52-55
+
+.. code-block:: default
+
+    table_subject = Table(conn, cursor, table_id)
+    print(table_subject)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    Table "subject" (subject_id, first_name_birth, last_name_birth)
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 56-57
+
+Then, we can make changes such as adding a new column
+
+.. GENERATED FROM PYTHON SOURCE LINES 57-61
 
 .. code-block:: default
 
@@ -184,12 +209,12 @@ we can also add a new column
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-60
+.. GENERATED FROM PYTHON SOURCE LINES 62-64
 
 We can create another table and relate it to the other table using
 a foreign key
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-69
+.. GENERATED FROM PYTHON SOURCE LINES 64-73
 
 .. code-block:: default
 
@@ -220,11 +245,11 @@ a foreign key
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-71
+.. GENERATED FROM PYTHON SOURCE LINES 74-75
 
 Finally, we can also delete rows in our table
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-75
+.. GENERATED FROM PYTHON SOURCE LINES 75-79
 
 .. code-block:: default
 
@@ -249,11 +274,11 @@ Finally, we can also delete rows in our table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 76-77
+.. GENERATED FROM PYTHON SOURCE LINES 80-81
 
 Don't forget to close the connection once done!
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-79
+.. GENERATED FROM PYTHON SOURCE LINES 81-83
 
 .. code-block:: default
 
@@ -269,7 +294,7 @@ Don't forget to close the connection once done!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.229 seconds)
+   **Total running time of the script:** ( 0 minutes  0.538 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

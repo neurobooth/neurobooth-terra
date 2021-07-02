@@ -219,8 +219,7 @@
 <span class="s2">        &quot;&quot;&quot;</span>
     <span class="n">create_cmd</span> <span class="o">=</span> <span class="n">create_cmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;);&#39;</span>  <span class="c1"># remove last comma</span>
     <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">create_cmd</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
-                 <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Table"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table">[docs]</a><span class="k">class</span> <span class="nc">Table</span><span class="p">:</span>
@@ -234,21 +233,34 @@
 <span class="sd">        The cursor object</span>
 <span class="sd">    table_id : str</span>
 <span class="sd">        The table ID</span>
-<span class="sd">    column_names : list of str</span>
-<span class="sd">        The columns to create</span>
-<span class="sd">    dtypes : list of str</span>
-<span class="sd">        The datatypes</span>
+<span class="sd">    column_names : list of str | None</span>
+<span class="sd">        The columns to create. If None, a query is made</span>
+<span class="sd">        to get the column names</span>
 <span class="sd">    primary_key : str | None</span>
 <span class="sd">        The primary key. If None, the first column name is used</span>
 <span class="sd">        as primary key.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
+<div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">conn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">cursor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_id</span> <span class="o">=</span> <span class="n">table_id</span>
+
+        <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;table_name = &#39;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span> <span class="o">=</span> <span class="n">column_names</span>
+
+        <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">primary_key</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_key</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">repr_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Table &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
+        <span class="n">repr_str</span> <span class="o">+=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="k">return</span> <span class="n">repr_str</span>
 
 <div class="viewcode-block" id="Table.add_column"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.add_column">[docs]</a>    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new column to the table.</span>

@@ -11,7 +11,7 @@ This example demonstrates how to create postgres table with neurobooth-terra.
 ###############################################################################
 # Let us first import the necessary functions.
 
-from neurobooth_terra import create_table, drop_table
+from neurobooth_terra import create_table, drop_table, Table
 
 import psycopg2
 import pandas as pd
@@ -20,8 +20,6 @@ import pandas as pd
 # Then, we will create a connection using ``psycopg2``.
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                "password='neuroboothrocks'")
-csv_fname = ('/Users/mainak/Dropbox (Partners HealthCare)/neurobooth_data/'
-             'register/consent.csv')
 
 conn = psycopg2.connect(connect_str)
 cursor = conn.cursor()
@@ -49,7 +47,13 @@ df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
 print(df_subject)
 
 ###############################################################################
-# we can also add a new column
+# If we know a table already exists and we want to make modifications to it,
+# we can create a Table object first.
+table_subject = Table(conn, cursor, table_id)
+print(table_subject)
+
+###############################################################################
+# Then, we can make changes such as adding a new column
 table_subject.add_column('dob', 'VARCHAR (255)')
 df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
 print(df_subject)

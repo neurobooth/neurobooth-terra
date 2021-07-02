@@ -117,8 +117,7 @@ def create_table(conn, cursor, table_id, column_names, dtypes,
         """
     create_cmd = create_cmd[:-1] + ');'  # remove last comma
     execute(conn, cursor, create_cmd)
-    return Table(conn, cursor, table_id, column_names, dtypes,
-                 primary_key=primary_key)
+    return Table(conn, cursor, table_id, column_names, primary_key=primary_key)
 
 
 class Table:
@@ -132,21 +131,34 @@ class Table:
         The cursor object
     table_id : str
         The table ID
-    column_names : list of str
-        The columns to create
-    dtypes : list of str
-        The datatypes
+    column_names : list of str | None
+        The columns to create. If None, a query is made
+        to get the column names
     primary_key : str | None
         The primary key. If None, the first column name is used
         as primary key.
     """
-    def __init__(self, conn, cursor, table_id, column_names, dtypes,
+    def __init__(self, conn, cursor, table_id, column_names=None,
                  primary_key=None):
         self.conn = conn
         self.cursor = cursor
         self.table_id = table_id
+
+        if column_names is None:
+            cmd = ("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE "
+                   f"table_name = '{table_id}';")
+            column_names = execute(conn, cursor, cmd, fetch=True)
+            column_names = [c[0] for c in column_names]
         self.column_names = column_names
+
+        if primary_key is None:
+            primary_key = column_names[0]
         self.primary_key = primary_key
+
+    def __repr__(self):
+        repr_str = f'Table "{self.table_id}" '
+        repr_str += '(' + ', '.join(self.column_names) + ')'
+        return repr_str
 
     def add_column(self, col, dtype):
         """Add a new column to the table.

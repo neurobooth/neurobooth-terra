@@ -1,6 +1,15 @@
 import psycopg2
 from neurobooth_terra import execute
 
+# drop all tables
+"""
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
+GRANT ALL ON SCHEMA public TO neuroboother;
+GRANT ALL ON SCHEMA public TO public;
+"""
+
 ###############################################################################
 # First, we will create a connection using ``psycopg2``.
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "

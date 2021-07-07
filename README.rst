@@ -13,7 +13,7 @@ Installation
 We recommend the `Anaconda Python distribution <https://www.anaconda.com/products/individual>`_.
 To install ``neurobooth-terra``, simply do::
 
-   $ pip install --upgrade https://api.github.com/repos/neurobooth/neurobooth-terra/zipball/master
+   $ pip install -e git+https://github.com/neurobooth/neurobooth-terra.git#egg=neurobooth_terra
 
 and it will install ``neurobooth-terra`` along with the dependencies which are not already installed.
 

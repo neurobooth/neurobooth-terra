@@ -28,13 +28,13 @@ CREATE TABLE "consent" (
 
 
 CREATE TABLE "study" (
-	"study_id" serial(255) NOT NULL,
+	"study_id" VARCHAR(255) NOT NULL,
 	"IRB_protocol_number" integer NOT NULL,
 	"study_title" VARCHAR(255) NOT NULL,
 	"protocol_version_array" integer NOT NULL,
-	"protocol_date_array" DATETIME NOT NULL,
+	"protocol_date_array" DATE NOT NULL,
 	"consent_version_array" VARCHAR(255) NOT NULL,
-	"consent_date_array" DATE(255) NOT NULL,
+	"consent_date_array" DATE NOT NULL,
 	CONSTRAINT "study_pk" PRIMARY KEY ("study_id")
 ) WITH (
   OIDS=FALSE
@@ -89,7 +89,7 @@ CREATE TABLE "clinical" (
 
 
 CREATE TABLE "subject" (
-	"subject_id" VARCHAR(255) NOT NULL,
+	"subject_id" VARCHAR(255) PRIMARY KEY,
 	"first_name_birth" VARCHAR(255) NOT NULL,
 	"middle_name_birth" VARCHAR(255) NOT NULL,
 	"last_name_birth" VARCHAR(255) NOT NULL,
@@ -185,7 +185,7 @@ CREATE TABLE "tech_obs_log" (
 	"tech_obs_id" VARCHAR(255) NOT NULL,
 	"staff_id" VARCHAR(255) NOT NULL,
 	"application_id" VARCHAR(255) NOT NULL,
-	"site_date" DATETIME NOT NULL,
+	"site_date" DATE NOT NULL,
 	"event_array" VARCHAR(255) NOT NULL,
 	"date_time_array" VARCHAR(255) NOT NULL,
 	CONSTRAINT "tech_obs_log_pk" PRIMARY KEY ("subject_id","study_id")
@@ -221,7 +221,7 @@ CREATE TABLE "sensor" (
 
 
 CREATE TABLE "instruction" (
-	"instruction_id" VARCHAR(255) NOT NULL,
+	"instruction_id" VARCHAR(255) PRIMARY KEY,
 	"instruction_text" TEXT NOT NULL,
 	"instruction_filetype" VARCHAR(255) NOT NULL,
 	"instruction_file" VARCHAR(255) NOT NULL
@@ -232,8 +232,8 @@ CREATE TABLE "instruction" (
 
 
 CREATE TABLE "human_obs_data" (
-	"human_obs_id" serial(255) NOT NULL,
-	"obs_name" serial(255) NOT NULL,
+	"human_obs_id" VARCHAR(255) NOT NULL,
+	"obs_name" VARCHAR(255) NOT NULL,
 	"feature_of_interest" VARCHAR(255) NOT NULL,
 	"measurement_type" VARCHAR(255) NOT NULL,
 	"question_array" VARCHAR(255) NOT NULL,
@@ -249,7 +249,7 @@ CREATE TABLE "human_obs_data" (
 
 
 CREATE TABLE "device" (
-	"device_id" serial(255) NOT NULL,
+	"device_id" VARCHAR(255) NOT NULL,
 	"device_sn" VARCHAR(255) NOT NULL,
 	"wearable_bool" BOOLEAN NOT NULL,
 	"device_location" VARCHAR(255) NOT NULL,
@@ -257,7 +257,7 @@ CREATE TABLE "device" (
 	"device_make" VARCHAR(255) NOT NULL,
 	"device_model" VARCHAR(255) NOT NULL,
 	"device_firmware" VARCHAR(255) NOT NULL,
-	"sensor_id_array" BINARY NOT NULL,
+	"sensor_id_array" BOOLEAN NOT NULL,
 	CONSTRAINT "device_pk" PRIMARY KEY ("device_id")
 ) WITH (
   OIDS=FALSE

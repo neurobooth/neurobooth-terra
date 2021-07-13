@@ -11,23 +11,12 @@ import psycopg2.extras as extras
 
 #### Monkeypatch psycopg2 functions ####
 
-def safe_close(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            cursor.close()
-            raise Exception(e)
-    return wrapper
-
-@safe_close
 def execute(conn, cursor, cmd, fetch=False):
     cursor.execute(cmd)
     conn.commit()
     if fetch:
         return cursor.fetchall()
 
-@safe_close
 def _execute_batch(conn, cursor, cmd, tuples, page_size=100):
     extras.execute_batch(cursor, cmd, tuples, page_size)
     conn.commit()
@@ -70,22 +59,25 @@ def psql_to_df(conn, cursor, query, column_names):
     df = pd.DataFrame(data, columns=column_names)
     return df
 
-def drop_table(conn, cursor, table_id):
+def drop_table(table_id, conn):
+    cursor = conn.cursor()
     cmd = f'DROP TABLE IF EXISTS "{table_id}" CASCADE;'
-    execute(conn, cursor, cmd)
+    try:
+        execute(conn, cursor, cmd)
+    except Exception as e:
+        cursor.close()
+        raise Exception(e)
 
-def create_table(conn, cursor, table_id, column_names, dtypes,
+def create_table(table_id, conn, column_names, dtypes,
                  primary_key=None, foreign_key=None):
     """Create a table.
 
     Paramters
     ---------
-    conn : instance of psycopg2.Postgres
-        The connection object
-    cursor : instance of psycopg2.cursor
-        The cursor object
     table_id : str
         The table ID
+    conn : instance of psycopg2.Postgres
+        The connection object
     column_names : list of str
         The columns to create
     dtypes : list of str
@@ -116,8 +108,14 @@ def create_table(conn, cursor, table_id, column_names, dtypes,
                             REFERENCES {foreign_key[key]}({key})
         """
     create_cmd = create_cmd[:-1] + ');'  # remove last comma
-    execute(conn, cursor, create_cmd)
-    return Table(conn, cursor, table_id, column_names, primary_key=primary_key)
+    cursor = conn.cursor()
+    try:
+        execute(conn, cursor, create_cmd)
+    except Exception as e:
+        cursor.close()
+        raise Exception(e)
+    return Table(table_id, conn=conn, cursor=cursor,
+                 column_names=column_names, primary_key=primary_key)
 
 
 class Table:
@@ -125,12 +123,10 @@ class Table:
 
     Parameters
     ----------
-    conn : instance of psycopg2.Postgres
-        The connection object
-    cursor : instance of psycopg2.cursor
-        The cursor object
     table_id : str
         The table ID
+    conn : instance of psycopg2.Postgres
+        The connection object
     column_names : list of str | None
         The columns to create. If None, a query is made
         to get the column names
@@ -138,9 +134,11 @@ class Table:
         The primary key. If None, the first column name is used
         as primary key.
     """
-    def __init__(self, conn, cursor, table_id, column_names=None,
+    def __init__(self, table_id, conn, cursor=None, column_names=None,
                  primary_key=None):
         self.conn = conn
+        if cursor is None:
+            cursor = conn.cursor()
         self.cursor = cursor
         self.table_id = table_id
 
@@ -159,6 +157,15 @@ class Table:
         repr_str = f'Table "{self.table_id}" '
         repr_str += '(' + ', '.join(self.column_names) + ')'
         return repr_str
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        self.close()
+
+    def close(self):
+        self.cursor.close()
 
     def add_column(self, col, dtype):
         """Add a new column to the table.

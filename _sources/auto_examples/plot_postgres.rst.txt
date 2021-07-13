@@ -63,7 +63,7 @@ Let us first import the necessary functions.
 
 Then, we will create a connection using ``psycopg2``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-27
+.. GENERATED FROM PYTHON SOURCE LINES 21-26
 
 .. code-block:: default
 
@@ -71,7 +71,6 @@ Then, we will create a connection using ``psycopg2``.
                    "password='neuroboothrocks'")
 
     conn = psycopg2.connect(connect_str)
-    cursor = conn.cursor()
 
 
 
@@ -80,19 +79,19 @@ Then, we will create a connection using ``psycopg2``.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-31
+.. GENERATED FROM PYTHON SOURCE LINES 27-30
 
 We will drop tables if they already exist
 this is just for convenience so we can re-run this script
 even when changing some columns
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-35
+.. GENERATED FROM PYTHON SOURCE LINES 30-34
 
 .. code-block:: default
 
-    drop_table(conn, cursor, 'subject')
-    drop_table(conn, cursor, 'contact')
-    drop_table(conn, cursor, 'consent')
+    drop_table('subject', conn)
+    drop_table('contact', conn)
+    drop_table('consent', conn)
 
 
 
@@ -101,16 +100,16 @@ even when changing some columns
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-37
+.. GENERATED FROM PYTHON SOURCE LINES 35-36
 
 Now we define the Table
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-42
+.. GENERATED FROM PYTHON SOURCE LINES 36-41
 
 .. code-block:: default
 
     table_id = 'subject'
-    table_subject = create_table(conn, cursor, table_id,
+    table_subject = create_table(table_id, conn,
                                  ['subject_id', 'first_name_birth', 'last_name_birth'],
                                  ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)'])
 
@@ -121,11 +120,11 @@ Now we define the Table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-44
+.. GENERATED FROM PYTHON SOURCE LINES 42-43
 
 and insert some data and retrieve the table as a dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 44-49
+.. GENERATED FROM PYTHON SOURCE LINES 43-48
 
 .. code-block:: default
 
@@ -152,16 +151,16 @@ and insert some data and retrieve the table as a dataframe
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-52
+.. GENERATED FROM PYTHON SOURCE LINES 49-51
 
 If we know a table already exists and we want to make modifications to it,
 we can create a Table object first.
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-55
+.. GENERATED FROM PYTHON SOURCE LINES 51-54
 
 .. code-block:: default
 
-    table_subject = Table(conn, cursor, table_id)
+    table_subject = Table(table_id, conn)
     print(table_subject)
 
 
@@ -179,11 +178,11 @@ we can create a Table object first.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-57
+.. GENERATED FROM PYTHON SOURCE LINES 55-56
 
 Then, we can make changes such as adding a new column
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-61
+.. GENERATED FROM PYTHON SOURCE LINES 56-60
 
 .. code-block:: default
 
@@ -209,17 +208,17 @@ Then, we can make changes such as adding a new column
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-64
+.. GENERATED FROM PYTHON SOURCE LINES 61-63
 
 We can create another table and relate it to the other table using
 a foreign key
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-73
+.. GENERATED FROM PYTHON SOURCE LINES 63-72
 
 .. code-block:: default
 
     table_id = 'contact'
-    table = create_table(conn, cursor, table_id,
+    table = create_table(table_id, conn,
                          column_names=['subject_id', 'email'],
                          dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
                          foreign_key=dict(subject_id='subject'))
@@ -245,11 +244,11 @@ a foreign key
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-75
+.. GENERATED FROM PYTHON SOURCE LINES 73-74
 
 Finally, we can also delete rows in our table
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-79
+.. GENERATED FROM PYTHON SOURCE LINES 74-78
 
 .. code-block:: default
 
@@ -274,15 +273,15 @@ Finally, we can also delete rows in our table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-81
+.. GENERATED FROM PYTHON SOURCE LINES 79-80
 
 Don't forget to close the connection once done!
 
-.. GENERATED FROM PYTHON SOURCE LINES 81-83
+.. GENERATED FROM PYTHON SOURCE LINES 80-82
 
 .. code-block:: default
 
-    cursor.close()
+    table.close()
     conn.close()
 
 
@@ -294,7 +293,7 @@ Don't forget to close the connection once done!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.538 seconds)
+   **Total running time of the script:** ( 0 minutes  1.212 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

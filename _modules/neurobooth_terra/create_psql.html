@@ -113,23 +113,12 @@
 
 <span class="c1">#### Monkeypatch psycopg2 functions ####</span>
 
-<span class="k">def</span> <span class="nf">safe_close</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">wrapper</span>
-
-<span class="nd">@safe_close</span>
 <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">fetch</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
 
-<span class="nd">@safe_close</span>
 <span class="k">def</span> <span class="nf">_execute_batch</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">tuples</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
     <span class="n">extras</span><span class="o">.</span><span class="n">execute_batch</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">tuples</span><span class="p">,</span> <span class="n">page_size</span><span class="p">)</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
@@ -172,22 +161,25 @@
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="drop_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table">[docs]</a><span class="k">def</span> <span class="nf">drop_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">):</span>
+<div class="viewcode-block" id="drop_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table">[docs]</a><span class="k">def</span> <span class="nf">drop_table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DROP TABLE IF EXISTS &quot;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; CASCADE;&#39;</span>
-    <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.create_table.html#neurobooth_terra.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
+<div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.create_table.html#neurobooth_terra.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
                  <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a table.</span>
 
 <span class="sd">    Paramters</span>
 <span class="sd">    ---------</span>
-<span class="sd">    conn : instance of psycopg2.Postgres</span>
-<span class="sd">        The connection object</span>
-<span class="sd">    cursor : instance of psycopg2.cursor</span>
-<span class="sd">        The cursor object</span>
 <span class="sd">    table_id : str</span>
 <span class="sd">        The table ID</span>
+<span class="sd">    conn : instance of psycopg2.Postgres</span>
+<span class="sd">        The connection object</span>
 <span class="sd">    column_names : list of str</span>
 <span class="sd">        The columns to create</span>
 <span class="sd">    dtypes : list of str</span>
@@ -218,8 +210,14 @@
 <span class="s2">                            REFERENCES </span><span class="si">{</span><span class="n">foreign_key</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">)</span>
 <span class="s2">        &quot;&quot;&quot;</span>
     <span class="n">create_cmd</span> <span class="o">=</span> <span class="n">create_cmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;);&#39;</span>  <span class="c1"># remove last comma</span>
-    <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">create_cmd</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">)</span></div>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">create_cmd</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="n">cursor</span><span class="p">,</span>
+                 <span class="n">column_names</span><span class="o">=</span><span class="n">column_names</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Table"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table">[docs]</a><span class="k">class</span> <span class="nc">Table</span><span class="p">:</span>
@@ -227,12 +225,10 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    conn : instance of psycopg2.Postgres</span>
-<span class="sd">        The connection object</span>
-<span class="sd">    cursor : instance of psycopg2.cursor</span>
-<span class="sd">        The cursor object</span>
 <span class="sd">    table_id : str</span>
 <span class="sd">        The table ID</span>
+<span class="sd">    conn : instance of psycopg2.Postgres</span>
+<span class="sd">        The connection object</span>
 <span class="sd">    column_names : list of str | None</span>
 <span class="sd">        The columns to create. If None, a query is made</span>
 <span class="sd">        to get the column names</span>
@@ -240,9 +236,11 @@
 <span class="sd">        The primary key. If None, the first column name is used</span>
 <span class="sd">        as primary key.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">conn</span>
+        <span class="k">if</span> <span class="n">cursor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">cursor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_id</span> <span class="o">=</span> <span class="n">table_id</span>
 
@@ -261,6 +259,15 @@
         <span class="n">repr_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Table &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
         <span class="n">repr_str</span> <span class="o">+=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
         <span class="k">return</span> <span class="n">repr_str</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Table.add_column"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.add_column">[docs]</a>    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new column to the table.</span>

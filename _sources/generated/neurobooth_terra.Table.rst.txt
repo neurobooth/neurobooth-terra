@@ -15,6 +15,7 @@
    
       ~Table.__init__
       ~Table.add_column
+      ~Table.close
       ~Table.delete_row
       ~Table.drop
       ~Table.insert_rows

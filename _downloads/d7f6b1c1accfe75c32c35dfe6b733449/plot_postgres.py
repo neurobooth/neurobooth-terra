@@ -22,20 +22,19 @@ connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                "password='neuroboothrocks'")
 
 conn = psycopg2.connect(connect_str)
-cursor = conn.cursor()
 
 ###############################################################################
 # We will drop tables if they already exist
 # this is just for convenience so we can re-run this script
 # even when changing some columns
-drop_table(conn, cursor, 'subject')
-drop_table(conn, cursor, 'contact')
-drop_table(conn, cursor, 'consent')
+drop_table('subject', conn)
+drop_table('contact', conn)
+drop_table('consent', conn)
 
 ###############################################################################
 # Now we define the Table
 table_id = 'subject'
-table_subject = create_table(conn, cursor, table_id,
+table_subject = create_table(table_id, conn,
                              ['subject_id', 'first_name_birth', 'last_name_birth'],
                              ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)'])
 
@@ -49,7 +48,7 @@ print(df_subject)
 ###############################################################################
 # If we know a table already exists and we want to make modifications to it,
 # we can create a Table object first.
-table_subject = Table(conn, cursor, table_id)
+table_subject = Table(table_id, conn)
 print(table_subject)
 
 ###############################################################################
@@ -62,7 +61,7 @@ print(df_subject)
 # We can create another table and relate it to the other table using
 # a foreign key
 table_id = 'contact'
-table = create_table(conn, cursor, table_id,
+table = create_table(table_id, conn,
                      column_names=['subject_id', 'email'],
                      dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
                      foreign_key=dict(subject_id='subject'))
@@ -78,5 +77,5 @@ print(df_contact)
 
 ###############################################################################
 # Don't forget to close the connection once done!
-cursor.close()
+table.close()
 conn.close()

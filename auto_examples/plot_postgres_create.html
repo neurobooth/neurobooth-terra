@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Export from dbdesigner &#8212; neurobooth-terra  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          neurobooth-terra</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="index.html">Examples</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="https://github.com/neurobooth/neurobooth-terra">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Export from dbdesigner</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/auto_examples/plot_postgres_create.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-postgres-create-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="export-from-dbdesigner">
+<span id="sphx-glr-auto-examples-plot-postgres-create-py"></span><h1>Export from dbdesigner<a class="headerlink" href="#export-from-dbdesigner" title="Permalink to this headline">¶</a></h1>
+<p>This example demonstrates how to create postgres table with neurobooth-terra.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra.create_psql</span> <span class="kn">import</span> <span class="n">drop_table</span>
+<span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">drop_table</span>
+
+<span class="c1"># drop all tables</span>
+</pre></div>
+</div>
+<p>First, we will create a connection using <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
+               <span class="s2">&quot;password=&#39;neuroboothrocks&#39;&quot;</span><span class="p">)</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a><span class="p">)</span>
+
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;consent&#39;</span><span class="p">,</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> <span class="s1">&#39;register&#39;</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;clinical&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;demograph&#39;</span><span class="p">,</span> <span class="s1">&#39;human_obs_log&#39;</span><span class="p">,</span> <span class="s1">&#39;observer&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;tech_obs_data&#39;</span><span class="p">,</span> <span class="s1">&#39;tech_obs_log&#39;</span><span class="p">,</span> <span class="s1">&#39;stimulus&#39;</span><span class="p">,</span> <span class="s1">&#39;sensor&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;instruction&#39;</span><span class="p">,</span> <span class="s1">&#39;human_obs_data&#39;</span><span class="p">,</span> <span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="s1">&#39;collection&#39;</span><span class="p">]:</span>
+    <span class="n">drop_table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then comes our sql command to create the SQL tables. This comes from
+dbdesigner.
+6/7/2021, 17:02:05</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">CREATE TABLE &quot;consent&quot; (</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;staff_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;application_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;site_date&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;consent_pk&quot; PRIMARY KEY (&quot;subject_id&quot;,&quot;study_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;study&quot; (</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;IRB_protocol_number&quot; integer NOT NULL,</span>
+<span class="s2">    &quot;study_title&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;protocol_version_array&quot; integer NOT NULL,</span>
+<span class="s2">    &quot;protocol_date_array&quot; DATE NOT NULL,</span>
+<span class="s2">    &quot;consent_version_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;consent_date_array&quot; DATE NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;study_pk&quot; PRIMARY KEY (&quot;study_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;register&quot; (</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;application_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;site_date&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;register_pk&quot; PRIMARY KEY (&quot;subject_id&quot;,&quot;study_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;contact&quot; (</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;application_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;site_date&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;email&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;phone&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;contact_pk&quot; PRIMARY KEY (&quot;subject_id&quot;,&quot;study_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;clinical&quot; (</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;application_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;site_date&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;diagnosis&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;relevant_diagnosis&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;symptom_age_onset&quot; integer NOT NULL,</span>
+<span class="s2">    &quot;handedness&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;height&quot; FLOAT NOT NULL,</span>
+<span class="s2">    &quot;weight&quot; FLOAT NOT NULL,</span>
+<span class="s2">    &quot;medications&quot; TEXT NOT NULL,</span>
+<span class="s2">    &quot;MRN&quot; integer NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;clinical_pk&quot; PRIMARY KEY (&quot;subject_id&quot;,&quot;study_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;subject&quot; (</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) PRIMARY KEY,</span>
+<span class="s2">    &quot;first_name_birth&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;middle_name_birth&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;last_name_birth&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;date of birth&quot; DATE NOT NULL,</span>
+<span class="s2">    &quot;country of birth&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;gender at birth&quot; VARCHAR(255) NOT NULL</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;demograph&quot; (</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;application_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;site_date&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;date_of_birth&quot; DATE NOT NULL,</span>
+<span class="s2">    &quot;age_study_start&quot; integer NOT NULL,</span>
+<span class="s2">    &quot;symptom_age_onset&quot; integer NOT NULL,</span>
+<span class="s2">    &quot;sex&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;race&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;ethnicity&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;recruit_mechanism&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;demograph_pk&quot; PRIMARY KEY (&quot;subject_id&quot;,&quot;study_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;human_obs_log&quot; (</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;observer_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;human_obs_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;application_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;site_date&quot; DATE NOT NULL,</span>
+<span class="s2">    &quot;response_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;human_obs_log_pk&quot; PRIMARY KEY (&quot;subject_id&quot;,&quot;study_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;observer&quot; (</span>
+<span class="s2">    &quot;observer_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;first_name&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;last_name&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;age&quot; integer NOT NULL,</span>
+<span class="s2">    &quot;sex&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;race&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;ethnicity&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;relationship&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;observer_pk&quot; PRIMARY KEY (&quot;observer_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;tech_obs_data&quot; (</span>
+<span class="s2">    &quot;tech_obs_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;obs_name&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;feature_of_interest&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;measurement_type&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;instruction_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;demo_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;stimulus_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;device_id_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;question_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;response_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;obs_property_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;obs_time_period_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;units_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;sensor_id_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;file_id_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;sensor_param_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;device-stim_sync_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;interdevice_sync-matrix&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;tech_obs_data_pk&quot; PRIMARY KEY (&quot;tech_obs_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;tech_obs_log&quot; (</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;tech_obs_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;staff_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;application_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;site_date&quot; DATE NOT NULL,</span>
+<span class="s2">    &quot;event_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;date_time_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;tech_obs_log_pk&quot; PRIMARY KEY (&quot;subject_id&quot;,&quot;study_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;stimulus&quot; (</span>
+<span class="s2">    &quot;stimulus_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;stimulus_description&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;num_iterations&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;duration&quot; FLOAT NOT NULL,</span>
+<span class="s2">    &quot;stimulus_filetype&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;stimulus_file&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;stimulus_pk&quot; PRIMARY KEY (&quot;stimulus_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;sensor&quot; (</span>
+<span class="s2">    &quot;sensor_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;temporal_res&quot; FLOAT NOT NULL,</span>
+<span class="s2">    &quot;spatial_res&quot; FLOAT NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;sensor_pk&quot; PRIMARY KEY (&quot;sensor_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;instruction&quot; (</span>
+<span class="s2">    &quot;instruction_id&quot; VARCHAR(255) PRIMARY KEY,</span>
+<span class="s2">    &quot;instruction_text&quot; TEXT NOT NULL,</span>
+<span class="s2">    &quot;instruction_filetype&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;instruction_file&quot; VARCHAR(255) NOT NULL</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;human_obs_data&quot; (</span>
+<span class="s2">    &quot;human_obs_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;obs_name&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;feature_of_interest&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;measurement_type&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;question_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;response_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;obs_property_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;obs_time_period_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;units_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;human_obs_data_pk&quot; PRIMARY KEY (&quot;human_obs_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;device&quot; (</span>
+<span class="s2">    &quot;device_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;device_sn&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;wearable_bool&quot; BOOLEAN NOT NULL,</span>
+<span class="s2">    &quot;device_location&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;device_name&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;device_make&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;device_model&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;device_firmware&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;sensor_id_array&quot; BOOLEAN NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;device_pk&quot; PRIMARY KEY (&quot;device_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;collection&quot; (</span>
+<span class="s2">    &quot;collection_name&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;tech_obs_array&quot; VARCHAR(255),</span>
+<span class="s2">    &quot;human_obs_array&quot; VARCHAR(255),</span>
+<span class="s2">    CONSTRAINT &quot;collection_pk&quot; PRIMARY KEY (&quot;collection_name&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">ALTER TABLE &quot;consent&quot; ADD CONSTRAINT &quot;consent_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;consent&quot; ADD CONSTRAINT &quot;consent_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;study&quot;(&quot;study_id&quot;);</span>
+
+
+<span class="s2">ALTER TABLE &quot;register&quot; ADD CONSTRAINT &quot;register_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;register&quot; ADD CONSTRAINT &quot;register_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+
+<span class="s2">ALTER TABLE &quot;contact&quot; ADD CONSTRAINT &quot;contact_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;contact&quot; ADD CONSTRAINT &quot;contact_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;study&quot;(&quot;study_id&quot;);</span>
+
+<span class="s2">ALTER TABLE &quot;clinical&quot; ADD CONSTRAINT &quot;clinical_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;clinical&quot; ADD CONSTRAINT &quot;clinical_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;study&quot;(&quot;study_id&quot;);</span>
+
+
+<span class="s2">ALTER TABLE &quot;demograph&quot; ADD CONSTRAINT &quot;demograph_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;demograph&quot; ADD CONSTRAINT &quot;demograph_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;study&quot;(&quot;study_id&quot;);</span>
+
+<span class="s2">ALTER TABLE &quot;human_obs_log&quot; ADD CONSTRAINT &quot;human_obs_log_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;human_obs_log&quot; ADD CONSTRAINT &quot;human_obs_log_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;study&quot;(&quot;study_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;human_obs_log&quot; ADD CONSTRAINT &quot;human_obs_log_fk2&quot; FOREIGN KEY (&quot;observer_id&quot;) REFERENCES &quot;observer&quot;(&quot;observer_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;human_obs_log&quot; ADD CONSTRAINT &quot;human_obs_log_fk3&quot; FOREIGN KEY (&quot;human_obs_id&quot;) REFERENCES &quot;human_obs_data&quot;(&quot;human_obs_id&quot;);</span>
+
+
+<span class="s2">ALTER TABLE &quot;tech_obs_data&quot; ADD CONSTRAINT &quot;tech_obs_data_fk0&quot; FOREIGN KEY (&quot;instruction_id&quot;) REFERENCES &quot;instruction&quot;(&quot;instruction_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;tech_obs_data&quot; ADD CONSTRAINT &quot;tech_obs_data_fk1&quot; FOREIGN KEY (&quot;stimulus_id&quot;) REFERENCES &quot;stimulus&quot;(&quot;stimulus_id&quot;);</span>
+
+<span class="s2">ALTER TABLE &quot;tech_obs_log&quot; ADD CONSTRAINT &quot;tech_obs_log_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;tech_obs_log&quot; ADD CONSTRAINT &quot;tech_obs_log_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;study&quot;(&quot;study_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;tech_obs_log&quot; ADD CONSTRAINT &quot;tech_obs_log_fk2&quot; FOREIGN KEY (&quot;tech_obs_id&quot;) REFERENCES &quot;tech_obs_data&quot;(&quot;tech_obs_id&quot;);</span>
+
+
+
+
+
+
+<span class="s2">ALTER TABLE &quot;collection&quot; ADD CONSTRAINT &quot;collection_fk0&quot; FOREIGN KEY (&quot;tech_obs_array&quot;) REFERENCES &quot;tech_obs_data&quot;(&quot;tech_obs_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;collection&quot; ADD CONSTRAINT &quot;collection_fk1&quot; FOREIGN KEY (&quot;human_obs_array&quot;) REFERENCES &quot;human_obs_data&quot;(&quot;human_obs_id&quot;);</span>
+
+
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Now we create the tables.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+<span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p>Don’t forget to close the connection once done!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.352 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-create-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/efaef7e908354ba3765fcd7642c76e72/plot_postgres_create.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres_create.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/8004ef6f0ca56092a4216e90c1ed1df8/plot_postgres_create.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_postgres_create.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Neurobooth Developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

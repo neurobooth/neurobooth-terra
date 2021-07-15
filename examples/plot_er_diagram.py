@@ -1,3 +1,10 @@
+"""
+==================================================
+Create Entity-Relation diagram from Postgres table
+==================================================
+
+This example demonstrates how to create postgres table with neurobooth-terra.
+"""
 import pygraphviz as pgv
 
 from neurobooth_terra import Table

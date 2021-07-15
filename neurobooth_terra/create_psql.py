@@ -220,3 +220,33 @@ class Table:
 
     def drop(self):
         drop_table(self.conn, self.cursor, self.table_id)
+
+
+def list_tables(conn):
+    """List the table_ids in the database.
+
+    Parameters
+    ----------
+    conn : instance of psycopg2.Postgres
+        The connection object
+
+    Returns
+    -------
+    table_ids : list of str
+        The table IDs
+    """
+        
+    query_tables_cmd = """
+    SELECT *
+    FROM pg_catalog.pg_tables
+    WHERE schemaname != 'pg_catalog' AND 
+        schemaname != 'information_schema';
+    """
+    cursor = conn.cursor()
+    cursor.execute(query_tables_cmd)
+
+    tables = cursor.fetchall()
+    cursor.close()
+
+    table_ids = [table[1] for table in tables]
+    return table_ids

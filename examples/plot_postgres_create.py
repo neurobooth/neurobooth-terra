@@ -105,13 +105,14 @@ CREATE TABLE "clinical" (
 
 
 CREATE TABLE "subject" (
-    "subject_id" VARCHAR(255) PRIMARY KEY,
+    "subject_id" VARCHAR(255) NOT NULL,
     "first_name_birth" VARCHAR(255) NOT NULL,
     "middle_name_birth" VARCHAR(255) NOT NULL,
     "last_name_birth" VARCHAR(255) NOT NULL,
     "date of birth" DATE NOT NULL,
     "country of birth" VARCHAR(255) NOT NULL,
-    "gender at birth" VARCHAR(255) NOT NULL
+    "gender at birth" VARCHAR(255) NOT NULL,
+    CONSTRAINT "subject_pk" PRIMARY KEY ("subject_id")
 ) WITH (
   OIDS=FALSE
 );
@@ -196,6 +197,7 @@ CREATE TABLE "tech_obs_data" (
 
 
 CREATE TABLE "tech_obs_log" (
+    "tech_obs_log_id" VARCHAR(255) NOT NULL,
     "subject_id" VARCHAR(255) NOT NULL,
     "study_id" VARCHAR(255) NOT NULL,
     "tech_obs_id" VARCHAR(255) NOT NULL,
@@ -204,7 +206,9 @@ CREATE TABLE "tech_obs_log" (
     "site_date" DATE NOT NULL,
     "event_array" VARCHAR(255) NOT NULL,
     "date_time_array" VARCHAR(255) NOT NULL,
-    CONSTRAINT "tech_obs_log_pk" PRIMARY KEY ("subject_id","study_id")
+    "sensor_file_id_array" VARCHAR(255) NOT NULL,
+    "collection_id" VARCHAR(255) NOT NULL,
+    CONSTRAINT "tech_obs_log_pk" PRIMARY KEY ("tech_obs_log_id")
 ) WITH (
   OIDS=FALSE
 );
@@ -230,6 +234,7 @@ CREATE TABLE "sensor" (
     "temporal_res" FLOAT NOT NULL,
     "spatial_res_x" FLOAT NOT NULL,
     "spatial_res_y" FLOAT NOT NULL,
+    "file_type" VARCHAR(255) NOT NULL,
     CONSTRAINT "sensor_pk" PRIMARY KEY ("sensor_id")
 ) WITH (
   OIDS=FALSE
@@ -238,10 +243,11 @@ CREATE TABLE "sensor" (
 
 
 CREATE TABLE "instruction" (
-    "instruction_id" VARCHAR(255) PRIMARY KEY,
+    "instruction_id" VARCHAR(255) NOT NULL,
     "instruction_text" TEXT NOT NULL,
     "instruction_filetype" VARCHAR(255) NOT NULL,
-    "instruction_file" VARCHAR(255) NOT NULL
+    "instruction_file" VARCHAR(255) NOT NULL,
+    CONSTRAINT "instruction_pk" PRIMARY KEY ("instruction_id")
 ) WITH (
   OIDS=FALSE
 );
@@ -286,7 +292,29 @@ CREATE TABLE "collection" (
     "collection_name" VARCHAR(255) NOT NULL,
     "tech_obs_array" VARCHAR(255),
     "human_obs_array" VARCHAR(255),
-    CONSTRAINT "collection_pk" PRIMARY KEY ("collection_name")
+    "collection_id" VARCHAR(255) NOT NULL,
+    "active" BOOLEAN NOT NULL,
+    CONSTRAINT "collection_pk" PRIMARY KEY ("collection_id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE "sensor_file_log" (
+    "sensor_file_id" VARCHAR(255) NOT NULL,
+    "subject_id" VARCHAR(255) NOT NULL,
+    "study_id" VARCHAR(255) NOT NULL,
+    "tech_obs_log_id" VARCHAR(255) NOT NULL,
+    "tech_obs_id" VARCHAR(255) NOT NULL,
+    "collection_id" VARCHAR(255) NOT NULL,
+    "true_temporal_resolution" FLOAT,
+    "true_spatial_resolution" FLOAT,
+    "file_start_time" TIMESTAMP NOT NULL,
+    "file_end_time" TIMESTAMP NOT NULL,
+    "device_id" VARCHAR(255) NOT NULL,
+    "sensor_id" VARCHAR(255) NOT NULL,
+    CONSTRAINT "sensor_file_log_pk" PRIMARY KEY ("sensor_file_id")
 ) WITH (
   OIDS=FALSE
 );
@@ -322,6 +350,8 @@ ALTER TABLE "tech_obs_data" ADD CONSTRAINT "tech_obs_data_fk1" FOREIGN KEY ("sti
 ALTER TABLE "tech_obs_log" ADD CONSTRAINT "tech_obs_log_fk0" FOREIGN KEY ("subject_id") REFERENCES "subject"("subject_id");
 ALTER TABLE "tech_obs_log" ADD CONSTRAINT "tech_obs_log_fk1" FOREIGN KEY ("study_id") REFERENCES "study"("study_id");
 ALTER TABLE "tech_obs_log" ADD CONSTRAINT "tech_obs_log_fk2" FOREIGN KEY ("tech_obs_id") REFERENCES "tech_obs_data"("tech_obs_id");
+ALTER TABLE "tech_obs_log" ADD CONSTRAINT "tech_obs_log_fk3" FOREIGN KEY ("sensor_file_id_array") REFERENCES "sensor_file_log"("sensor_file_id");
+ALTER TABLE "tech_obs_log" ADD CONSTRAINT "tech_obs_log_fk4" FOREIGN KEY ("collection_id") REFERENCES "collection"("collection_id");
 
 
 
@@ -331,6 +361,13 @@ ALTER TABLE "tech_obs_log" ADD CONSTRAINT "tech_obs_log_fk2" FOREIGN KEY ("tech_
 ALTER TABLE "collection" ADD CONSTRAINT "collection_fk0" FOREIGN KEY ("tech_obs_array") REFERENCES "tech_obs_data"("tech_obs_id");
 ALTER TABLE "collection" ADD CONSTRAINT "collection_fk1" FOREIGN KEY ("human_obs_array") REFERENCES "human_obs_data"("human_obs_id");
 
+ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk0" FOREIGN KEY ("subject_id") REFERENCES "subject"("subject_id");
+ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk1" FOREIGN KEY ("study_id") REFERENCES "study"("study_id");
+ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk2" FOREIGN KEY ("tech_obs_log_id") REFERENCES "tech_obs_log"("tech_obs_log_id");
+ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk3" FOREIGN KEY ("tech_obs_id") REFERENCES "tech_obs_data"("tech_obs_id");
+ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk4" FOREIGN KEY ("collection_id") REFERENCES "collection"("collection_id");
+ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk5" FOREIGN KEY ("device_id") REFERENCES "device"("device_id");
+ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk6" FOREIGN KEY ("sensor_id") REFERENCES "sensor"("sensor_id");
 
 """
 ###############################################################################

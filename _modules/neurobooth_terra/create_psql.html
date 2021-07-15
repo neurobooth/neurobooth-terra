@@ -216,8 +216,7 @@
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="n">cursor</span><span class="p">,</span>
-                 <span class="n">column_names</span><span class="o">=</span><span class="n">column_names</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="n">cursor</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Table"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table">[docs]</a><span class="k">class</span> <span class="nc">Table</span><span class="p">:</span>
@@ -229,14 +228,18 @@
 <span class="sd">        The table ID</span>
 <span class="sd">    conn : instance of psycopg2.Postgres</span>
 <span class="sd">        The connection object</span>
-<span class="sd">    column_names : list of str | None</span>
-<span class="sd">        The columns to create. If None, a query is made</span>
-<span class="sd">        to get the column names</span>
 <span class="sd">    primary_key : str | None</span>
 <span class="sd">        The primary key. If None, the first column name is used</span>
 <span class="sd">        as primary key.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    column_names : list of str</span>
+<span class="sd">        The column names</span>
+<span class="sd">    data_types : list of str</span>
+<span class="sd">        The data types of the column names</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="Table.__init__"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">conn</span>
         <span class="k">if</span> <span class="n">cursor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -244,15 +247,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">cursor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_id</span> <span class="o">=</span> <span class="n">table_id</span>
 
-        <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE &quot;</span>
-                   <span class="sa">f</span><span class="s2">&quot;table_name = &#39;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
-            <span class="n">column_names</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span> <span class="o">=</span> <span class="n">column_names</span>
+        <span class="n">alias</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;character varying&#39;</span><span class="p">:</span> <span class="s1">&#39;VARCHAR&#39;</span><span class="p">}</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT column_name, data_type, character_maximum_length&quot;</span>
+               <span class="s2">&quot; FROM INFORMATION_SCHEMA.COLUMNS WHERE &quot;</span>
+               <span class="sa">f</span><span class="s2">&quot;table_name = &#39;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">maxlen</span> <span class="o">=</span> <span class="n">cn</span>
+            <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;character varying&#39;</span><span class="p">:</span>
+                <span class="n">dtype</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;VARCHAR (</span><span class="si">{</span><span class="n">maxlen</span><span class="si">}</span><span class="s1">)&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">primary_key</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_key</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -298,6 +309,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;vals must be a list of tuple. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;entries in vals must be tuples. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tuple length must match number of columns (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
         <span class="n">str_format</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">])</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
         <span class="n">insert_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;INSERT INTO </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">cols</span><span class="si">}</span><span class="s1">) VALUES(</span><span class="si">{</span><span class="n">str_format</span><span class="si">}</span><span class="s1">)&#39;</span>

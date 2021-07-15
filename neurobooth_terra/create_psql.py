@@ -196,6 +196,11 @@ class Table:
         """
         if cols is None:
             cols = self.column_names
+        if not isinstance(vals, list):
+            raise ValueError(f'vals must be a list of tuple. Got {type(vals)}')
+        for val in vals:
+            if not isinstance(val, tuple):
+                raise ValueError(f'entries in vals must be tuples. Got {type(val)}')
         str_format = ','.join(len(cols) * ['%s'])
         cols = ','.join(cols)
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format})'

@@ -1,5 +1,7 @@
 import psycopg2
+
 import pytest
+from numpy.testing import assert_raises
 
 from neurobooth_terra import Table, create_table, drop_table
 
@@ -19,5 +21,9 @@ def test_psql_connection():
                                  dtypes=['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)'])
     table_subject.insert_rows([('x5dc', 'mainak', 'jas'),
                                ('y5d3', 'anoopum', 'gupta')])
+    with pytest.raises(ValueError, match='vals must be a list of tuple'):
+        table_subject.insert_rows('blah')
+    with pytest.raises(ValueError, match='entries in vals must be tuples'):
+        table_subject.insert_rows(['blah'])
     table_subject.close()
     conn.close()

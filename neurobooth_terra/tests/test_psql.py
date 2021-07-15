@@ -16,14 +16,21 @@ def test_psql_connection():
 
     table_id = 'test'
     drop_table(table_id, conn)
+
+    column_names = ['subject_id', 'first_name_birth', 'last_name_birth', 'age']
+    dtypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'INTEGER']
     table_subject = create_table(table_id, conn=conn,
-                                 column_names=['subject_id', 'first_name_birth', 'last_name_birth'],
-                                 dtypes=['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)'])
-    table_subject.insert_rows([('x5dc', 'mainak', 'jas'),
-                               ('y5d3', 'anoopum', 'gupta')])
+                                 column_names=column_names,
+                                 dtypes=dtypes)
+    table_subject.insert_rows([('x5dc', 'mainak', 'jas', 21),
+                               ('y5d3', 'anoopum', 'gupta', 25)])
     with pytest.raises(ValueError, match='vals must be a list of tuple'):
         table_subject.insert_rows('blah')
     with pytest.raises(ValueError, match='entries in vals must be tuples'):
         table_subject.insert_rows(['blah'])
+    with pytest.raises(ValueError, match='tuple length must match'):
+        table_subject.insert_rows([('x5dc', 'mainak', 'jas')])
+
+    assert table_subject.data_types == dtypes
     table_subject.close()
     conn.close()

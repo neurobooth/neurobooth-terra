@@ -114,8 +114,7 @@ def create_table(table_id, conn, column_names, dtypes,
     except Exception as e:
         cursor.close()
         raise Exception(e)
-    return Table(table_id, conn=conn, cursor=cursor,
-                 column_names=column_names, primary_key=primary_key)
+    return Table(table_id, conn=conn, cursor=cursor, primary_key=primary_key)
 
 
 class Table:
@@ -127,14 +126,18 @@ class Table:
         The table ID
     conn : instance of psycopg2.Postgres
         The connection object
-    column_names : list of str | None
-        The columns to create. If None, a query is made
-        to get the column names
     primary_key : str | None
         The primary key. If None, the first column name is used
         as primary key.
+
+    Attributes
+    ----------
+    column_names : list of str
+        The column names
+    data_types : list of str
+        The data types of the column names
     """
-    def __init__(self, table_id, conn, cursor=None, column_names=None,
+    def __init__(self, table_id, conn, cursor=None,
                  primary_key=None):
         self.conn = conn
         if cursor is None:
@@ -142,15 +145,23 @@ class Table:
         self.cursor = cursor
         self.table_id = table_id
 
-        if column_names is None:
-            cmd = ("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE "
-                   f"table_name = '{table_id}';")
-            column_names = execute(conn, cursor, cmd, fetch=True)
-            column_names = [c[0] for c in column_names]
-        self.column_names = column_names
+        alias = {'character varying': 'VARCHAR'}
+        cmd = ("SELECT column_name, data_type, character_maximum_length"
+               " FROM INFORMATION_SCHEMA.COLUMNS WHERE "
+               f"table_name = '{table_id}';")
+        columns = execute(conn, cursor, cmd, fetch=True)
+
+        self.column_names = list()
+        self.data_types = list()
+        for cn in columns:
+            column_name, dtype, maxlen = cn
+            if dtype == 'character varying':
+                dtype = f'VARCHAR ({maxlen})'
+            self.column_names.append(column_name)
+            self.data_types.append(dtype.upper())
 
         if primary_key is None:
-            primary_key = column_names[0]
+            primary_key = self.column_names[0]
         self.primary_key = primary_key
 
     def __repr__(self):
@@ -201,6 +212,8 @@ class Table:
         for val in vals:
             if not isinstance(val, tuple):
                 raise ValueError(f'entries in vals must be tuples. Got {type(val)}')
+            if len(val) != len(cols):
+                raise ValueError(f'tuple length must match number of columns ({len(cols)})')
         str_format = ','.join(len(cols) * ['%s'])
         cols = ','.join(cols)
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format})'

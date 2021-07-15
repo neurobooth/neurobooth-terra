@@ -44,13 +44,13 @@ CREATE TABLE "consent" (
 
 
 CREATE TABLE "study" (
-    "study_id" serial(255) NOT NULL,
+    "study_id" VARCHAR(255) NOT NULL,
     "IRB_protocol_number" integer NOT NULL,
     "study_title" VARCHAR(255) NOT NULL,
     "protocol_version_array" integer NOT NULL,
-    "protocol_date_array" DATETIME NOT NULL,
+    "protocol_date_array" DATE NOT NULL,
     "consent_version_array" VARCHAR(255) NOT NULL,
-    "consent_date_array" DATE(255) NOT NULL,
+    "consent_date_array" DATE NOT NULL,
     CONSTRAINT "study_pk" PRIMARY KEY ("study_id")
 ) WITH (
   OIDS=FALSE
@@ -111,7 +111,8 @@ CREATE TABLE "subject" (
     "last_name_birth" VARCHAR(255) NOT NULL,
     "date of birth" DATE NOT NULL,
     "country of birth" VARCHAR(255) NOT NULL,
-    "gender at birth" VARCHAR(255) NOT NULL
+    "gender at birth" VARCHAR(255) NOT NULL,
+    CONSTRAINT "subject_pk" PRIMARY KEY ("subject_id")
 ) WITH (
   OIDS=FALSE
 );
@@ -196,17 +197,17 @@ CREATE TABLE "tech_obs_data" (
 
 
 CREATE TABLE "tech_obs_log" (
-    "tech_obs_log_id" serial NOT NULL,
+    "tech_obs_log_id" VARCHAR(255) NOT NULL,
     "subject_id" VARCHAR(255) NOT NULL,
     "study_id" VARCHAR(255) NOT NULL,
     "tech_obs_id" VARCHAR(255) NOT NULL,
     "staff_id" VARCHAR(255) NOT NULL,
     "application_id" VARCHAR(255) NOT NULL,
-    "site_date" DATETIME NOT NULL,
+    "site_date" DATE NOT NULL,
     "event_array" VARCHAR(255) NOT NULL,
     "date_time_array" VARCHAR(255) NOT NULL,
-    "sensor_file_id_array" BINARY NOT NULL,
-    "collection_id" BINARY NOT NULL,
+    "sensor_file_id_array" VARCHAR(255) NOT NULL,
+    "collection_id" VARCHAR(255) NOT NULL,
     CONSTRAINT "tech_obs_log_pk" PRIMARY KEY ("tech_obs_log_id")
 ) WITH (
   OIDS=FALSE
@@ -231,8 +232,9 @@ CREATE TABLE "stimulus" (
 CREATE TABLE "sensor" (
     "sensor_id" VARCHAR(255) NOT NULL,
     "temporal_res" FLOAT NOT NULL,
-    "spatial_res" FLOAT NOT NULL,
-    "file_type" BINARY NOT NULL,
+    "spatial_res_x" FLOAT NOT NULL,
+    "spatial_res_y" FLOAT NOT NULL,
+    "file_type" VARCHAR(255) NOT NULL,
     CONSTRAINT "sensor_pk" PRIMARY KEY ("sensor_id")
 ) WITH (
   OIDS=FALSE
@@ -244,7 +246,8 @@ CREATE TABLE "instruction" (
     "instruction_id" VARCHAR(255) NOT NULL,
     "instruction_text" TEXT NOT NULL,
     "instruction_filetype" VARCHAR(255) NOT NULL,
-    "instruction_file" VARCHAR(255) NOT NULL
+    "instruction_file" VARCHAR(255) NOT NULL,
+    CONSTRAINT "instruction_pk" PRIMARY KEY ("instruction_id")
 ) WITH (
   OIDS=FALSE
 );
@@ -252,8 +255,8 @@ CREATE TABLE "instruction" (
 
 
 CREATE TABLE "human_obs_data" (
-    "human_obs_id" serial(255) NOT NULL,
-    "obs_name" serial(255) NOT NULL,
+    "human_obs_id" VARCHAR(255) NOT NULL,
+    "obs_name" VARCHAR(255) NOT NULL,
     "feature_of_interest" VARCHAR(255) NOT NULL,
     "measurement_type" VARCHAR(255) NOT NULL,
     "question_array" VARCHAR(255) NOT NULL,
@@ -269,7 +272,7 @@ CREATE TABLE "human_obs_data" (
 
 
 CREATE TABLE "device" (
-    "device_id" serial(255) NOT NULL,
+    "device_id" VARCHAR(255) NOT NULL,
     "device_sn" VARCHAR(255) NOT NULL,
     "wearable_bool" BOOLEAN NOT NULL,
     "device_location" VARCHAR(255) NOT NULL,
@@ -277,7 +280,7 @@ CREATE TABLE "device" (
     "device_make" VARCHAR(255) NOT NULL,
     "device_model" VARCHAR(255) NOT NULL,
     "device_firmware" VARCHAR(255) NOT NULL,
-    "sensor_id_array" BINARY NOT NULL,
+    "sensor_id_array" BOOLEAN NOT NULL,
     CONSTRAINT "device_pk" PRIMARY KEY ("device_id")
 ) WITH (
   OIDS=FALSE
@@ -289,8 +292,8 @@ CREATE TABLE "collection" (
     "collection_name" VARCHAR(255) NOT NULL,
     "tech_obs_array" VARCHAR(255),
     "human_obs_array" VARCHAR(255),
-    "collection_id" serial NOT NULL,
-    "active" BINARY NOT NULL,
+    "collection_id" VARCHAR(255) NOT NULL,
+    "active" BOOLEAN NOT NULL,
     CONSTRAINT "collection_pk" PRIMARY KEY ("collection_id")
 ) WITH (
   OIDS=FALSE
@@ -299,18 +302,18 @@ CREATE TABLE "collection" (
 
 
 CREATE TABLE "sensor_file_log" (
-    "sensor_file_id" serial NOT NULL,
-    "subject_id" BINARY NOT NULL,
-    "study_id" BINARY NOT NULL,
-    "tech_obs_log_id" serial NOT NULL,
-    "tech_obs_id" BINARY NOT NULL,
-    "collection_id" BINARY NOT NULL,
-    "true_temporal_resolution" BINARY,
-    "true_spatial_resolution" BINARY,
-    "file_start_time" BINARY NOT NULL,
-    "file_end_time" BINARY NOT NULL,
-    "device_id" serial NOT NULL,
-    "sensor_id" serial NOT NULL,
+    "sensor_file_id" VARCHAR(255) NOT NULL,
+    "subject_id" VARCHAR(255) NOT NULL,
+    "study_id" VARCHAR(255) NOT NULL,
+    "tech_obs_log_id" VARCHAR(255) NOT NULL,
+    "tech_obs_id" VARCHAR(255) NOT NULL,
+    "collection_id" VARCHAR(255) NOT NULL,
+    "true_temporal_resolution" FLOAT,
+    "true_spatial_resolution" FLOAT,
+    "file_start_time" TIMESTAMP NOT NULL,
+    "file_end_time" TIMESTAMP NOT NULL,
+    "device_id" VARCHAR(255) NOT NULL,
+    "sensor_id" VARCHAR(255) NOT NULL,
     CONSTRAINT "sensor_file_log_pk" PRIMARY KEY ("sensor_file_id")
 ) WITH (
   OIDS=FALSE
@@ -358,7 +361,7 @@ ALTER TABLE "tech_obs_log" ADD CONSTRAINT "tech_obs_log_fk4" FOREIGN KEY ("colle
 ALTER TABLE "collection" ADD CONSTRAINT "collection_fk0" FOREIGN KEY ("tech_obs_array") REFERENCES "tech_obs_data"("tech_obs_id");
 ALTER TABLE "collection" ADD CONSTRAINT "collection_fk1" FOREIGN KEY ("human_obs_array") REFERENCES "human_obs_data"("human_obs_id");
 
-ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk0" FOREIGN KEY ("subject_id") REFERENCES "register"("subject_id");
+ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk0" FOREIGN KEY ("subject_id") REFERENCES "subject"("subject_id");
 ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk1" FOREIGN KEY ("study_id") REFERENCES "study"("study_id");
 ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk2" FOREIGN KEY ("tech_obs_log_id") REFERENCES "tech_obs_log"("tech_obs_log_id");
 ALTER TABLE "sensor_file_log" ADD CONSTRAINT "sensor_file_log_fk3" FOREIGN KEY ("tech_obs_id") REFERENCES "tech_obs_data"("tech_obs_id");

@@ -74,7 +74,7 @@ Then comes our sql command to create the SQL tables. This comes from
 dbdesigner.
 6/7/2021, 17:02:05
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-335
+.. GENERATED FROM PYTHON SOURCE LINES 32-336
 
 .. code-block:: default
 
@@ -277,7 +277,8 @@ dbdesigner.
     CREATE TABLE "sensor" (
         "sensor_id" VARCHAR(255) NOT NULL,
         "temporal_res" FLOAT NOT NULL,
-        "spatial_res" FLOAT NOT NULL,
+        "spatial_res_x" FLOAT NOT NULL,
+        "spatial_res_y" FLOAT NOT NULL,
         CONSTRAINT "sensor_pk" PRIMARY KEY ("sensor_id")
     ) WITH (
       OIDS=FALSE
@@ -388,11 +389,11 @@ dbdesigner.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 336-337
+.. GENERATED FROM PYTHON SOURCE LINES 337-338
 
 Now we create the tables.
 
-.. GENERATED FROM PYTHON SOURCE LINES 337-340
+.. GENERATED FROM PYTHON SOURCE LINES 338-341
 
 .. code-block:: default
 
@@ -406,11 +407,11 @@ Now we create the tables.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 341-342
+.. GENERATED FROM PYTHON SOURCE LINES 342-343
 
 Don't forget to close the connection once done!
 
-.. GENERATED FROM PYTHON SOURCE LINES 342-344
+.. GENERATED FROM PYTHON SOURCE LINES 343-345
 
 .. code-block:: default
 
@@ -426,7 +427,7 @@ Don't forget to close the connection once done!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  2.270 seconds)
+   **Total running time of the script:** ( 0 minutes  0.805 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres_create.py:

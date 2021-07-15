@@ -322,6 +322,36 @@
 
     <span class="k">def</span> <span class="nf">drop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">drop_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="list_tables"><a class="viewcode-back" href="../../generated/neurobooth_terra.list_tables.html#neurobooth_terra.list_tables">[docs]</a><span class="k">def</span> <span class="nf">list_tables</span><span class="p">(</span><span class="n">conn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;List the table_ids in the database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    conn : instance of psycopg2.Postgres</span>
+<span class="sd">        The connection object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    table_ids : list of str</span>
+<span class="sd">        The table IDs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        
+    <span class="n">query_tables_cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    SELECT *</span>
+<span class="s2">    FROM pg_catalog.pg_tables</span>
+<span class="s2">    WHERE schemaname != &#39;pg_catalog&#39; AND </span>
+<span class="s2">        schemaname != &#39;information_schema&#39;;</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query_tables_cmd</span><span class="p">)</span>
+
+    <span class="n">tables</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">table_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">table_ids</span></div>
 </pre></div>
 
     </div>

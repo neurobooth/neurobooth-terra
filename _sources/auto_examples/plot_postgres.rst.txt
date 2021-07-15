@@ -47,7 +47,7 @@ Let us first import the necessary functions.
 .. code-block:: default
 
 
-    from neurobooth_terra import create_table, drop_table, Table
+    from neurobooth_terra import list_tables, create_table, drop_table, Table
 
     import psycopg2
     import pandas as pd
@@ -246,7 +246,7 @@ a foreign key
 
 .. GENERATED FROM PYTHON SOURCE LINES 73-74
 
-Finally, we can also delete rows in our table
+We can also delete rows in our table
 
 .. GENERATED FROM PYTHON SOURCE LINES 74-78
 
@@ -275,9 +275,34 @@ Finally, we can also delete rows in our table
 
 .. GENERATED FROM PYTHON SOURCE LINES 79-80
 
-Don't forget to close the connection once done!
+Finally, we can list the tables in the database
 
 .. GENERATED FROM PYTHON SOURCE LINES 80-82
+
+.. code-block:: default
+
+    list_tables(conn)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    ['sensor', 'device', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'collection', 'test', 'subject', 'contact']
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 83-84
+
+Don't forget to close the connection once done!
+
+.. GENERATED FROM PYTHON SOURCE LINES 84-86
 
 .. code-block:: default
 
@@ -293,7 +318,7 @@ Don't forget to close the connection once done!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.212 seconds)
+   **Total running time of the script:** ( 0 minutes  0.223 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

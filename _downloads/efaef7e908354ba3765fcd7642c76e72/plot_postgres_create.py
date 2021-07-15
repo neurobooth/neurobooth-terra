@@ -228,7 +228,8 @@ CREATE TABLE "stimulus" (
 CREATE TABLE "sensor" (
     "sensor_id" VARCHAR(255) NOT NULL,
     "temporal_res" FLOAT NOT NULL,
-    "spatial_res" FLOAT NOT NULL,
+    "spatial_res_x" FLOAT NOT NULL,
+    "spatial_res_y" FLOAT NOT NULL,
     CONSTRAINT "sensor_pk" PRIMARY KEY ("sensor_id")
 ) WITH (
   OIDS=FALSE

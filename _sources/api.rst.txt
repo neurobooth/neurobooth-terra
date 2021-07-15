@@ -17,3 +17,4 @@ Tables (:py:mod:`neurobooth_terra`):
    Table
    create_table
    drop_table
+   list_tables

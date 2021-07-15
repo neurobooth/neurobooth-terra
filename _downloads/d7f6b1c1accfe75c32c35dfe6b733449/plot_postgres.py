@@ -11,7 +11,7 @@ This example demonstrates how to create postgres table with neurobooth-terra.
 ###############################################################################
 # Let us first import the necessary functions.
 
-from neurobooth_terra import create_table, drop_table, Table
+from neurobooth_terra import list_tables, create_table, drop_table, Table
 
 import psycopg2
 import pandas as pd
@@ -70,10 +70,14 @@ df_contact = table.query(f'SELECT * FROM "{table_id}";')
 print(df_contact)
 
 ###############################################################################
-# Finally, we can also delete rows in our table
+# We can also delete rows in our table
 table.delete_row(condition="subject_id = 'x5dc'")
 df_contact = table.query(f'SELECT * FROM "{table_id}";')
 print(df_contact)
+
+###############################################################################
+# Finally, we can list the tables in the database
+list_tables(conn)
 
 ###############################################################################
 # Don't forget to close the connection once done!

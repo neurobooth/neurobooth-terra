@@ -337,7 +337,8 @@ dbdesigner.
 <span class="s2">CREATE TABLE &quot;sensor&quot; (</span>
 <span class="s2">    &quot;sensor_id&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;temporal_res&quot; FLOAT NOT NULL,</span>
-<span class="s2">    &quot;spatial_res&quot; FLOAT NOT NULL,</span>
+<span class="s2">    &quot;spatial_res_x&quot; FLOAT NOT NULL,</span>
+<span class="s2">    &quot;spatial_res_y&quot; FLOAT NOT NULL,</span>
 <span class="s2">    CONSTRAINT &quot;sensor_pk&quot; PRIMARY KEY (&quot;sensor_id&quot;)</span>
 <span class="s2">) WITH (</span>
 <span class="s2">  OIDS=FALSE</span>
@@ -453,7 +454,7 @@ dbdesigner.
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.270 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.805 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-create-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/efaef7e908354ba3765fcd7642c76e72/plot_postgres_create.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres_create.py</span></code></a></p>

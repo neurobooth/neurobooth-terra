@@ -119,7 +119,7 @@ to download the full example code</p>
 </pre></div>
 </div>
 <p>Let us first import the necessary functions.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">create_table</span><span class="p">,</span> <span class="n">drop_table</span><span class="p">,</span> <span class="n">Table</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">list_tables</span><span class="p">,</span> <span class="n">create_table</span><span class="p">,</span> <span class="n">drop_table</span><span class="p">,</span> <span class="n">Table</span>
 
 <span class="kn">import</span> <span class="nn">psycopg2</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -203,7 +203,7 @@ x5dc        None
 y5d3        None
 </pre></div>
 </div>
-<p>Finally, we can also delete rows in our table</p>
+<p>We can also delete rows in our table</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table</span><span class="o">.</span><span class="n">delete_row</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="s2">&quot;subject_id = &#39;x5dc&#39;&quot;</span><span class="p">)</span>
 <span class="n">df_contact</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df_contact</span><span class="p">)</span>
@@ -215,12 +215,20 @@ subject_id
 y5d3        None
 </pre></div>
 </div>
+<p>Finally, we can list the tables in the database</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">list_tables</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;sensor&#39;, &#39;device&#39;, &#39;study&#39;, &#39;register&#39;, &#39;clinical&#39;, &#39;demograph&#39;, &#39;human_obs_log&#39;, &#39;observer&#39;, &#39;human_obs_data&#39;, &#39;instruction&#39;, &#39;tech_obs_data&#39;, &#39;stimulus&#39;, &#39;tech_obs_log&#39;, &#39;collection&#39;, &#39;test&#39;, &#39;subject&#39;, &#39;contact&#39;]
+</pre></div>
+</div>
 <p>Don’t forget to close the connection once done!</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.212 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.223 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d7f6b1c1accfe75c32c35dfe6b733449/plot_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres.py</span></code></a></p>

@@ -13,6 +13,27 @@
 
 .. only:: html
 
+ .. figure:: /auto_examples/images/thumb/sphx_glr_plot_er_diagram_thumb.png
+     :alt: Create Entity-Relation diagram from Postgres table
+
+     :ref:`sphx_glr_auto_examples_plot_er_diagram.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_er_diagram
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to create postgres table with neurobooth-terra.">
+
+.. only:: html
+
  .. figure:: /auto_examples/images/thumb/sphx_glr_plot_postgres_thumb.png
      :alt: Create Postgres table using Neurobooth-terra.
 

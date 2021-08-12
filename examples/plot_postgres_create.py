@@ -22,7 +22,8 @@ conn = psycopg2.connect(connect_str)
 for table_id in ['consent', 'study', 'register', 'contact', 'clinical',
                  'subject', 'demograph', 'human_obs_log', 'observer',
                  'tech_obs_data', 'tech_obs_log', 'stimulus', 'sensor',
-                 'instruction', 'human_obs_data', 'device', 'collection']:
+                 'instruction', 'human_obs_data', 'device', 'collection',
+                 'sensor_file_log']:
     drop_table(table_id, conn)
 
 ###############################################################################

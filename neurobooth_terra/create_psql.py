@@ -21,6 +21,19 @@ def _execute_batch(conn, cursor, cmd, tuples, page_size=100):
     extras.execute_batch(cursor, cmd, tuples, page_size)
     conn.commit()
 
+def _get_primary_key(conn, cursor, table_id):
+    query = (
+    "SELECT a.attname "
+    "FROM   pg_index i "
+    "JOIN   pg_attribute a ON a.attrelid = i.indrelid "
+                        "AND a.attnum = ANY(i.indkey) "
+    f"WHERE  i.indrelid = '{table_id}'::regclass "
+    "AND    i.indisprimary;"
+    )
+    column_names = execute(conn, cursor, query, fetch=True)
+    assert len(column_names[0]) == 1  # only one primary key
+    return column_names[0][0]
+
 #### Neurobooth related comands #####
 
 def df_to_psql(conn, cursor, df, table_id):
@@ -161,7 +174,7 @@ class Table:
             self.data_types.append(dtype.upper())
 
         if primary_key is None:
-            primary_key = self.column_names[0]
+            primary_key = _get_primary_key(conn, cursor, table_id)
         self.primary_key = primary_key
 
     def __repr__(self):

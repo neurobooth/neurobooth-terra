@@ -33,4 +33,7 @@ def test_psql_connection():
 
     assert table_subject.data_types == dtypes
     table_subject.close()
+
+    table_test = Table('test', conn)
+    assert table_test.primary_key == 'subject_id'
     conn.close()

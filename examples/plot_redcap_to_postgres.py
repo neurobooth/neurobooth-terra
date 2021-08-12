@@ -14,6 +14,7 @@ import os.path as op
 import json
 from redcap import Project, RedcapError
 
+from neurobooth_terra import Table
 from neurobooth_terra.ingest_redcap import fetch_survey, infer_schema
 
 ###############################################################################
@@ -23,7 +24,8 @@ from neurobooth_terra.ingest_redcap import fetch_survey, infer_schema
 # You will need to request for the Redcap API token from Redcap interface.
 
 survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
-              'clinical': 84431, 'falls': 85031}
+              'clinical': 84431, 'falls': 85031, 'guid': 84426}
+survey_ids = {'guid': 84426}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -55,3 +57,41 @@ for survey_name, survey_id in survey_ids.items():
     df = fetch_survey(project, survey_name, survey_id)
     json_schema[survey_name] = infer_schema(df, metadata)
 print(json.dumps(json_schema[survey_name], indent=4, sort_keys=True))
+
+###############################################################################
+# Now, we will prepare the subject table in postgres
+
+import hashlib
+import datetime
+
+df = fetch_survey(project, 'guid', survey_ids['guid'])
+df = df[df['guid_information_complete'] == 2]  # take only complete rows
+
+rows = list()
+for df_row in df.iterrows():
+    df_row = df_row[1]
+    subject_id = df_row['guid_firstname'] + df_row['guid_lastname']
+    subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
+    dob = datetime.date(year=int(df_row['guid_yearofbirth']),
+                        month=int(df_row['guid_monthofbirth']),
+                        day=int(df_row['guid_dayofbirth']))
+    dob = dob.strftime("%y-%m-%d")
+    rows.append((subject_id,
+                 df_row['guid_firstname'],
+                 df_row['guid_middlename'],
+                 df_row['guid_lastname'],
+                 dob,
+                 df_row['guid_countryofbirth'],
+                 df_row['guid_birthgender']))
+
+
+###############################################################################
+# Now, we will prepare the subject table in postgres
+
+import psycopg2
+
+connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
+               "password='neuroboothrocks'")
+
+conn = psycopg2.connect(connect_str)
+table_subject = Table('subject', conn, primary_key='subject_id')

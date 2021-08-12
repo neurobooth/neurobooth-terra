@@ -232,6 +232,28 @@ class Table:
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format})'
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)
 
+    def update_row(self, pk_val, vals):
+        """Update values in a row
+
+        Parameters
+        ----------
+        pk_val : str
+            The value of the primary key to match
+            the row to replace.
+        vals : tuple
+            The values in the row to replace.
+        """
+        cmd = f"UPDATE {self.table_id} SET "
+
+        if not isinstance(vals, tuple):
+            raise ValueError('vals must be a tuple')
+
+        for col, val in zip(self.column_names, vals):
+            cmd += f"{col} = '{val}', "
+        cmd = cmd[:-2]  # remove last comma
+        cmd += f" WHERE {self.primary_key} = '{pk_val}';"
+        execute(self.conn, self.cursor, cmd)
+
     def query(self, cmd):
         """Run a query.
 

@@ -36,4 +36,9 @@ def test_psql_connection():
 
     table_test = Table('test', conn)
     assert table_test.primary_key == 'subject_id'
+
+    table_test.update_row('y5d3', ('blah', 'anupum', 'gupta', 32))
+    df = table_test.query('SELECT * FROM test')
+    assert 'blah' in df.index
+
     conn.close()

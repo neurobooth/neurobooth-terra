@@ -1,3 +1,5 @@
+import datetime
+
 import psycopg2
 
 import pytest
@@ -40,5 +42,13 @@ def test_psql_connection():
     table_test.update_row('y5d3', ('blah', 'anupum', 'gupta', 32))
     df = table_test.query('SELECT * FROM test')
     assert 'blah' in df.index
+
+    # test insertion of date
+    table_id = 'test_consent'
+    column_names = ['subject_id', 'consent_date']
+    dtypes = ['VARCHAR (255)', 'date']
+    table_consent = create_table(table_id, conn, column_names, dtypes)
+    date = datetime.datetime.today().strftime('%Y-%m-%d')
+    table_consent.insert_rows([('x5dc', date)])
 
     conn.close()

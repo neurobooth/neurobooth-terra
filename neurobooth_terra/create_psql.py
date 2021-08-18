@@ -211,12 +211,12 @@ class Table:
 
         Parameters
         ----------
-        cols : list of str | None
-            The columns to insert into. If None, use
-            all columns
         vals : list of tuple
             The records to insert. Each tuple
             is one row.
+        cols : list of str | None
+            The columns to insert into. If None, use
+            all columns
         """
         if cols is None:
             cols = self.column_names
@@ -232,7 +232,7 @@ class Table:
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format})'
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)
 
-    def update_row(self, pk_val, vals):
+    def update_row(self, pk_val, vals, cols=None):
         """Update values in a row
 
         Parameters
@@ -242,13 +242,25 @@ class Table:
             the row to replace.
         vals : tuple
             The values in the row to replace.
+        cols : list of str | None
+            The columns to insert into. If None, use
+            all columns
         """
         cmd = f"UPDATE {self.table_id} SET "
 
         if not isinstance(vals, tuple):
             raise ValueError('vals must be a tuple')
 
-        for col, val in zip(self.column_names, vals):
+        if cols is None:
+            cols = self.column_names
+
+        if len(cols) != len(vals):
+            raise ValueError(f'length of vals ({len(vals)}) != '
+                             f'length of cols ({len(cols)})')
+
+        for col, val in zip(cols, vals):
+            if col not in self.column_names:
+                raise ValueError(f'column {col} is not present in table')
             cmd += f"{col} = '{val}', "
         cmd = cmd[:-2]  # remove last comma
         cmd += f" WHERE {self.primary_key} = '{pk_val}';"

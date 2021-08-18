@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Ingest table from Redcap into Postgres &#8212; neurobooth-terra  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          neurobooth-terra</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="index.html">Examples</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="https://github.com/neurobooth/neurobooth-terra">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Ingest table from Redcap into Postgres</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/auto_examples/plot_redcap_to_postgres.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-redcap-to-postgres-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="ingest-table-from-redcap-into-postgres">
+<span id="sphx-glr-auto-examples-plot-redcap-to-postgres-py"></span><h1>Ingest table from Redcap into Postgres<a class="headerlink" href="#ingest-table-from-redcap-into-postgres" title="Permalink to this headline">¶</a></h1>
+<p>This example demonstrates how to create table from Redcap.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Mainak Jas &lt;mjas@harvard.mgh.edu&gt;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">op</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">redcap</span> <span class="kn">import</span> <span class="n">Project</span><span class="p">,</span> <span class="n">RedcapError</span>
+
+<span class="kn">from</span> <span class="nn">neurobooth_terra.ingest_redcap</span> <span class="kn">import</span> <span class="n">fetch_survey</span><span class="p">,</span> <span class="n">infer_schema</span>
+</pre></div>
+</div>
+<p>Let us first define the surveys and their survey IDs that we want to fetch.
+This information can be found on Redcap. To fetch Redcap data, you will
+also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
+You will need to request for the Redcap API token from Redcap interface.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_ids</span></a></a></a> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;consent&#39;</span><span class="p">:</span> <span class="mi">84349</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">:</span> <span class="mi">84427</span><span class="p">,</span> <span class="s1">&#39;demographics&#39;</span><span class="p">:</span> <span class="mi">84429</span><span class="p">,</span>
+              <span class="s1">&#39;clinical&#39;</span><span class="p">:</span> <span class="mi">84431</span><span class="p">,</span> <span class="s1">&#39;falls&#39;</span><span class="p">:</span> <span class="mi">85031</span><span class="p">}</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">URL</span></a></a></a> <span class="o">=</span> <span class="s1">&#39;https://redcap.partners.org/redcap/api/&#39;</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NEUROBOOTH_REDCAP_TOKEN&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first&#39;</span><span class="p">)</span>
+
+<span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">URL</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we fetch the metadata table. This table is the master table
+that contains columns and their informations. It can be used to infer
+information about the columns: example, what choices are available for a
+particular question.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fetching metadata ...&#39;</span><span class="p">)</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">export_metadata</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;df&#39;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">metadata_fields</span></a></a></a> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;field_label&#39;</span><span class="p">,</span> <span class="s1">&#39;form_name&#39;</span><span class="p">,</span> <span class="s1">&#39;section_header&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;field_type&#39;</span><span class="p">,</span> <span class="s1">&#39;select_choices_or_calculations&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;required_field&#39;</span><span class="p">]</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">metadata_fields</span></a></a></a><span class="p">]</span>
+<span class="c1"># metadata.to_csv(op.join(data_dir, &#39;data_dictionary.csv&#39;), index=False)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[Done]&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Fetching metadata ...
+[Done]
+</pre></div>
+</div>
+<p>Finally, we loop over the surveys and print out the schema.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_id</span></a></a></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_ids</span></a></a></a><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">fetch_survey</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_id</span></a></a></a><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a><span class="p">]</span> <span class="o">=</span> <span class="n">infer_schema</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><span class="n">json</span><span class="o">.</span><span class="n">dumps</span></a></a></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Fetching report consent from Redcap
+[Done]
+Skipping redcap_repeat_instrument
+Skipping redcap_repeat_instance
+Fetching report contact from Redcap
+[Done]
+Skipping redcap_repeat_instrument
+Skipping redcap_repeat_instance
+Skipping contact_information_complete
+Fetching report demographics from Redcap
+[Done]
+Skipping redcap_repeat_instrument
+Skipping redcap_repeat_instance
+Skipping race___1
+Skipping race___2
+Skipping race___3
+Skipping race___4
+Skipping race___5
+Skipping race___6
+Skipping race___7
+Skipping health_history___1
+Skipping health_history___2
+Skipping health_history___3
+Skipping health_history___4
+Skipping health_history___5
+Skipping health_history___6
+Skipping health_history___diabetes
+Skipping health_history___7
+Skipping health_history___8
+Skipping health_history___9
+Skipping health_history___10
+Skipping health_history___11
+Skipping health_history___12
+Skipping health_history___13
+Skipping health_history___14
+Skipping health_history___15
+Skipping health_history___16
+Skipping health_history___17
+Skipping health_history___18
+Skipping health_history___19
+Skipping health_history___20
+Skipping health_history___21
+Skipping health_history___22
+Skipping health_history___23
+Skipping health_history___24
+Skipping health_history___25
+Skipping health_history___26
+Skipping health_history___27
+Skipping health_history___28
+Skipping health_history___29
+Skipping health_history___30
+Skipping health_history___31
+Skipping health_history___32
+Skipping health_history___33
+Skipping health_history___34
+Skipping health_history___35
+Skipping health_history___36
+Skipping health_history___37
+Skipping demographics_complete
+Fetching report clinical from Redcap
+[Done]
+Skipping redcap_repeat_instrument
+Skipping redcap_repeat_instance
+Skipping primary_diagnosis___0
+Skipping primary_diagnosis___1
+Skipping primary_diagnosis___2
+Skipping primary_diagnosis___3
+Skipping primary_diagnosis___4
+Skipping primary_diagnosis___5
+Skipping primary_diagnosis___6
+Skipping primary_diagnosis___7
+Skipping primary_diagnosis___8
+Skipping primary_diagnosis___9
+Skipping primary_diagnosis___10
+Skipping primary_diagnosis___12
+Skipping primary_diagnosis___13
+Skipping primary_diagnosis___14
+Skipping primary_diagnosis___15
+Skipping primary_diagnosis___16
+Skipping primary_diagnosis___17
+Skipping primary_diagnosis___18
+Skipping primary_diagnosis___19
+Skipping primary_diagnosis___20
+Skipping primary_diagnosis___21
+Skipping primary_diagnosis___22
+Skipping clinical_information_survey_complete
+Fetching report falls from Redcap
+[Done]
+Skipping redcap_repeat_instrument
+Skipping redcap_repeat_instance
+Skipping neurobooth_falls_complete
+{
+    &quot;falls_12mo&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;yesno&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;falls_12mo&quot;,
+        &quot;question&quot;: &quot;Have you fallen in the past 12 months?&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;falls_3mo&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;yesno&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;falls_3mo&quot;,
+        &quot;question&quot;: &quot;Have you fallen in the past 3 months?&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;falls_6mo&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;yesno&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;falls_6mo&quot;,
+        &quot;question&quot;: &quot;Have you fallen in the past 6 months?&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;n_falls_12_mo&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;1-3 times&quot;,
+            &quot;1&quot;: &quot;4-6 times&quot;,
+            &quot;2&quot;: &quot;6-10 times&quot;,
+            &quot;3&quot;: &quot;10-15 times&quot;,
+            &quot;4&quot;: &quot;more than 15 times&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;n_falls_12_mo&quot;,
+        &quot;question&quot;: &quot;How many times have you fallen in the past 12 months?&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;n_falls_3_mo&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;1-3 times&quot;,
+            &quot;1&quot;: &quot;4-6 times&quot;,
+            &quot;2&quot;: &quot;6-10 times&quot;,
+            &quot;3&quot;: &quot;10-15 times&quot;,
+            &quot;4&quot;: &quot;more than 15 times&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;n_falls_3_mo&quot;,
+        &quot;question&quot;: &quot;How many times have you fallen in the past 3 months?&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;n_falls_6_mo&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;1-3 times&quot;,
+            &quot;1&quot;: &quot;4-6 times&quot;,
+            &quot;2&quot;: &quot;6-10 times&quot;,
+            &quot;3&quot;: &quot;10-15 times&quot;,
+            &quot;4&quot;: &quot;more than 15 times&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;n_falls_6_mo&quot;,
+        &quot;question&quot;: &quot;How many times have you fallen in the past 6 months?&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;neurobooth_falls_complete&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;neurobooth_falls_complete&quot;,
+        &quot;question&quot;: &quot;&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxi_27&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Without any difficulty&quot;,
+            &quot;1&quot;: &quot;With a little difficulty&quot;,
+            &quot;2&quot;: &quot;With some difficulty&quot;,
+            &quot;3&quot;: &quot;With much difficulty&quot;,
+            &quot;4&quot;: &quot;Unable to do&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxi_27&quot;,
+        &quot;question&quot;: &quot;I can walk without assistance (without a cane, walker, personal aid, wheelchair)&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_1&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Never&quot;,
+            &quot;1&quot;: &quot;Rarely&quot;,
+            &quot;2&quot;: &quot;Sometimes&quot;,
+            &quot;3&quot;: &quot;Often&quot;,
+            &quot;4&quot;: &quot;Always&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_1&quot;,
+        &quot;question&quot;: &quot;I feel unsteady on my feet when standing/walking on flat surfaces&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_2&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Never&quot;,
+            &quot;1&quot;: &quot;Rarely&quot;,
+            &quot;2&quot;: &quot;Sometimes&quot;,
+            &quot;3&quot;: &quot;Often&quot;,
+            &quot;4&quot;: &quot;Always&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_2&quot;,
+        &quot;question&quot;: &quot;I lose my balance walking/hiking on uneven surfaces, including hills and sand/beach&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_26&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Without any difficulty&quot;,
+            &quot;1&quot;: &quot;With a little difficulty&quot;,
+            &quot;2&quot;: &quot;With some difficulty&quot;,
+            &quot;3&quot;: &quot;With much difficulty&quot;,
+            &quot;4&quot;: &quot;Unable to do&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_26&quot;,
+        &quot;question&quot;: &quot;I can carry things in my arms while walking (e.g., furniture, packages, babies, etc.)&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_28&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Without any difficulty&quot;,
+            &quot;1&quot;: &quot;With a little difficulty&quot;,
+            &quot;2&quot;: &quot;With some difficulty&quot;,
+            &quot;3&quot;: &quot;With much difficulty&quot;,
+            &quot;4&quot;: &quot;Unable to do&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_28&quot;,
+        &quot;question&quot;: &quot;I can catch myself and prevent a fall when I stumble&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_3&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Never&quot;,
+            &quot;1&quot;: &quot;Rarely&quot;,
+            &quot;2&quot;: &quot;Sometimes&quot;,
+            &quot;3&quot;: &quot;Often&quot;,
+            &quot;4&quot;: &quot;Always&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_3&quot;,
+        &quot;question&quot;: &quot;I feel as though I may lose my balance and fall&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_30&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Without any difficulty&quot;,
+            &quot;1&quot;: &quot;With a little difficulty&quot;,
+            &quot;2&quot;: &quot;With some difficulty&quot;,
+            &quot;3&quot;: &quot;With much difficulty&quot;,
+            &quot;4&quot;: &quot;Unable to do&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_30&quot;,
+        &quot;question&quot;: &quot;I can bend down and pick something off the floor without help&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_31&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Without any difficulty&quot;,
+            &quot;1&quot;: &quot;With a little difficulty&quot;,
+            &quot;2&quot;: &quot;With some difficulty&quot;,
+            &quot;3&quot;: &quot;With much difficulty&quot;,
+            &quot;4&quot;: &quot;Unable to do&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_31&quot;,
+        &quot;question&quot;: &quot;I can get up off the floor without help&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_4&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Never&quot;,
+            &quot;1&quot;: &quot;Rarely&quot;,
+            &quot;2&quot;: &quot;Sometimes&quot;,
+            &quot;3&quot;: &quot;Often&quot;,
+            &quot;4&quot;: &quot;Always&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_4&quot;,
+        &quot;question&quot;: &quot;I lose my balance on stairs/ladders/stepstools&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_5&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Never&quot;,
+            &quot;1&quot;: &quot;Rarely&quot;,
+            &quot;2&quot;: &quot;Sometimes&quot;,
+            &quot;3&quot;: &quot;Often&quot;,
+            &quot;4&quot;: &quot;Always&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_5&quot;,
+        &quot;question&quot;: &quot;I am clumsy&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;prom_ataxia_6&quot;: {
+        &quot;choices&quot;: {
+            &quot;0&quot;: &quot;Never&quot;,
+            &quot;1&quot;: &quot;Rarely&quot;,
+            &quot;2&quot;: &quot;Sometimes&quot;,
+            &quot;3&quot;: &quot;Often&quot;,
+            &quot;4&quot;: &quot;Always&quot;
+        },
+        &quot;field_type&quot;: &quot;radio&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;prom_ataxia_6&quot;,
+        &quot;question&quot;: &quot;I find myself stumbling and/or falling&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;record_id&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;text&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;record_id&quot;,
+        &quot;question&quot;: &quot;Subject Identification&quot;,
+        &quot;type&quot;: &quot;integer&quot;
+    },
+    &quot;redcap_repeat_instance&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;redcap_repeat_instance&quot;,
+        &quot;question&quot;: &quot;&quot;,
+        &quot;type&quot;: &quot;float&quot;
+    },
+    &quot;redcap_repeat_instrument&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;redcap_repeat_instrument&quot;,
+        &quot;question&quot;: &quot;&quot;,
+        &quot;type&quot;: &quot;string&quot;
+    }
+}
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  5.040 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-redcap-to-postgres-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/aa9cc0aa64c7679d8d6160220406645c/plot_redcap_to_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_redcap_to_postgres.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/3157cab1da4d2e49f6f1ae311932b277/plot_redcap_to_postgres.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_redcap_to_postgres.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Neurobooth Developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -150,6 +150,9 @@ as primary key.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(cmd)</p></td>
 <td><p>Run a query.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.update_row" title="neurobooth_terra.Table.update_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_row</span></code></a>(pk_val, vals[, cols])</p></td>
+<td><p>Update values in a row</p></td>
+</tr>
 </tbody>
 </table>
 <table class="docutils align-default">
@@ -203,6 +206,9 @@ as primary key.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(cmd)</p></td>
 <td><p>Run a query.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.update_row" title="neurobooth_terra.Table.update_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_row</span></code></a>(pk_val, vals[, cols])</p></td>
+<td><p>Update values in a row</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py method">
@@ -228,11 +234,11 @@ as primary key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>cols</strong><span class="classifier">list of str | None</span></dt><dd><p>The columns to insert into. If None, use
-all columns</p>
-</dd>
 <dt><strong>vals</strong><span class="classifier">list of tuple</span></dt><dd><p>The records to insert. Each tuple
 is one row.</p>
+</dd>
+<dt><strong>cols</strong><span class="classifier">list of str | None</span></dt><dd><p>The columns to insert into. If None, use
+all columns</p>
 </dd>
 </dl>
 </dd>
@@ -247,6 +253,26 @@ is one row.</p>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>df</strong><span class="classifier">instance of pd.Dataframe</span></dt><dd><p>A pandas dataframe object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neurobooth_terra.Table.update_row">
+<span class="sig-name descname"><span class="pre">update_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pk_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/create_psql.html#Table.update_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.update_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update values in a row</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pk_val</strong><span class="classifier">str</span></dt><dd><p>The value of the primary key to match
+the row to replace.</p>
+</dd>
+<dt><strong>vals</strong><span class="classifier">tuple</span></dt><dd><p>The values in the row to replace.</p>
+</dd>
+<dt><strong>cols</strong><span class="classifier">list of str | None</span></dt><dd><p>The columns to insert into. If None, use
+all columns</p>
 </dd>
 </dl>
 </dd>

@@ -123,22 +123,23 @@ to download the full example code</p>
 </pre></div>
 </div>
 <p>First, we will create a connection using <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
                <span class="s2">&quot;password=&#39;neuroboothrocks&#39;&quot;</span><span class="p">)</span>
 
-<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a></a><span class="p">)</span>
 
-<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;consent&#39;</span><span class="p">,</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> <span class="s1">&#39;register&#39;</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;clinical&#39;</span><span class="p">,</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;consent&#39;</span><span class="p">,</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> <span class="s1">&#39;register&#39;</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;clinical&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;demograph&#39;</span><span class="p">,</span> <span class="s1">&#39;human_obs_log&#39;</span><span class="p">,</span> <span class="s1">&#39;observer&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;tech_obs_data&#39;</span><span class="p">,</span> <span class="s1">&#39;tech_obs_log&#39;</span><span class="p">,</span> <span class="s1">&#39;stimulus&#39;</span><span class="p">,</span> <span class="s1">&#39;sensor&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;instruction&#39;</span><span class="p">,</span> <span class="s1">&#39;human_obs_data&#39;</span><span class="p">,</span> <span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="s1">&#39;collection&#39;</span><span class="p">]:</span>
-    <span class="n">drop_table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+                 <span class="s1">&#39;instruction&#39;</span><span class="p">,</span> <span class="s1">&#39;human_obs_data&#39;</span><span class="p">,</span> <span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="s1">&#39;collection&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;sensor_file_log&#39;</span><span class="p">]:</span>
+    <span class="n">drop_table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then comes our sql command to create the SQL tables. This comes from
 dbdesigner.
 6/7/2021, 17:02:05</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a></a></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">CREATE TABLE &quot;consent&quot; (</span>
 <span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
@@ -214,13 +215,14 @@ dbdesigner.
 
 
 <span class="s2">CREATE TABLE &quot;subject&quot; (</span>
-<span class="s2">    &quot;subject_id&quot; VARCHAR(255) PRIMARY KEY,</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;first_name_birth&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;middle_name_birth&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;last_name_birth&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;date of birth&quot; DATE NOT NULL,</span>
 <span class="s2">    &quot;country of birth&quot; VARCHAR(255) NOT NULL,</span>
-<span class="s2">    &quot;gender at birth&quot; VARCHAR(255) NOT NULL</span>
+<span class="s2">    &quot;gender at birth&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;subject_pk&quot; PRIMARY KEY (&quot;subject_id&quot;)</span>
 <span class="s2">) WITH (</span>
 <span class="s2">  OIDS=FALSE</span>
 <span class="s2">);</span>
@@ -305,6 +307,7 @@ dbdesigner.
 
 
 <span class="s2">CREATE TABLE &quot;tech_obs_log&quot; (</span>
+<span class="s2">    &quot;tech_obs_log_id&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;tech_obs_id&quot; VARCHAR(255) NOT NULL,</span>
@@ -313,7 +316,9 @@ dbdesigner.
 <span class="s2">    &quot;site_date&quot; DATE NOT NULL,</span>
 <span class="s2">    &quot;event_array&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;date_time_array&quot; VARCHAR(255) NOT NULL,</span>
-<span class="s2">    CONSTRAINT &quot;tech_obs_log_pk&quot; PRIMARY KEY (&quot;subject_id&quot;,&quot;study_id&quot;)</span>
+<span class="s2">    &quot;sensor_file_id_array&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;collection_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;tech_obs_log_pk&quot; PRIMARY KEY (&quot;tech_obs_log_id&quot;)</span>
 <span class="s2">) WITH (</span>
 <span class="s2">  OIDS=FALSE</span>
 <span class="s2">);</span>
@@ -339,6 +344,7 @@ dbdesigner.
 <span class="s2">    &quot;temporal_res&quot; FLOAT NOT NULL,</span>
 <span class="s2">    &quot;spatial_res_x&quot; FLOAT NOT NULL,</span>
 <span class="s2">    &quot;spatial_res_y&quot; FLOAT NOT NULL,</span>
+<span class="s2">    &quot;file_type&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    CONSTRAINT &quot;sensor_pk&quot; PRIMARY KEY (&quot;sensor_id&quot;)</span>
 <span class="s2">) WITH (</span>
 <span class="s2">  OIDS=FALSE</span>
@@ -347,10 +353,11 @@ dbdesigner.
 
 
 <span class="s2">CREATE TABLE &quot;instruction&quot; (</span>
-<span class="s2">    &quot;instruction_id&quot; VARCHAR(255) PRIMARY KEY,</span>
+<span class="s2">    &quot;instruction_id&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;instruction_text&quot; TEXT NOT NULL,</span>
 <span class="s2">    &quot;instruction_filetype&quot; VARCHAR(255) NOT NULL,</span>
-<span class="s2">    &quot;instruction_file&quot; VARCHAR(255) NOT NULL</span>
+<span class="s2">    &quot;instruction_file&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;instruction_pk&quot; PRIMARY KEY (&quot;instruction_id&quot;)</span>
 <span class="s2">) WITH (</span>
 <span class="s2">  OIDS=FALSE</span>
 <span class="s2">);</span>
@@ -395,7 +402,29 @@ dbdesigner.
 <span class="s2">    &quot;collection_name&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;tech_obs_array&quot; VARCHAR(255),</span>
 <span class="s2">    &quot;human_obs_array&quot; VARCHAR(255),</span>
-<span class="s2">    CONSTRAINT &quot;collection_pk&quot; PRIMARY KEY (&quot;collection_name&quot;)</span>
+<span class="s2">    &quot;collection_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;active&quot; BOOLEAN NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;collection_pk&quot; PRIMARY KEY (&quot;collection_id&quot;)</span>
+<span class="s2">) WITH (</span>
+<span class="s2">  OIDS=FALSE</span>
+<span class="s2">);</span>
+
+
+
+<span class="s2">CREATE TABLE &quot;sensor_file_log&quot; (</span>
+<span class="s2">    &quot;sensor_file_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;tech_obs_log_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;tech_obs_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;collection_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;true_temporal_resolution&quot; FLOAT,</span>
+<span class="s2">    &quot;true_spatial_resolution&quot; FLOAT,</span>
+<span class="s2">    &quot;file_start_time&quot; TIMESTAMP NOT NULL,</span>
+<span class="s2">    &quot;file_end_time&quot; TIMESTAMP NOT NULL,</span>
+<span class="s2">    &quot;device_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    &quot;sensor_id&quot; VARCHAR(255) NOT NULL,</span>
+<span class="s2">    CONSTRAINT &quot;sensor_file_log_pk&quot; PRIMARY KEY (&quot;sensor_file_id&quot;)</span>
 <span class="s2">) WITH (</span>
 <span class="s2">  OIDS=FALSE</span>
 <span class="s2">);</span>
@@ -431,6 +460,8 @@ dbdesigner.
 <span class="s2">ALTER TABLE &quot;tech_obs_log&quot; ADD CONSTRAINT &quot;tech_obs_log_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
 <span class="s2">ALTER TABLE &quot;tech_obs_log&quot; ADD CONSTRAINT &quot;tech_obs_log_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;study&quot;(&quot;study_id&quot;);</span>
 <span class="s2">ALTER TABLE &quot;tech_obs_log&quot; ADD CONSTRAINT &quot;tech_obs_log_fk2&quot; FOREIGN KEY (&quot;tech_obs_id&quot;) REFERENCES &quot;tech_obs_data&quot;(&quot;tech_obs_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;tech_obs_log&quot; ADD CONSTRAINT &quot;tech_obs_log_fk3&quot; FOREIGN KEY (&quot;sensor_file_id_array&quot;) REFERENCES &quot;sensor_file_log&quot;(&quot;sensor_file_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;tech_obs_log&quot; ADD CONSTRAINT &quot;tech_obs_log_fk4&quot; FOREIGN KEY (&quot;collection_id&quot;) REFERENCES &quot;collection&quot;(&quot;collection_id&quot;);</span>
 
 
 
@@ -440,13 +471,20 @@ dbdesigner.
 <span class="s2">ALTER TABLE &quot;collection&quot; ADD CONSTRAINT &quot;collection_fk0&quot; FOREIGN KEY (&quot;tech_obs_array&quot;) REFERENCES &quot;tech_obs_data&quot;(&quot;tech_obs_id&quot;);</span>
 <span class="s2">ALTER TABLE &quot;collection&quot; ADD CONSTRAINT &quot;collection_fk1&quot; FOREIGN KEY (&quot;human_obs_array&quot;) REFERENCES &quot;human_obs_data&quot;(&quot;human_obs_id&quot;);</span>
 
+<span class="s2">ALTER TABLE &quot;sensor_file_log&quot; ADD CONSTRAINT &quot;sensor_file_log_fk0&quot; FOREIGN KEY (&quot;subject_id&quot;) REFERENCES &quot;subject&quot;(&quot;subject_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;sensor_file_log&quot; ADD CONSTRAINT &quot;sensor_file_log_fk1&quot; FOREIGN KEY (&quot;study_id&quot;) REFERENCES &quot;study&quot;(&quot;study_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;sensor_file_log&quot; ADD CONSTRAINT &quot;sensor_file_log_fk2&quot; FOREIGN KEY (&quot;tech_obs_log_id&quot;) REFERENCES &quot;tech_obs_log&quot;(&quot;tech_obs_log_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;sensor_file_log&quot; ADD CONSTRAINT &quot;sensor_file_log_fk3&quot; FOREIGN KEY (&quot;tech_obs_id&quot;) REFERENCES &quot;tech_obs_data&quot;(&quot;tech_obs_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;sensor_file_log&quot; ADD CONSTRAINT &quot;sensor_file_log_fk4&quot; FOREIGN KEY (&quot;collection_id&quot;) REFERENCES &quot;collection&quot;(&quot;collection_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;sensor_file_log&quot; ADD CONSTRAINT &quot;sensor_file_log_fk5&quot; FOREIGN KEY (&quot;device_id&quot;) REFERENCES &quot;device&quot;(&quot;device_id&quot;);</span>
+<span class="s2">ALTER TABLE &quot;sensor_file_log&quot; ADD CONSTRAINT &quot;sensor_file_log_fk6&quot; FOREIGN KEY (&quot;sensor_id&quot;) REFERENCES &quot;sensor&quot;(&quot;sensor_id&quot;);</span>
 
 <span class="s2">&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 <p>Now we create the tables.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-<span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a><span class="p">)</span>
+<span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a></a></a><span class="p">)</span>
 </pre></div>
 </div>
 <p>Don’t forget to close the connection once done!</p>
@@ -454,7 +492,7 @@ dbdesigner.
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.805 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.572 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-create-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/efaef7e908354ba3765fcd7642c76e72/plot_postgres_create.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres_create.py</span></code></a></p>

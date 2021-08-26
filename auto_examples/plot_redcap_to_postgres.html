@@ -123,6 +123,7 @@ to download the full example code</p>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">redcap</span> <span class="kn">import</span> <span class="n">Project</span><span class="p">,</span> <span class="n">RedcapError</span>
 
+<span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">neurobooth_terra.ingest_redcap</span> <span class="kn">import</span> <span class="n">fetch_survey</span><span class="p">,</span> <span class="n">infer_schema</span>
 </pre></div>
 </div>
@@ -130,16 +131,17 @@ to download the full example code</p>
 This information can be found on Redcap. To fetch Redcap data, you will
 also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 You will need to request for the Redcap API token from Redcap interface.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_ids</span></a></a></a> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;consent&#39;</span><span class="p">:</span> <span class="mi">84349</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">:</span> <span class="mi">84427</span><span class="p">,</span> <span class="s1">&#39;demographics&#39;</span><span class="p">:</span> <span class="mi">84429</span><span class="p">,</span>
-              <span class="s1">&#39;clinical&#39;</span><span class="p">:</span> <span class="mi">84431</span><span class="p">,</span> <span class="s1">&#39;falls&#39;</span><span class="p">:</span> <span class="mi">85031</span><span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_ids</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;consent&#39;</span><span class="p">:</span> <span class="mi">84349</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">:</span> <span class="mi">84427</span><span class="p">,</span> <span class="s1">&#39;demographics&#39;</span><span class="p">:</span> <span class="mi">84429</span><span class="p">,</span>
+              <span class="s1">&#39;clinical&#39;</span><span class="p">:</span> <span class="mi">84431</span><span class="p">,</span> <span class="s1">&#39;falls&#39;</span><span class="p">:</span> <span class="mi">85031</span><span class="p">,</span> <span class="s1">&#39;guid&#39;</span><span class="p">:</span> <span class="mi">84426</span><span class="p">}</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_ids</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;guid&#39;</span><span class="p">:</span> <span class="mi">84426</span><span class="p">}</span>
 
-<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">URL</span></a></a></a> <span class="o">=</span> <span class="s1">&#39;https://redcap.partners.org/redcap/api/&#39;</span>
-<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NEUROBOOTH_REDCAP_TOKEN&#39;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">URL</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> <span class="o">=</span> <span class="s1">&#39;https://redcap.partners.org/redcap/api/&#39;</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NEUROBOOTH_REDCAP_TOKEN&#39;</span><span class="p">)</span>
 
-<span class="k">if</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first&#39;</span><span class="p">)</span>
 
-<span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">URL</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">URL</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">API_KEY</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Next, we fetch the metadata table. This table is the master table
@@ -148,10 +150,10 @@ information about the columns: example, what choices are available for a
 particular question.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fetching metadata ...&#39;</span><span class="p">)</span>
 <span class="n">metadata</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">export_metadata</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;df&#39;</span><span class="p">)</span>
-<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">metadata_fields</span></a></a></a> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;field_label&#39;</span><span class="p">,</span> <span class="s1">&#39;form_name&#39;</span><span class="p">,</span> <span class="s1">&#39;section_header&#39;</span><span class="p">,</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">metadata_fields</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;field_label&#39;</span><span class="p">,</span> <span class="s1">&#39;form_name&#39;</span><span class="p">,</span> <span class="s1">&#39;section_header&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;field_type&#39;</span><span class="p">,</span> <span class="s1">&#39;select_choices_or_calculations&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;required_field&#39;</span><span class="p">]</span>
-<span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">metadata_fields</span></a></a></a><span class="p">]</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">metadata_fields</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">]</span>
 <span class="c1"># metadata.to_csv(op.join(data_dir, &#39;data_dictionary.csv&#39;), index=False)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[Done]&#39;</span><span class="p">)</span>
 </pre></div>
@@ -162,333 +164,274 @@ particular question.</p>
 </pre></div>
 </div>
 <p>Finally, we loop over the surveys and print out the schema.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_id</span></a></a></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_ids</span></a></a></a><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">fetch_survey</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_id</span></a></a></a><span class="p">)</span>
-    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a><span class="p">]</span> <span class="o">=</span> <span class="n">infer_schema</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><span class="n">json</span><span class="o">.</span><span class="n">dumps</span></a></a></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_id</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_ids</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">fetch_survey</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_id</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">]</span> <span class="o">=</span> <span class="n">infer_schema</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/json.html#json.dumps" title="json.dumps" class="sphx-glr-backref-module-json sphx-glr-backref-type-py-function"><span class="n">json</span><span class="o">.</span><span class="n">dumps</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">json_schema</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_name</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Fetching report consent from Redcap
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Fetching report guid from Redcap
 [Done]
+Skipping redcap_event_name
 Skipping redcap_repeat_instrument
 Skipping redcap_repeat_instance
-Fetching report contact from Redcap
-[Done]
-Skipping redcap_repeat_instrument
-Skipping redcap_repeat_instance
-Skipping contact_information_complete
-Fetching report demographics from Redcap
-[Done]
-Skipping redcap_repeat_instrument
-Skipping redcap_repeat_instance
-Skipping race___1
-Skipping race___2
-Skipping race___3
-Skipping race___4
-Skipping race___5
-Skipping race___6
-Skipping race___7
-Skipping health_history___1
-Skipping health_history___2
-Skipping health_history___3
-Skipping health_history___4
-Skipping health_history___5
-Skipping health_history___6
-Skipping health_history___diabetes
-Skipping health_history___7
-Skipping health_history___8
-Skipping health_history___9
-Skipping health_history___10
-Skipping health_history___11
-Skipping health_history___12
-Skipping health_history___13
-Skipping health_history___14
-Skipping health_history___15
-Skipping health_history___16
-Skipping health_history___17
-Skipping health_history___18
-Skipping health_history___19
-Skipping health_history___20
-Skipping health_history___21
-Skipping health_history___22
-Skipping health_history___23
-Skipping health_history___24
-Skipping health_history___25
-Skipping health_history___26
-Skipping health_history___27
-Skipping health_history___28
-Skipping health_history___29
-Skipping health_history___30
-Skipping health_history___31
-Skipping health_history___32
-Skipping health_history___33
-Skipping health_history___34
-Skipping health_history___35
-Skipping health_history___36
-Skipping health_history___37
-Skipping demographics_complete
-Fetching report clinical from Redcap
-[Done]
-Skipping redcap_repeat_instrument
-Skipping redcap_repeat_instance
-Skipping primary_diagnosis___0
-Skipping primary_diagnosis___1
-Skipping primary_diagnosis___2
-Skipping primary_diagnosis___3
-Skipping primary_diagnosis___4
-Skipping primary_diagnosis___5
-Skipping primary_diagnosis___6
-Skipping primary_diagnosis___7
-Skipping primary_diagnosis___8
-Skipping primary_diagnosis___9
-Skipping primary_diagnosis___10
-Skipping primary_diagnosis___12
-Skipping primary_diagnosis___13
-Skipping primary_diagnosis___14
-Skipping primary_diagnosis___15
-Skipping primary_diagnosis___16
-Skipping primary_diagnosis___17
-Skipping primary_diagnosis___18
-Skipping primary_diagnosis___19
-Skipping primary_diagnosis___20
-Skipping primary_diagnosis___21
-Skipping primary_diagnosis___22
-Skipping clinical_information_survey_complete
-Fetching report falls from Redcap
-[Done]
-Skipping redcap_repeat_instrument
-Skipping redcap_repeat_instance
-Skipping neurobooth_falls_complete
 {
-    &quot;falls_12mo&quot;: {
+    &quot;birthplace&quot;: {
         &quot;choices&quot;: {},
-        &quot;field_type&quot;: &quot;yesno&quot;,
+        &quot;field_type&quot;: &quot;text&quot;,
         &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;falls_12mo&quot;,
-        &quot;question&quot;: &quot;Have you fallen in the past 12 months?&quot;,
+        &quot;name&quot;: &quot;birthplace&quot;,
+        &quot;question&quot;: &quot;Name of City/municipality at birth (as it appears on birth certificate)&quot;,
+        &quot;type&quot;: &quot;string&quot;
+    },
+    &quot;country_of_birth&quot;: {
+        &quot;choices&quot;: {
+            &quot;1&quot;: &quot;United States of America&quot;,
+            &quot;10&quot;: &quot;Austria&quot;,
+            &quot;100&quot;: &quot;Macedonia&quot;,
+            &quot;101&quot;: &quot;Madagascar&quot;,
+            &quot;102&quot;: &quot;Malawi&quot;,
+            &quot;103&quot;: &quot;Malaysia&quot;,
+            &quot;104&quot;: &quot;Maldives&quot;,
+            &quot;105&quot;: &quot;Mali&quot;,
+            &quot;106&quot;: &quot;Malta&quot;,
+            &quot;107&quot;: &quot;Marshall Islands&quot;,
+            &quot;108&quot;: &quot;Mauritania&quot;,
+            &quot;109&quot;: &quot;Mauritius&quot;,
+            &quot;11&quot;: &quot;Azerbaijan&quot;,
+            &quot;110&quot;: &quot;Mexico&quot;,
+            &quot;111&quot;: &quot;Moldova&quot;,
+            &quot;112&quot;: &quot;Monaco&quot;,
+            &quot;113&quot;: &quot;Mongolia&quot;,
+            &quot;114&quot;: &quot;Montenegro&quot;,
+            &quot;115&quot;: &quot;Morocco&quot;,
+            &quot;116&quot;: &quot;Mozambique&quot;,
+            &quot;117&quot;: &quot;Myanmar (Burma)&quot;,
+            &quot;118&quot;: &quot;Namibia&quot;,
+            &quot;119&quot;: &quot;Nauru&quot;,
+            &quot;12&quot;: &quot;The Bahamas&quot;,
+            &quot;120&quot;: &quot;Nepal&quot;,
+            &quot;121&quot;: &quot;Netherlands&quot;,
+            &quot;122&quot;: &quot;New Zealand&quot;,
+            &quot;123&quot;: &quot;Nicaragua&quot;,
+            &quot;124&quot;: &quot;Niger&quot;,
+            &quot;125&quot;: &quot;Nigeria&quot;,
+            &quot;126&quot;: &quot;Norway&quot;,
+            &quot;127&quot;: &quot;Oman&quot;,
+            &quot;128&quot;: &quot;Pakistan&quot;,
+            &quot;129&quot;: &quot;Palau&quot;,
+            &quot;13&quot;: &quot;Bahrain&quot;,
+            &quot;130&quot;: &quot;Panama&quot;,
+            &quot;131&quot;: &quot;Papua New Guinea&quot;,
+            &quot;132&quot;: &quot;Paraguay&quot;,
+            &quot;133&quot;: &quot;Peru&quot;,
+            &quot;134&quot;: &quot;Philippines&quot;,
+            &quot;135&quot;: &quot;Poland&quot;,
+            &quot;136&quot;: &quot;Portugal&quot;,
+            &quot;137&quot;: &quot;Qatar&quot;,
+            &quot;138&quot;: &quot;Romania&quot;,
+            &quot;139&quot;: &quot;Russia&quot;,
+            &quot;14&quot;: &quot;Bangladesh&quot;,
+            &quot;140&quot;: &quot;Rwanda&quot;,
+            &quot;141&quot;: &quot;Saint Kitts and Nevis&quot;,
+            &quot;142&quot;: &quot;Saint Lucia&quot;,
+            &quot;143&quot;: &quot;Saint Vincent and the Grenadines&quot;,
+            &quot;144&quot;: &quot;Samoa&quot;,
+            &quot;145&quot;: &quot;San Marino&quot;,
+            &quot;146&quot;: &quot;Sao Tome and Principe&quot;,
+            &quot;147&quot;: &quot;Saudi Arabia&quot;,
+            &quot;148&quot;: &quot;Senegal&quot;,
+            &quot;149&quot;: &quot;Serbia&quot;,
+            &quot;15&quot;: &quot;Barbados&quot;,
+            &quot;150&quot;: &quot;Seychelles&quot;,
+            &quot;151&quot;: &quot;Sierra Leone&quot;,
+            &quot;152&quot;: &quot;Singapore&quot;,
+            &quot;153&quot;: &quot;Slovakia&quot;,
+            &quot;154&quot;: &quot;Slovenia&quot;,
+            &quot;155&quot;: &quot;Solomon Islands&quot;,
+            &quot;156&quot;: &quot;Somalia&quot;,
+            &quot;157&quot;: &quot;South Africa&quot;,
+            &quot;158&quot;: &quot;South Sudan&quot;,
+            &quot;159&quot;: &quot;Spain&quot;,
+            &quot;16&quot;: &quot;Belarus&quot;,
+            &quot;160&quot;: &quot;Sri Lanka&quot;,
+            &quot;161&quot;: &quot;Sudan&quot;,
+            &quot;162&quot;: &quot;Suriname&quot;,
+            &quot;163&quot;: &quot;Swaziland&quot;,
+            &quot;164&quot;: &quot;Sweden&quot;,
+            &quot;165&quot;: &quot;Switzerland&quot;,
+            &quot;166&quot;: &quot;Syria&quot;,
+            &quot;167&quot;: &quot;Taiwan&quot;,
+            &quot;168&quot;: &quot;Tajikistan&quot;,
+            &quot;169&quot;: &quot;Tanzania&quot;,
+            &quot;17&quot;: &quot;Belgium&quot;,
+            &quot;170&quot;: &quot;Thailand&quot;,
+            &quot;171&quot;: &quot;Togo&quot;,
+            &quot;172&quot;: &quot;Tonga&quot;,
+            &quot;173&quot;: &quot;Trinidad and Tobago&quot;,
+            &quot;174&quot;: &quot;Tunisia&quot;,
+            &quot;175&quot;: &quot;Turkey&quot;,
+            &quot;176&quot;: &quot;Turkmenistan&quot;,
+            &quot;177&quot;: &quot;Tuvalu&quot;,
+            &quot;178&quot;: &quot;Uganda&quot;,
+            &quot;179&quot;: &quot;Ukraine&quot;,
+            &quot;18&quot;: &quot;Belize&quot;,
+            &quot;180&quot;: &quot;United Arab Emirates&quot;,
+            &quot;181&quot;: &quot;United Kingdom&quot;,
+            &quot;183&quot;: &quot;Uruguay&quot;,
+            &quot;184&quot;: &quot;Uzbekistan&quot;,
+            &quot;185&quot;: &quot;Vanuatu&quot;,
+            &quot;186&quot;: &quot;Vatican City (Holy See)&quot;,
+            &quot;187&quot;: &quot;Venezuela&quot;,
+            &quot;188&quot;: &quot;Vietnam&quot;,
+            &quot;189&quot;: &quot;Yemen&quot;,
+            &quot;19&quot;: &quot;Benin&quot;,
+            &quot;190&quot;: &quot;Zambia&quot;,
+            &quot;191&quot;: &quot;Zimbabwe&quot;,
+            &quot;192&quot;: &quot;Republic of the Congo&quot;,
+            &quot;193&quot;: &quot;North Korea&quot;,
+            &quot;194&quot;: &quot;South Korea&quot;,
+            &quot;195&quot;: &quot;Afghanistan&quot;,
+            &quot;2&quot;: &quot;Albania&quot;,
+            &quot;20&quot;: &quot;Bhutan&quot;,
+            &quot;21&quot;: &quot;Bolivia&quot;,
+            &quot;22&quot;: &quot;Bosnia and Herzegovina&quot;,
+            &quot;23&quot;: &quot;Botswana&quot;,
+            &quot;24&quot;: &quot;Brazil&quot;,
+            &quot;25&quot;: &quot;Brunei&quot;,
+            &quot;26&quot;: &quot;Bulgaria&quot;,
+            &quot;27&quot;: &quot;Burkina Faso&quot;,
+            &quot;28&quot;: &quot;Burundi&quot;,
+            &quot;29&quot;: &quot;Cambodia&quot;,
+            &quot;3&quot;: &quot;Algeria&quot;,
+            &quot;30&quot;: &quot;Cameroon&quot;,
+            &quot;31&quot;: &quot;Canada&quot;,
+            &quot;32&quot;: &quot;Cape Verde&quot;,
+            &quot;33&quot;: &quot;Central African Republic&quot;,
+            &quot;34&quot;: &quot;Chad&quot;,
+            &quot;35&quot;: &quot;Chile&quot;,
+            &quot;36&quot;: &quot;China&quot;,
+            &quot;37&quot;: &quot;Colombia&quot;,
+            &quot;38&quot;: &quot;Comoros&quot;,
+            &quot;39&quot;: &quot;Costa Rica&quot;,
+            &quot;4&quot;: &quot;Andorra&quot;,
+            &quot;40&quot;: &quot;Cote d&#39;Ivoire&quot;,
+            &quot;41&quot;: &quot;Croatia&quot;,
+            &quot;42&quot;: &quot;Cuba&quot;,
+            &quot;43&quot;: &quot;Cyprus&quot;,
+            &quot;44&quot;: &quot;Czech Republic&quot;,
+            &quot;45&quot;: &quot;Denmark&quot;,
+            &quot;46&quot;: &quot;Djibouti&quot;,
+            &quot;47&quot;: &quot;Dominica&quot;,
+            &quot;48&quot;: &quot;Dominican Republic&quot;,
+            &quot;49&quot;: &quot;East Timor (Timor-Leste)&quot;,
+            &quot;5&quot;: &quot;Angola&quot;,
+            &quot;50&quot;: &quot;Ecuador&quot;,
+            &quot;51&quot;: &quot;Egypt&quot;,
+            &quot;52&quot;: &quot;El Salvador&quot;,
+            &quot;53&quot;: &quot;Equatorial Guinea&quot;,
+            &quot;54&quot;: &quot;Eritrea&quot;,
+            &quot;55&quot;: &quot;Estonia&quot;,
+            &quot;56&quot;: &quot;Ethiopia&quot;,
+            &quot;57&quot;: &quot;Fiji&quot;,
+            &quot;58&quot;: &quot;Finland&quot;,
+            &quot;59&quot;: &quot;France&quot;,
+            &quot;6&quot;: &quot;Antigua and Barbuda&quot;,
+            &quot;60&quot;: &quot;Gabon&quot;,
+            &quot;61&quot;: &quot;The Gambia&quot;,
+            &quot;62&quot;: &quot;Georgia&quot;,
+            &quot;63&quot;: &quot;Germany&quot;,
+            &quot;64&quot;: &quot;Ghana&quot;,
+            &quot;65&quot;: &quot;Greece&quot;,
+            &quot;66&quot;: &quot;Grenada&quot;,
+            &quot;67&quot;: &quot;Guatemala&quot;,
+            &quot;68&quot;: &quot;Guinea&quot;,
+            &quot;69&quot;: &quot;Guinea-Bissau&quot;,
+            &quot;7&quot;: &quot;Argentina&quot;,
+            &quot;70&quot;: &quot;Guyana&quot;,
+            &quot;71&quot;: &quot;Haiti&quot;,
+            &quot;72&quot;: &quot;Honduras&quot;,
+            &quot;73&quot;: &quot;Hungary&quot;,
+            &quot;74&quot;: &quot;Iceland&quot;,
+            &quot;75&quot;: &quot;India&quot;,
+            &quot;76&quot;: &quot;Indonesia&quot;,
+            &quot;77&quot;: &quot;Iran&quot;,
+            &quot;78&quot;: &quot;Iraq&quot;,
+            &quot;79&quot;: &quot;Ireland&quot;,
+            &quot;8&quot;: &quot;Armenia&quot;,
+            &quot;80&quot;: &quot;Israel&quot;,
+            &quot;81&quot;: &quot;Italy&quot;,
+            &quot;82&quot;: &quot;Jamaica&quot;,
+            &quot;83&quot;: &quot;Japan&quot;,
+            &quot;84&quot;: &quot;Jordan&quot;,
+            &quot;85&quot;: &quot;Kazakhstan&quot;,
+            &quot;86&quot;: &quot;Kenya&quot;,
+            &quot;87&quot;: &quot;Kiribati&quot;,
+            &quot;88&quot;: &quot;Kosovo&quot;,
+            &quot;89&quot;: &quot;Kuwait&quot;,
+            &quot;9&quot;: &quot;Australia&quot;,
+            &quot;90&quot;: &quot;Kyrgyzstan&quot;,
+            &quot;91&quot;: &quot;Laos&quot;,
+            &quot;92&quot;: &quot;Latvia&quot;,
+            &quot;93&quot;: &quot;Lebanon&quot;,
+            &quot;94&quot;: &quot;Lesotho&quot;,
+            &quot;95&quot;: &quot;Liberia&quot;,
+            &quot;96&quot;: &quot;Libya&quot;,
+            &quot;97&quot;: &quot;Liechtenstein&quot;,
+            &quot;98&quot;: &quot;Lithuania&quot;,
+            &quot;99&quot;: &quot;Luxembourg&quot;,
+            &quot;Micronesia&quot;: &quot;Federated States of&quot;
+        },
+        &quot;field_type&quot;: &quot;dropdown&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;country_of_birth&quot;,
+        &quot;question&quot;: &quot;Country of Birth&quot;,
         &quot;type&quot;: &quot;float&quot;
     },
-    &quot;falls_3mo&quot;: {
+    &quot;date_of_birth&quot;: {
         &quot;choices&quot;: {},
-        &quot;field_type&quot;: &quot;yesno&quot;,
+        &quot;field_type&quot;: &quot;text&quot;,
         &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;falls_3mo&quot;,
-        &quot;question&quot;: &quot;Have you fallen in the past 3 months?&quot;,
-        &quot;type&quot;: &quot;float&quot;
+        &quot;name&quot;: &quot;date_of_birth&quot;,
+        &quot;question&quot;: &quot;Date of Birth&quot;,
+        &quot;type&quot;: &quot;datetime&quot;
     },
-    &quot;falls_6mo&quot;: {
+    &quot;first_name_birth&quot;: {
         &quot;choices&quot;: {},
-        &quot;field_type&quot;: &quot;yesno&quot;,
+        &quot;field_type&quot;: &quot;text&quot;,
         &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;falls_6mo&quot;,
-        &quot;question&quot;: &quot;Have you fallen in the past 6 months?&quot;,
-        &quot;type&quot;: &quot;float&quot;
+        &quot;name&quot;: &quot;first_name_birth&quot;,
+        &quot;question&quot;: &quot;First Name at Birth&quot;,
+        &quot;type&quot;: &quot;string&quot;
     },
-    &quot;n_falls_12_mo&quot;: {
+    &quot;gender_at_birth&quot;: {
         &quot;choices&quot;: {
-            &quot;0&quot;: &quot;1-3 times&quot;,
-            &quot;1&quot;: &quot;4-6 times&quot;,
-            &quot;2&quot;: &quot;6-10 times&quot;,
-            &quot;3&quot;: &quot;10-15 times&quot;,
-            &quot;4&quot;: &quot;more than 15 times&quot;
+            &quot;1&quot;: &quot;Male&quot;,
+            &quot;2&quot;: &quot;Female&quot;
         },
         &quot;field_type&quot;: &quot;radio&quot;,
         &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;n_falls_12_mo&quot;,
-        &quot;question&quot;: &quot;How many times have you fallen in the past 12 months?&quot;,
+        &quot;name&quot;: &quot;gender_at_birth&quot;,
+        &quot;question&quot;: &quot;Physical Gender at birth&quot;,
         &quot;type&quot;: &quot;float&quot;
     },
-    &quot;n_falls_3_mo&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;1-3 times&quot;,
-            &quot;1&quot;: &quot;4-6 times&quot;,
-            &quot;2&quot;: &quot;6-10 times&quot;,
-            &quot;3&quot;: &quot;10-15 times&quot;,
-            &quot;4&quot;: &quot;more than 15 times&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;n_falls_3_mo&quot;,
-        &quot;question&quot;: &quot;How many times have you fallen in the past 3 months?&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;n_falls_6_mo&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;1-3 times&quot;,
-            &quot;1&quot;: &quot;4-6 times&quot;,
-            &quot;2&quot;: &quot;6-10 times&quot;,
-            &quot;3&quot;: &quot;10-15 times&quot;,
-            &quot;4&quot;: &quot;more than 15 times&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;n_falls_6_mo&quot;,
-        &quot;question&quot;: &quot;How many times have you fallen in the past 6 months?&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;neurobooth_falls_complete&quot;: {
+    &quot;last_name_birth&quot;: {
         &quot;choices&quot;: {},
-        &quot;field_type&quot;: &quot;&quot;,
+        &quot;field_type&quot;: &quot;text&quot;,
         &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;neurobooth_falls_complete&quot;,
-        &quot;question&quot;: &quot;&quot;,
-        &quot;type&quot;: &quot;float&quot;
+        &quot;name&quot;: &quot;last_name_birth&quot;,
+        &quot;question&quot;: &quot;Last Name at Birth&quot;,
+        &quot;type&quot;: &quot;string&quot;
     },
-    &quot;prom_ataxi_27&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Without any difficulty&quot;,
-            &quot;1&quot;: &quot;With a little difficulty&quot;,
-            &quot;2&quot;: &quot;With some difficulty&quot;,
-            &quot;3&quot;: &quot;With much difficulty&quot;,
-            &quot;4&quot;: &quot;Unable to do&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
+    &quot;middle_name_birth&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;text&quot;,
         &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxi_27&quot;,
-        &quot;question&quot;: &quot;I can walk without assistance (without a cane, walker, personal aid, wheelchair)&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_1&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Never&quot;,
-            &quot;1&quot;: &quot;Rarely&quot;,
-            &quot;2&quot;: &quot;Sometimes&quot;,
-            &quot;3&quot;: &quot;Often&quot;,
-            &quot;4&quot;: &quot;Always&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_1&quot;,
-        &quot;question&quot;: &quot;I feel unsteady on my feet when standing/walking on flat surfaces&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_2&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Never&quot;,
-            &quot;1&quot;: &quot;Rarely&quot;,
-            &quot;2&quot;: &quot;Sometimes&quot;,
-            &quot;3&quot;: &quot;Often&quot;,
-            &quot;4&quot;: &quot;Always&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_2&quot;,
-        &quot;question&quot;: &quot;I lose my balance walking/hiking on uneven surfaces, including hills and sand/beach&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_26&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Without any difficulty&quot;,
-            &quot;1&quot;: &quot;With a little difficulty&quot;,
-            &quot;2&quot;: &quot;With some difficulty&quot;,
-            &quot;3&quot;: &quot;With much difficulty&quot;,
-            &quot;4&quot;: &quot;Unable to do&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_26&quot;,
-        &quot;question&quot;: &quot;I can carry things in my arms while walking (e.g., furniture, packages, babies, etc.)&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_28&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Without any difficulty&quot;,
-            &quot;1&quot;: &quot;With a little difficulty&quot;,
-            &quot;2&quot;: &quot;With some difficulty&quot;,
-            &quot;3&quot;: &quot;With much difficulty&quot;,
-            &quot;4&quot;: &quot;Unable to do&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_28&quot;,
-        &quot;question&quot;: &quot;I can catch myself and prevent a fall when I stumble&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_3&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Never&quot;,
-            &quot;1&quot;: &quot;Rarely&quot;,
-            &quot;2&quot;: &quot;Sometimes&quot;,
-            &quot;3&quot;: &quot;Often&quot;,
-            &quot;4&quot;: &quot;Always&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_3&quot;,
-        &quot;question&quot;: &quot;I feel as though I may lose my balance and fall&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_30&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Without any difficulty&quot;,
-            &quot;1&quot;: &quot;With a little difficulty&quot;,
-            &quot;2&quot;: &quot;With some difficulty&quot;,
-            &quot;3&quot;: &quot;With much difficulty&quot;,
-            &quot;4&quot;: &quot;Unable to do&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_30&quot;,
-        &quot;question&quot;: &quot;I can bend down and pick something off the floor without help&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_31&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Without any difficulty&quot;,
-            &quot;1&quot;: &quot;With a little difficulty&quot;,
-            &quot;2&quot;: &quot;With some difficulty&quot;,
-            &quot;3&quot;: &quot;With much difficulty&quot;,
-            &quot;4&quot;: &quot;Unable to do&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_31&quot;,
-        &quot;question&quot;: &quot;I can get up off the floor without help&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_4&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Never&quot;,
-            &quot;1&quot;: &quot;Rarely&quot;,
-            &quot;2&quot;: &quot;Sometimes&quot;,
-            &quot;3&quot;: &quot;Often&quot;,
-            &quot;4&quot;: &quot;Always&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_4&quot;,
-        &quot;question&quot;: &quot;I lose my balance on stairs/ladders/stepstools&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_5&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Never&quot;,
-            &quot;1&quot;: &quot;Rarely&quot;,
-            &quot;2&quot;: &quot;Sometimes&quot;,
-            &quot;3&quot;: &quot;Often&quot;,
-            &quot;4&quot;: &quot;Always&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_5&quot;,
-        &quot;question&quot;: &quot;I am clumsy&quot;,
-        &quot;type&quot;: &quot;float&quot;
-    },
-    &quot;prom_ataxia_6&quot;: {
-        &quot;choices&quot;: {
-            &quot;0&quot;: &quot;Never&quot;,
-            &quot;1&quot;: &quot;Rarely&quot;,
-            &quot;2&quot;: &quot;Sometimes&quot;,
-            &quot;3&quot;: &quot;Often&quot;,
-            &quot;4&quot;: &quot;Always&quot;
-        },
-        &quot;field_type&quot;: &quot;radio&quot;,
-        &quot;mode&quot;: &quot;NULLABLE&quot;,
-        &quot;name&quot;: &quot;prom_ataxia_6&quot;,
-        &quot;question&quot;: &quot;I find myself stumbling and/or falling&quot;,
-        &quot;type&quot;: &quot;float&quot;
+        &quot;name&quot;: &quot;middle_name_birth&quot;,
+        &quot;question&quot;: &quot;Middle Name at Birth&quot;,
+        &quot;type&quot;: &quot;string&quot;
     },
     &quot;record_id&quot;: {
         &quot;choices&quot;: {},
@@ -497,6 +440,14 @@ Skipping neurobooth_falls_complete
         &quot;name&quot;: &quot;record_id&quot;,
         &quot;question&quot;: &quot;Subject Identification&quot;,
         &quot;type&quot;: &quot;integer&quot;
+    },
+    &quot;redcap_event_name&quot;: {
+        &quot;choices&quot;: {},
+        &quot;field_type&quot;: &quot;&quot;,
+        &quot;mode&quot;: &quot;NULLABLE&quot;,
+        &quot;name&quot;: &quot;redcap_event_name&quot;,
+        &quot;question&quot;: &quot;&quot;,
+        &quot;type&quot;: &quot;string&quot;
     },
     &quot;redcap_repeat_instance&quot;: {
         &quot;choices&quot;: {},
@@ -512,12 +463,57 @@ Skipping neurobooth_falls_complete
         &quot;mode&quot;: &quot;NULLABLE&quot;,
         &quot;name&quot;: &quot;redcap_repeat_instrument&quot;,
         &quot;question&quot;: &quot;&quot;,
-        &quot;type&quot;: &quot;string&quot;
+        &quot;type&quot;: &quot;float&quot;
     }
 }
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  5.040 seconds)</p>
+<p>Now, we will prepare the subject table in postgres</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">fetch_survey</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="s1">&#39;guid&#39;</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">survey_ids</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">[</span><span class="s1">&#39;guid&#39;</span><span class="p">])</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;guid_information_complete&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># take only complete rows</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">df_row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">df_row</span> <span class="o">=</span> <span class="n">df_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">subject_id</span> <span class="o">=</span> <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_firstname&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_lastname&#39;</span><span class="p">]</span>
+    <span class="n">subject_id</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">subject_id</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="n">dob</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><a href="https://docs.python.org/3/library/datetime.html#datetime.date" title="datetime.date" class="sphx-glr-backref-module-datetime sphx-glr-backref-type-py-class"><span class="n">datetime</span><span class="o">.</span><span class="n">date</span></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_yearofbirth&#39;</span><span class="p">]),</span>
+                        <span class="n">month</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_monthofbirth&#39;</span><span class="p">]),</span>
+                        <span class="n">day</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_dayofbirth&#39;</span><span class="p">]))</span>
+    <span class="n">dob</span> <span class="o">=</span> <span class="n">dob</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">subject_id</span><span class="p">,</span>
+                 <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_firstname&#39;</span><span class="p">],</span>
+                 <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_middlename&#39;</span><span class="p">],</span>
+                 <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_lastname&#39;</span><span class="p">],</span>
+                 <span class="n">dob</span><span class="p">,</span>
+                 <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_countryofbirth&#39;</span><span class="p">],</span>
+                 <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;guid_birthgender&#39;</span><span class="p">]))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;/Users/mainak/Documents/github_repos/neurobooth-terra/examples/plot_redcap_to_postgres.py&quot;</span>, line <span class="m">68</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;guid_information_complete&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># take only complete rows</span>
+  File <span class="nb">&quot;/Users/mainak/anaconda3/envs/neurobooth/lib/python3.8/site-packages/pandas/core/frame.py&quot;</span>, line <span class="m">3024</span>, in <span class="n">__getitem__</span>
+    <span class="n">indexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+  File <span class="nb">&quot;/Users/mainak/anaconda3/envs/neurobooth/lib/python3.8/site-packages/pandas/core/indexes/base.py&quot;</span>, line <span class="m">3082</span>, in <span class="n">get_loc</span>
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;guid_information_complete&#39;</span>
+</pre></div>
+</div>
+<p>Now, we will prepare the subject table in postgres</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">psycopg2</span>
+
+<span class="n">connect_str</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
+               <span class="s2">&quot;password=&#39;neuroboothrocks&#39;&quot;</span><span class="p">)</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">connect_str</span><span class="p">)</span>
+<span class="n">table_subject</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="s1">&#39;subject_id&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.549 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-redcap-to-postgres-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/aa9cc0aa64c7679d8d6160220406645c/plot_redcap_to_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_redcap_to_postgres.py</span></code></a></p>

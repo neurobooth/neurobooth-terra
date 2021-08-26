@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Create Postgres table using Neurobooth-terra. &#8212; neurobooth-terra  documentation</title>
+    <title>CRUD operations on Postgres tables using Neurobooth-terra &#8212; neurobooth-terra  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
@@ -71,7 +71,13 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Create Postgres table using Neurobooth-terra.</a></li>
+<li><a class="reference internal" href="#">CRUD operations on Postgres tables using Neurobooth-terra</a><ul>
+<li><a class="reference internal" href="#create">Create</a></li>
+<li><a class="reference internal" href="#read">Read</a></li>
+<li><a class="reference internal" href="#update">Update</a></li>
+<li><a class="reference internal" href="#delete">Delete</a></li>
+</ul>
+</li>
 </ul>
 </ul>
 </li>
@@ -112,11 +118,21 @@
 <p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-postgres-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<section class="sphx-glr-example-title" id="create-postgres-table-using-neurobooth-terra">
-<span id="sphx-glr-auto-examples-plot-postgres-py"></span><h1>Create Postgres table using Neurobooth-terra.<a class="headerlink" href="#create-postgres-table-using-neurobooth-terra" title="Permalink to this headline">¶</a></h1>
-<p>This example demonstrates how to create postgres table with neurobooth-terra.</p>
+<section class="sphx-glr-example-title" id="crud-operations-on-postgres-tables-using-neurobooth-terra">
+<span id="sphx-glr-auto-examples-plot-postgres-py"></span><h1>CRUD operations on Postgres tables using Neurobooth-terra<a class="headerlink" href="#crud-operations-on-postgres-tables-using-neurobooth-terra" title="Permalink to this headline">¶</a></h1>
+<p>This example demonstrates how to perform <a class="reference external" href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a> operations
+on postgres tables with neurobooth-terra.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Mainak Jas &lt;mjas@harvard.mgh.edu&gt;</span>
 </pre></div>
+</div>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#create" id="id1">Create</a></p></li>
+<li><p><a class="reference internal" href="#read" id="id2">Read</a></p></li>
+<li><p><a class="reference internal" href="#update" id="id3">Update</a></p></li>
+<li><p><a class="reference internal" href="#delete" id="id4">Delete</a></p></li>
+</ul>
 </div>
 <p>Let us first import the necessary functions.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">list_tables</span><span class="p">,</span> <span class="n">create_table</span><span class="p">,</span> <span class="n">drop_table</span><span class="p">,</span> <span class="n">Table</span>
@@ -126,10 +142,10 @@ to download the full example code</p>
 </pre></div>
 </div>
 <p>Then, we will create a connection using <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
                <span class="s2">&quot;password=&#39;neuroboothrocks&#39;&quot;</span><span class="p">)</span>
 
-<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a></a><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a><span class="p">)</span>
 </pre></div>
 </div>
 <p>We will drop tables if they already exist
@@ -140,9 +156,11 @@ even when changing some columns</p>
 <span class="n">drop_table</span><span class="p">(</span><span class="s1">&#39;consent&#39;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
 </pre></div>
 </div>
+<section id="create">
+<h2><a class="toc-backref" href="#id1">Create</a><a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h2>
 <p>Now we define the Table</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a> <span class="o">=</span> <span class="s1">&#39;subject&#39;</span>
-<span class="n">table_subject</span> <span class="o">=</span> <span class="n">create_table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a> <span class="o">=</span> <span class="s1">&#39;subject&#39;</span>
+<span class="n">table_subject</span> <span class="o">=</span> <span class="n">create_table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">,</span>
                              <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;first_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name_birth&#39;</span><span class="p">],</span>
                              <span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">])</span>
 </pre></div>
@@ -150,7 +168,43 @@ even when changing some columns</p>
 <p>and insert some data and retrieve the table as a dataframe</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">([(</span><span class="s1">&#39;x5dc&#39;</span><span class="p">,</span> <span class="s1">&#39;mainak&#39;</span><span class="p">,</span> <span class="s1">&#39;jas&#39;</span><span class="p">),</span>
                            <span class="p">(</span><span class="s1">&#39;y5d3&#39;</span><span class="p">,</span> <span class="s1">&#39;anoopum&#39;</span><span class="p">,</span> <span class="s1">&#39;gupta&#39;</span><span class="p">)])</span>
-<span class="n">df_subject</span> <span class="o">=</span> <span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can create another table and relate it to the other table using
+a foreign key</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a> <span class="o">=</span> <span class="s1">&#39;contact&#39;</span>
+<span class="n">table_contact</span> <span class="o">=</span> <span class="n">create_table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">,</span>
+                             <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">],</span>
+                             <span class="n">dtypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">],</span>
+                             <span class="n">foreign_key</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">subject_id</span><span class="o">=</span><span class="s1">&#39;subject&#39;</span><span class="p">))</span>
+<span class="n">table_contact</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">([(</span><span class="s1">&#39;x5dc&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;y5d3&#39;</span><span class="p">,)],</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="read">
+<h2><a class="toc-backref" href="#id2">Read</a><a class="headerlink" href="#read" title="Permalink to this headline">¶</a></h2>
+<p>We can get a list of tables in the database by doing</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">list_tables</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;test&#39;, &#39;test_consent&#39;, &#39;subject&#39;, &#39;contact&#39;, &#39;sensor_file_log&#39;]
+</pre></div>
+</div>
+<p>From the list of these table, we can select one to inspect by
+creating a <a class="reference internal" href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a> object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a> <span class="o">=</span> <span class="s1">&#39;subject&#39;</span>
+<span class="n">table_subject</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">table_subject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Table &quot;subject&quot; (subject_id, first_name_birth, last_name_birth)
+</pre></div>
+</div>
+<p>With this Table object, we can create a query that
+returns a dataframe</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df_subject</span> <span class="o">=</span> <span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df_subject</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -161,20 +215,12 @@ x5dc                 mainak             jas
 y5d3                anoopum           gupta
 </pre></div>
 </div>
-<p>If we know a table already exists and we want to make modifications to it,
-we can create a Table object first.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">table_subject</span><span class="p">)</span>
-</pre></div>
-</div>
-<p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Table &quot;subject&quot; (subject_id, first_name_birth, last_name_birth)
-</pre></div>
-</div>
-<p>Then, we can make changes such as adding a new column</p>
+</section>
+<section id="update">
+<h2><a class="toc-backref" href="#id3">Update</a><a class="headerlink" href="#update" title="Permalink to this headline">¶</a></h2>
+<p>We can make changes such as adding a new column</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;dob&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">)</span>
-<span class="n">df_subject</span> <span class="o">=</span> <span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_subject</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM subject&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
@@ -184,51 +230,51 @@ x5dc                 mainak             jas  None
 y5d3                anoopum           gupta  None
 </pre></div>
 </div>
-<p>We can create another table and relate it to the other table using
-a foreign key</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a> <span class="o">=</span> <span class="s1">&#39;contact&#39;</span>
-<span class="n">table</span> <span class="o">=</span> <span class="n">create_table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">,</span>
-                     <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">],</span>
-                     <span class="n">dtypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">,</span> <span class="s1">&#39;VARCHAR (255)&#39;</span><span class="p">],</span>
-                     <span class="n">foreign_key</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">subject_id</span><span class="o">=</span><span class="s1">&#39;subject&#39;</span><span class="p">))</span>
-<span class="n">table</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">([(</span><span class="s1">&#39;x5dc&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;y5d3&#39;</span><span class="p">,)],</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">])</span>
-<span class="n">df_contact</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_contact</span><span class="p">)</span>
+<p>To update a row in the table we can do</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span><span class="o">.</span><span class="n">update_row</span><span class="p">(</span><span class="s1">&#39;y5d3&#39;</span><span class="p">,</span>
+                         <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;first_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name_birth&#39;</span><span class="p">],</span>
+                         <span class="n">vals</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;anupum&#39;</span><span class="p">,</span> <span class="s1">&#39;gupta&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM subject&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           email
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           first_name_birth last_name_birth   dob
 subject_id
-x5dc        None
-y5d3        None
+x5dc                 mainak             jas  None
+y5d3                 anupum           gupta  None
 </pre></div>
 </div>
+</section>
+<section id="delete">
+<h2><a class="toc-backref" href="#id4">Delete</a><a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h2>
 <p>We can also delete rows in our table</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table</span><span class="o">.</span><span class="n">delete_row</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="s2">&quot;subject_id = &#39;x5dc&#39;&quot;</span><span class="p">)</span>
-<span class="n">df_contact</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_contact</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span><span class="o">.</span><span class="n">delete_row</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="s2">&quot;subject_id = &#39;yd53&#39;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SELECT * FROM &quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           email
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           first_name_birth last_name_birth   dob
 subject_id
-y5d3        None
+x5dc                 mainak             jas  None
+y5d3                 anupum           gupta  None
 </pre></div>
 </div>
-<p>Finally, we can list the tables in the database</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">list_tables</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+<p>To delete an entire table, we can do</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">drop_table</span><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+<span class="n">list_tables</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;sensor&#39;, &#39;device&#39;, &#39;study&#39;, &#39;register&#39;, &#39;clinical&#39;, &#39;demograph&#39;, &#39;human_obs_log&#39;, &#39;observer&#39;, &#39;human_obs_data&#39;, &#39;instruction&#39;, &#39;tech_obs_data&#39;, &#39;stimulus&#39;, &#39;tech_obs_log&#39;, &#39;collection&#39;, &#39;test&#39;, &#39;subject&#39;, &#39;contact&#39;]
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;test&#39;, &#39;test_consent&#39;, &#39;contact&#39;, &#39;sensor_file_log&#39;]
 </pre></div>
 </div>
 <p>Don’t forget to close the connection once done!</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">table_subject</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">table_contact</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.223 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.003 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d7f6b1c1accfe75c32c35dfe6b733449/plot_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres.py</span></code></a></p>
@@ -238,6 +284,7 @@ y5d3        None
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
 </section>
 
 

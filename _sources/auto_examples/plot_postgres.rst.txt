@@ -18,13 +18,14 @@
 .. _sphx_glr_auto_examples_plot_postgres.py:
 
 
-=============================================
-Create Postgres table using Neurobooth-terra.
-=============================================
+=========================================================
+CRUD operations on Postgres tables using Neurobooth-terra
+=========================================================
 
-This example demonstrates how to create postgres table with neurobooth-terra.
+This example demonstrates how to perform `CRUD`_ operations
+on postgres tables with neurobooth-terra.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-11
+.. GENERATED FROM PYTHON SOURCE LINES 9-12
 
 .. code-block:: default
 
@@ -38,11 +39,17 @@ This example demonstrates how to create postgres table with neurobooth-terra.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 12-13
+.. GENERATED FROM PYTHON SOURCE LINES 13-16
+
+.. contents:: Table of Contents
+   :local:
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 18-19
 
 Let us first import the necessary functions.
 
-.. GENERATED FROM PYTHON SOURCE LINES 13-19
+.. GENERATED FROM PYTHON SOURCE LINES 19-25
 
 .. code-block:: default
 
@@ -59,11 +66,11 @@ Let us first import the necessary functions.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-21
+.. GENERATED FROM PYTHON SOURCE LINES 26-27
 
 Then, we will create a connection using ``psycopg2``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-26
+.. GENERATED FROM PYTHON SOURCE LINES 27-32
 
 .. code-block:: default
 
@@ -79,13 +86,13 @@ Then, we will create a connection using ``psycopg2``.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-30
+.. GENERATED FROM PYTHON SOURCE LINES 33-36
 
 We will drop tables if they already exist
 this is just for convenience so we can re-run this script
 even when changing some columns
 
-.. GENERATED FROM PYTHON SOURCE LINES 30-34
+.. GENERATED FROM PYTHON SOURCE LINES 36-40
 
 .. code-block:: default
 
@@ -100,11 +107,13 @@ even when changing some columns
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-36
+.. GENERATED FROM PYTHON SOURCE LINES 41-44
 
+Create
+------
 Now we define the Table
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-41
+.. GENERATED FROM PYTHON SOURCE LINES 44-49
 
 .. code-block:: default
 
@@ -120,16 +129,111 @@ Now we define the Table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 42-43
+.. GENERATED FROM PYTHON SOURCE LINES 50-51
 
 and insert some data and retrieve the table as a dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-48
+.. GENERATED FROM PYTHON SOURCE LINES 51-54
 
 .. code-block:: default
 
     table_subject.insert_rows([('x5dc', 'mainak', 'jas'),
                                ('y5d3', 'anoopum', 'gupta')])
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 55-57
+
+We can create another table and relate it to the other table using
+a foreign key
+
+.. GENERATED FROM PYTHON SOURCE LINES 57-64
+
+.. code-block:: default
+
+    table_id = 'contact'
+    table_contact = create_table(table_id, conn,
+                                 column_names=['subject_id', 'email'],
+                                 dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
+                                 foreign_key=dict(subject_id='subject'))
+    table_contact.insert_rows([('x5dc',), ('y5d3',)], ['subject_id'])
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 65-68
+
+Read
+----
+We can get a list of tables in the database by doing
+
+.. GENERATED FROM PYTHON SOURCE LINES 68-70
+
+.. code-block:: default
+
+    list_tables(conn)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    ['test', 'test_consent', 'subject', 'contact', 'sensor_file_log']
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 71-73
+
+From the list of these table, we can select one to inspect by
+creating a :class:`~neurobooth_terra.Table` object.
+
+.. GENERATED FROM PYTHON SOURCE LINES 73-77
+
+.. code-block:: default
+
+    table_id = 'subject'
+    table_subject = Table(table_id, conn)
+    print(table_subject)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    Table "subject" (subject_id, first_name_birth, last_name_birth)
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 78-80
+
+With this Table object, we can create a query that
+returns a dataframe
+
+.. GENERATED FROM PYTHON SOURCE LINES 80-83
+
+.. code-block:: default
+
     df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
     print(df_subject)
 
@@ -151,44 +255,18 @@ and insert some data and retrieve the table as a dataframe
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 49-51
+.. GENERATED FROM PYTHON SOURCE LINES 84-87
 
-If we know a table already exists and we want to make modifications to it,
-we can create a Table object first.
+Update
+------
+We can make changes such as adding a new column
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-54
-
-.. code-block:: default
-
-    table_subject = Table(table_id, conn)
-    print(table_subject)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    Table "subject" (subject_id, first_name_birth, last_name_birth)
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 55-56
-
-Then, we can make changes such as adding a new column
-
-.. GENERATED FROM PYTHON SOURCE LINES 56-60
+.. GENERATED FROM PYTHON SOURCE LINES 87-90
 
 .. code-block:: default
 
     table_subject.add_column('dob', 'VARCHAR (255)')
-    df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
-    print(df_subject)
+    print(table_subject.query('SELECT * FROM subject'))
 
 
 
@@ -208,23 +286,18 @@ Then, we can make changes such as adding a new column
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-63
+.. GENERATED FROM PYTHON SOURCE LINES 91-92
 
-We can create another table and relate it to the other table using
-a foreign key
+To update a row in the table we can do
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-72
+.. GENERATED FROM PYTHON SOURCE LINES 92-97
 
 .. code-block:: default
 
-    table_id = 'contact'
-    table = create_table(table_id, conn,
-                         column_names=['subject_id', 'email'],
-                         dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
-                         foreign_key=dict(subject_id='subject'))
-    table.insert_rows([('x5dc',), ('y5d3',)], ['subject_id'])
-    df_contact = table.query(f'SELECT * FROM "{table_id}";')
-    print(df_contact)
+    table_subject.update_row('y5d3',
+                             cols=['first_name_birth', 'last_name_birth'],
+                             vals=('anupum', 'gupta'))
+    print(table_subject.query('SELECT * FROM subject'))
 
 
 
@@ -236,25 +309,26 @@ a foreign key
 
  .. code-block:: none
 
-               email
-    subject_id      
-    x5dc        None
-    y5d3        None
+               first_name_birth last_name_birth   dob
+    subject_id                                       
+    x5dc                 mainak             jas  None
+    y5d3                 anupum           gupta  None
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-74
+.. GENERATED FROM PYTHON SOURCE LINES 98-101
 
+Delete
+------
 We can also delete rows in our table
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-78
+.. GENERATED FROM PYTHON SOURCE LINES 101-104
 
 .. code-block:: default
 
-    table.delete_row(condition="subject_id = 'x5dc'")
-    df_contact = table.query(f'SELECT * FROM "{table_id}";')
-    print(df_contact)
+    table_subject.delete_row(condition="subject_id = 'yd53'")
+    print(table_subject.query(f'SELECT * FROM "{table_id}";'))
 
 
 
@@ -266,27 +340,28 @@ We can also delete rows in our table
 
  .. code-block:: none
 
-               email
-    subject_id      
-    y5d3        None
+               first_name_birth last_name_birth   dob
+    subject_id                                       
+    x5dc                 mainak             jas  None
+    y5d3                 anupum           gupta  None
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-80
+.. GENERATED FROM PYTHON SOURCE LINES 105-106
 
-Finally, we can list the tables in the database
+To delete an entire table, we can do
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-82
+.. GENERATED FROM PYTHON SOURCE LINES 106-108
 
 .. code-block:: default
 
+    drop_table('subject', conn)
     list_tables(conn)
 
 
 
 
-
 .. rst-class:: sphx-glr-script-out
 
  Out:
@@ -294,19 +369,20 @@ Finally, we can list the tables in the database
  .. code-block:: none
 
 
-    ['sensor', 'device', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'collection', 'test', 'subject', 'contact']
+    ['test', 'test_consent', 'contact', 'sensor_file_log']
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 83-84
+.. GENERATED FROM PYTHON SOURCE LINES 109-110
 
 Don't forget to close the connection once done!
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-86
+.. GENERATED FROM PYTHON SOURCE LINES 110-114
 
 .. code-block:: default
 
-    table.close()
+    table_subject.close()
+    table_contact.close()
     conn.close()
 
 
@@ -316,9 +392,14 @@ Don't forget to close the connection once done!
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 115-116
+
+.. _CRUD: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
+
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.223 seconds)
+   **Total running time of the script:** ( 0 minutes  1.003 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

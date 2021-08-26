@@ -24,7 +24,7 @@ Ingest table from Redcap into Postgres
 
 This example demonstrates how to create table from Redcap.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-19
+.. GENERATED FROM PYTHON SOURCE LINES 8-20
 
 .. code-block:: default
 
@@ -37,6 +37,7 @@ This example demonstrates how to create table from Redcap.
     import json
     from redcap import Project, RedcapError
 
+    from neurobooth_terra import Table
     from neurobooth_terra.ingest_redcap import fetch_survey, infer_schema
 
 
@@ -46,20 +47,21 @@ This example demonstrates how to create table from Redcap.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-24
+.. GENERATED FROM PYTHON SOURCE LINES 21-25
 
 Let us first define the surveys and their survey IDs that we want to fetch.
 This information can be found on Redcap. To fetch Redcap data, you will
 also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 You will need to request for the Redcap API token from Redcap interface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-36
+.. GENERATED FROM PYTHON SOURCE LINES 25-38
 
 .. code-block:: default
 
 
     survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
-                  'clinical': 84431, 'falls': 85031}
+                  'clinical': 84431, 'falls': 85031, 'guid': 84426}
+    survey_ids = {'guid': 84426}
 
     URL = 'https://redcap.partners.org/redcap/api/'
     API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -76,14 +78,14 @@ You will need to request for the Redcap API token from Redcap interface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-41
+.. GENERATED FROM PYTHON SOURCE LINES 39-43
 
 Next, we fetch the metadata table. This table is the master table
 that contains columns and their informations. It can be used to infer
 information about the columns: example, what choices are available for a
 particular question.
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-51
+.. GENERATED FROM PYTHON SOURCE LINES 43-53
 
 .. code-block:: default
 
@@ -113,11 +115,11 @@ particular question.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-53
+.. GENERATED FROM PYTHON SOURCE LINES 54-55
 
 Finally, we loop over the surveys and print out the schema.
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-58
+.. GENERATED FROM PYTHON SOURCE LINES 55-61
 
 .. code-block:: default
 
@@ -130,331 +132,273 @@ Finally, we loop over the surveys and print out the schema.
 
 
 
+
 .. rst-class:: sphx-glr-script-out
 
  Out:
 
  .. code-block:: none
 
-    Fetching report consent from Redcap
+    Fetching report guid from Redcap
     [Done]
+    Skipping redcap_event_name
     Skipping redcap_repeat_instrument
     Skipping redcap_repeat_instance
-    Fetching report contact from Redcap
-    [Done]
-    Skipping redcap_repeat_instrument
-    Skipping redcap_repeat_instance
-    Skipping contact_information_complete
-    Fetching report demographics from Redcap
-    [Done]
-    Skipping redcap_repeat_instrument
-    Skipping redcap_repeat_instance
-    Skipping race___1
-    Skipping race___2
-    Skipping race___3
-    Skipping race___4
-    Skipping race___5
-    Skipping race___6
-    Skipping race___7
-    Skipping health_history___1
-    Skipping health_history___2
-    Skipping health_history___3
-    Skipping health_history___4
-    Skipping health_history___5
-    Skipping health_history___6
-    Skipping health_history___diabetes
-    Skipping health_history___7
-    Skipping health_history___8
-    Skipping health_history___9
-    Skipping health_history___10
-    Skipping health_history___11
-    Skipping health_history___12
-    Skipping health_history___13
-    Skipping health_history___14
-    Skipping health_history___15
-    Skipping health_history___16
-    Skipping health_history___17
-    Skipping health_history___18
-    Skipping health_history___19
-    Skipping health_history___20
-    Skipping health_history___21
-    Skipping health_history___22
-    Skipping health_history___23
-    Skipping health_history___24
-    Skipping health_history___25
-    Skipping health_history___26
-    Skipping health_history___27
-    Skipping health_history___28
-    Skipping health_history___29
-    Skipping health_history___30
-    Skipping health_history___31
-    Skipping health_history___32
-    Skipping health_history___33
-    Skipping health_history___34
-    Skipping health_history___35
-    Skipping health_history___36
-    Skipping health_history___37
-    Skipping demographics_complete
-    Fetching report clinical from Redcap
-    [Done]
-    Skipping redcap_repeat_instrument
-    Skipping redcap_repeat_instance
-    Skipping primary_diagnosis___0
-    Skipping primary_diagnosis___1
-    Skipping primary_diagnosis___2
-    Skipping primary_diagnosis___3
-    Skipping primary_diagnosis___4
-    Skipping primary_diagnosis___5
-    Skipping primary_diagnosis___6
-    Skipping primary_diagnosis___7
-    Skipping primary_diagnosis___8
-    Skipping primary_diagnosis___9
-    Skipping primary_diagnosis___10
-    Skipping primary_diagnosis___12
-    Skipping primary_diagnosis___13
-    Skipping primary_diagnosis___14
-    Skipping primary_diagnosis___15
-    Skipping primary_diagnosis___16
-    Skipping primary_diagnosis___17
-    Skipping primary_diagnosis___18
-    Skipping primary_diagnosis___19
-    Skipping primary_diagnosis___20
-    Skipping primary_diagnosis___21
-    Skipping primary_diagnosis___22
-    Skipping clinical_information_survey_complete
-    Fetching report falls from Redcap
-    [Done]
-    Skipping redcap_repeat_instrument
-    Skipping redcap_repeat_instance
-    Skipping neurobooth_falls_complete
     {
-        "falls_12mo": {
+        "birthplace": {
             "choices": {},
-            "field_type": "yesno",
+            "field_type": "text",
             "mode": "NULLABLE",
-            "name": "falls_12mo",
-            "question": "Have you fallen in the past 12 months?",
+            "name": "birthplace",
+            "question": "Name of City/municipality at birth (as it appears on birth certificate)",
+            "type": "string"
+        },
+        "country_of_birth": {
+            "choices": {
+                "1": "United States of America",
+                "10": "Austria",
+                "100": "Macedonia",
+                "101": "Madagascar",
+                "102": "Malawi",
+                "103": "Malaysia",
+                "104": "Maldives",
+                "105": "Mali",
+                "106": "Malta",
+                "107": "Marshall Islands",
+                "108": "Mauritania",
+                "109": "Mauritius",
+                "11": "Azerbaijan",
+                "110": "Mexico",
+                "111": "Moldova",
+                "112": "Monaco",
+                "113": "Mongolia",
+                "114": "Montenegro",
+                "115": "Morocco",
+                "116": "Mozambique",
+                "117": "Myanmar (Burma)",
+                "118": "Namibia",
+                "119": "Nauru",
+                "12": "The Bahamas",
+                "120": "Nepal",
+                "121": "Netherlands",
+                "122": "New Zealand",
+                "123": "Nicaragua",
+                "124": "Niger",
+                "125": "Nigeria",
+                "126": "Norway",
+                "127": "Oman",
+                "128": "Pakistan",
+                "129": "Palau",
+                "13": "Bahrain",
+                "130": "Panama",
+                "131": "Papua New Guinea",
+                "132": "Paraguay",
+                "133": "Peru",
+                "134": "Philippines",
+                "135": "Poland",
+                "136": "Portugal",
+                "137": "Qatar",
+                "138": "Romania",
+                "139": "Russia",
+                "14": "Bangladesh",
+                "140": "Rwanda",
+                "141": "Saint Kitts and Nevis",
+                "142": "Saint Lucia",
+                "143": "Saint Vincent and the Grenadines",
+                "144": "Samoa",
+                "145": "San Marino",
+                "146": "Sao Tome and Principe",
+                "147": "Saudi Arabia",
+                "148": "Senegal",
+                "149": "Serbia",
+                "15": "Barbados",
+                "150": "Seychelles",
+                "151": "Sierra Leone",
+                "152": "Singapore",
+                "153": "Slovakia",
+                "154": "Slovenia",
+                "155": "Solomon Islands",
+                "156": "Somalia",
+                "157": "South Africa",
+                "158": "South Sudan",
+                "159": "Spain",
+                "16": "Belarus",
+                "160": "Sri Lanka",
+                "161": "Sudan",
+                "162": "Suriname",
+                "163": "Swaziland",
+                "164": "Sweden",
+                "165": "Switzerland",
+                "166": "Syria",
+                "167": "Taiwan",
+                "168": "Tajikistan",
+                "169": "Tanzania",
+                "17": "Belgium",
+                "170": "Thailand",
+                "171": "Togo",
+                "172": "Tonga",
+                "173": "Trinidad and Tobago",
+                "174": "Tunisia",
+                "175": "Turkey",
+                "176": "Turkmenistan",
+                "177": "Tuvalu",
+                "178": "Uganda",
+                "179": "Ukraine",
+                "18": "Belize",
+                "180": "United Arab Emirates",
+                "181": "United Kingdom",
+                "183": "Uruguay",
+                "184": "Uzbekistan",
+                "185": "Vanuatu",
+                "186": "Vatican City (Holy See)",
+                "187": "Venezuela",
+                "188": "Vietnam",
+                "189": "Yemen",
+                "19": "Benin",
+                "190": "Zambia",
+                "191": "Zimbabwe",
+                "192": "Republic of the Congo",
+                "193": "North Korea",
+                "194": "South Korea",
+                "195": "Afghanistan",
+                "2": "Albania",
+                "20": "Bhutan",
+                "21": "Bolivia",
+                "22": "Bosnia and Herzegovina",
+                "23": "Botswana",
+                "24": "Brazil",
+                "25": "Brunei",
+                "26": "Bulgaria",
+                "27": "Burkina Faso",
+                "28": "Burundi",
+                "29": "Cambodia",
+                "3": "Algeria",
+                "30": "Cameroon",
+                "31": "Canada",
+                "32": "Cape Verde",
+                "33": "Central African Republic",
+                "34": "Chad",
+                "35": "Chile",
+                "36": "China",
+                "37": "Colombia",
+                "38": "Comoros",
+                "39": "Costa Rica",
+                "4": "Andorra",
+                "40": "Cote d'Ivoire",
+                "41": "Croatia",
+                "42": "Cuba",
+                "43": "Cyprus",
+                "44": "Czech Republic",
+                "45": "Denmark",
+                "46": "Djibouti",
+                "47": "Dominica",
+                "48": "Dominican Republic",
+                "49": "East Timor (Timor-Leste)",
+                "5": "Angola",
+                "50": "Ecuador",
+                "51": "Egypt",
+                "52": "El Salvador",
+                "53": "Equatorial Guinea",
+                "54": "Eritrea",
+                "55": "Estonia",
+                "56": "Ethiopia",
+                "57": "Fiji",
+                "58": "Finland",
+                "59": "France",
+                "6": "Antigua and Barbuda",
+                "60": "Gabon",
+                "61": "The Gambia",
+                "62": "Georgia",
+                "63": "Germany",
+                "64": "Ghana",
+                "65": "Greece",
+                "66": "Grenada",
+                "67": "Guatemala",
+                "68": "Guinea",
+                "69": "Guinea-Bissau",
+                "7": "Argentina",
+                "70": "Guyana",
+                "71": "Haiti",
+                "72": "Honduras",
+                "73": "Hungary",
+                "74": "Iceland",
+                "75": "India",
+                "76": "Indonesia",
+                "77": "Iran",
+                "78": "Iraq",
+                "79": "Ireland",
+                "8": "Armenia",
+                "80": "Israel",
+                "81": "Italy",
+                "82": "Jamaica",
+                "83": "Japan",
+                "84": "Jordan",
+                "85": "Kazakhstan",
+                "86": "Kenya",
+                "87": "Kiribati",
+                "88": "Kosovo",
+                "89": "Kuwait",
+                "9": "Australia",
+                "90": "Kyrgyzstan",
+                "91": "Laos",
+                "92": "Latvia",
+                "93": "Lebanon",
+                "94": "Lesotho",
+                "95": "Liberia",
+                "96": "Libya",
+                "97": "Liechtenstein",
+                "98": "Lithuania",
+                "99": "Luxembourg",
+                "Micronesia": "Federated States of"
+            },
+            "field_type": "dropdown",
+            "mode": "NULLABLE",
+            "name": "country_of_birth",
+            "question": "Country of Birth",
             "type": "float"
         },
-        "falls_3mo": {
+        "date_of_birth": {
             "choices": {},
-            "field_type": "yesno",
+            "field_type": "text",
             "mode": "NULLABLE",
-            "name": "falls_3mo",
-            "question": "Have you fallen in the past 3 months?",
-            "type": "float"
+            "name": "date_of_birth",
+            "question": "Date of Birth",
+            "type": "datetime"
         },
-        "falls_6mo": {
+        "first_name_birth": {
             "choices": {},
-            "field_type": "yesno",
+            "field_type": "text",
             "mode": "NULLABLE",
-            "name": "falls_6mo",
-            "question": "Have you fallen in the past 6 months?",
-            "type": "float"
+            "name": "first_name_birth",
+            "question": "First Name at Birth",
+            "type": "string"
         },
-        "n_falls_12_mo": {
+        "gender_at_birth": {
             "choices": {
-                "0": "1-3 times",
-                "1": "4-6 times",
-                "2": "6-10 times",
-                "3": "10-15 times",
-                "4": "more than 15 times"
+                "1": "Male",
+                "2": "Female"
             },
             "field_type": "radio",
             "mode": "NULLABLE",
-            "name": "n_falls_12_mo",
-            "question": "How many times have you fallen in the past 12 months?",
+            "name": "gender_at_birth",
+            "question": "Physical Gender at birth",
             "type": "float"
         },
-        "n_falls_3_mo": {
-            "choices": {
-                "0": "1-3 times",
-                "1": "4-6 times",
-                "2": "6-10 times",
-                "3": "10-15 times",
-                "4": "more than 15 times"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "n_falls_3_mo",
-            "question": "How many times have you fallen in the past 3 months?",
-            "type": "float"
-        },
-        "n_falls_6_mo": {
-            "choices": {
-                "0": "1-3 times",
-                "1": "4-6 times",
-                "2": "6-10 times",
-                "3": "10-15 times",
-                "4": "more than 15 times"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "n_falls_6_mo",
-            "question": "How many times have you fallen in the past 6 months?",
-            "type": "float"
-        },
-        "neurobooth_falls_complete": {
+        "last_name_birth": {
             "choices": {},
-            "field_type": "",
+            "field_type": "text",
             "mode": "NULLABLE",
-            "name": "neurobooth_falls_complete",
-            "question": "",
-            "type": "float"
+            "name": "last_name_birth",
+            "question": "Last Name at Birth",
+            "type": "string"
         },
-        "prom_ataxi_27": {
-            "choices": {
-                "0": "Without any difficulty",
-                "1": "With a little difficulty",
-                "2": "With some difficulty",
-                "3": "With much difficulty",
-                "4": "Unable to do"
-            },
-            "field_type": "radio",
+        "middle_name_birth": {
+            "choices": {},
+            "field_type": "text",
             "mode": "NULLABLE",
-            "name": "prom_ataxi_27",
-            "question": "I can walk without assistance (without a cane, walker, personal aid, wheelchair)",
-            "type": "float"
-        },
-        "prom_ataxia_1": {
-            "choices": {
-                "0": "Never",
-                "1": "Rarely",
-                "2": "Sometimes",
-                "3": "Often",
-                "4": "Always"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_1",
-            "question": "I feel unsteady on my feet when standing/walking on flat surfaces",
-            "type": "float"
-        },
-        "prom_ataxia_2": {
-            "choices": {
-                "0": "Never",
-                "1": "Rarely",
-                "2": "Sometimes",
-                "3": "Often",
-                "4": "Always"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_2",
-            "question": "I lose my balance walking/hiking on uneven surfaces, including hills and sand/beach",
-            "type": "float"
-        },
-        "prom_ataxia_26": {
-            "choices": {
-                "0": "Without any difficulty",
-                "1": "With a little difficulty",
-                "2": "With some difficulty",
-                "3": "With much difficulty",
-                "4": "Unable to do"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_26",
-            "question": "I can carry things in my arms while walking (e.g., furniture, packages, babies, etc.)",
-            "type": "float"
-        },
-        "prom_ataxia_28": {
-            "choices": {
-                "0": "Without any difficulty",
-                "1": "With a little difficulty",
-                "2": "With some difficulty",
-                "3": "With much difficulty",
-                "4": "Unable to do"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_28",
-            "question": "I can catch myself and prevent a fall when I stumble",
-            "type": "float"
-        },
-        "prom_ataxia_3": {
-            "choices": {
-                "0": "Never",
-                "1": "Rarely",
-                "2": "Sometimes",
-                "3": "Often",
-                "4": "Always"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_3",
-            "question": "I feel as though I may lose my balance and fall",
-            "type": "float"
-        },
-        "prom_ataxia_30": {
-            "choices": {
-                "0": "Without any difficulty",
-                "1": "With a little difficulty",
-                "2": "With some difficulty",
-                "3": "With much difficulty",
-                "4": "Unable to do"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_30",
-            "question": "I can bend down and pick something off the floor without help",
-            "type": "float"
-        },
-        "prom_ataxia_31": {
-            "choices": {
-                "0": "Without any difficulty",
-                "1": "With a little difficulty",
-                "2": "With some difficulty",
-                "3": "With much difficulty",
-                "4": "Unable to do"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_31",
-            "question": "I can get up off the floor without help",
-            "type": "float"
-        },
-        "prom_ataxia_4": {
-            "choices": {
-                "0": "Never",
-                "1": "Rarely",
-                "2": "Sometimes",
-                "3": "Often",
-                "4": "Always"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_4",
-            "question": "I lose my balance on stairs/ladders/stepstools",
-            "type": "float"
-        },
-        "prom_ataxia_5": {
-            "choices": {
-                "0": "Never",
-                "1": "Rarely",
-                "2": "Sometimes",
-                "3": "Often",
-                "4": "Always"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_5",
-            "question": "I am clumsy",
-            "type": "float"
-        },
-        "prom_ataxia_6": {
-            "choices": {
-                "0": "Never",
-                "1": "Rarely",
-                "2": "Sometimes",
-                "3": "Often",
-                "4": "Always"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "prom_ataxia_6",
-            "question": "I find myself stumbling and/or falling",
-            "type": "float"
+            "name": "middle_name_birth",
+            "question": "Middle Name at Birth",
+            "type": "string"
         },
         "record_id": {
             "choices": {},
@@ -463,6 +407,14 @@ Finally, we loop over the surveys and print out the schema.
             "name": "record_id",
             "question": "Subject Identification",
             "type": "integer"
+        },
+        "redcap_event_name": {
+            "choices": {},
+            "field_type": "",
+            "mode": "NULLABLE",
+            "name": "redcap_event_name",
+            "question": "",
+            "type": "string"
         },
         "redcap_repeat_instance": {
             "choices": {},
@@ -478,17 +430,85 @@ Finally, we loop over the surveys and print out the schema.
             "mode": "NULLABLE",
             "name": "redcap_repeat_instrument",
             "question": "",
-            "type": "string"
+            "type": "float"
         }
     }
 
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 62-63
+
+Now, we will prepare the subject table in postgres
+
+.. GENERATED FROM PYTHON SOURCE LINES 63-88
+
+.. code-block:: default
+
+
+    import hashlib
+    import datetime
+
+    df = fetch_survey(project, 'guid', survey_ids['guid'])
+    df = df[df['guid_information_complete'] == 2]  # take only complete rows
+
+    rows = list()
+    for df_row in df.iterrows():
+        df_row = df_row[1]
+        subject_id = df_row['guid_firstname'] + df_row['guid_lastname']
+        subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
+        dob = datetime.date(year=int(df_row['guid_yearofbirth']),
+                            month=int(df_row['guid_monthofbirth']),
+                            day=int(df_row['guid_dayofbirth']))
+        dob = dob.strftime("%y-%m-%d")
+        rows.append((subject_id,
+                     df_row['guid_firstname'],
+                     df_row['guid_middlename'],
+                     df_row['guid_lastname'],
+                     dob,
+                     df_row['guid_countryofbirth'],
+                     df_row['guid_birthgender']))
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/Users/mainak/Documents/github_repos/neurobooth-terra/examples/plot_redcap_to_postgres.py", line 68, in <module>
+        df = df[df['guid_information_complete'] == 2]  # take only complete rows
+      File "/Users/mainak/anaconda3/envs/neurobooth/lib/python3.8/site-packages/pandas/core/frame.py", line 3024, in __getitem__
+        indexer = self.columns.get_loc(key)
+      File "/Users/mainak/anaconda3/envs/neurobooth/lib/python3.8/site-packages/pandas/core/indexes/base.py", line 3082, in get_loc
+        raise KeyError(key) from err
+    KeyError: 'guid_information_complete'
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 89-90
+
+Now, we will prepare the subject table in postgres
+
+.. GENERATED FROM PYTHON SOURCE LINES 90-98
+
+.. code-block:: default
+
+
+    import psycopg2
+
+    connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
+                   "password='neuroboothrocks'")
+
+    conn = psycopg2.connect(connect_str)
+    table_subject = Table('subject', conn, primary_key='subject_id')
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  5.040 seconds)
+   **Total running time of the script:** ( 0 minutes  1.549 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_redcap_to_postgres.py:

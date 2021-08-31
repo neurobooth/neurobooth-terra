@@ -15,9 +15,11 @@
    
       ~Table.__init__
       ~Table.add_column
+      ~Table.alter_column
       ~Table.close
       ~Table.delete_row
       ~Table.drop
+      ~Table.drop_column
       ~Table.insert_rows
       ~Table.query
       ~Table.update_row

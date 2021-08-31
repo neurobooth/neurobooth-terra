@@ -193,7 +193,7 @@ We can get a list of tables in the database by doing
  .. code-block:: none
 
 
-    ['test', 'test_consent', 'subject', 'contact', 'sensor_file_log']
+    ['subject', 'contact', 'test_consent', 'sensor_file_log', 'test']
 
 
 
@@ -350,9 +350,38 @@ We can also delete rows in our table
 
 .. GENERATED FROM PYTHON SOURCE LINES 105-106
 
+Or drop columns
+
+.. GENERATED FROM PYTHON SOURCE LINES 106-109
+
+.. code-block:: default
+
+    table_contact.drop_column('subject_id')
+    print(table_subject.query(f'SELECT * FROM "{table_id}";'))
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+               first_name_birth last_name_birth   dob
+    subject_id                                       
+    x5dc                 mainak             jas  None
+    y5d3                 anupum           gupta  None
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 110-111
+
 To delete an entire table, we can do
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-108
+.. GENERATED FROM PYTHON SOURCE LINES 111-113
 
 .. code-block:: default
 
@@ -369,15 +398,15 @@ To delete an entire table, we can do
  .. code-block:: none
 
 
-    ['test', 'test_consent', 'contact', 'sensor_file_log']
+    ['contact', 'test_consent', 'sensor_file_log', 'test']
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-110
+.. GENERATED FROM PYTHON SOURCE LINES 114-115
 
 Don't forget to close the connection once done!
 
-.. GENERATED FROM PYTHON SOURCE LINES 110-114
+.. GENERATED FROM PYTHON SOURCE LINES 115-119
 
 .. code-block:: default
 
@@ -392,14 +421,14 @@ Don't forget to close the connection once done!
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-116
+.. GENERATED FROM PYTHON SOURCE LINES 120-121
 
 .. _CRUD: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.003 seconds)
+   **Total running time of the script:** ( 0 minutes  0.798 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

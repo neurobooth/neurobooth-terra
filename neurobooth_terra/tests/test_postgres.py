@@ -59,6 +59,18 @@ def test_psql_connection():
         table_test.update_row('blah', ('mainak',),
                               ['first_name_birth', 'last_name_birth'])
 
+    # test dropping a column
+    table_test.drop_column(col='subject_id')
+    assert 'subject_id' not in table_test.column_names
+
+    # test adding an auto-incrementing default value to the column
+    table_test.add_column(col='subject_id', dtype='VARCHAR')
+    table_test.alter_column(col='subject_id', default=dict(prefix='SUBJ'))
+    table_test.insert_rows([('mainak', 'jas', 21)],
+                           cols=['first_name_birth', 'last_name_birth', 'age'])
+    df = table_test.query('SELECT * from test')
+    assert 'SUBJ1' in df.index
+
     # test insertion of date
     table_id = 'test_consent'
     drop_table(table_id, conn)

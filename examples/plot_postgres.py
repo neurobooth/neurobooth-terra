@@ -102,6 +102,11 @@ table_subject.delete_row(condition="subject_id = 'yd53'")
 print(table_subject.query(f'SELECT * FROM "{table_id}";'))
 
 # %%
+# Or drop columns
+table_contact.drop_column('subject_id')
+print(table_subject.query(f'SELECT * FROM "{table_id}";'))
+
+# %%
 # To delete an entire table, we can do
 drop_table('subject', conn)
 list_tables(conn)

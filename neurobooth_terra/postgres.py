@@ -191,6 +191,41 @@ class Table:
     def close(self):
         self.cursor.close()
 
+    def alter_column(self, col, default=None):
+        """Alter a column in the table.
+
+        Parameters
+        ----------
+        col : str
+            The column name.
+        default : str | dict | None
+            The default value of the column.
+            If you want to specify a prefix that
+            autoincrements, you can say:
+            dict(prefix=prefix), e.g.,
+            dict(prefix='SUBJECT')
+        """
+        cmd = f"ALTER TABLE {self.table_id} ALTER COLUMN {col} "
+        if isinstance(default, str):
+            cmd += f'SET DEFAULT {default}'
+            execute(self.conn, self.cursor, cmd)
+        elif isinstance(default, dict):
+            sequence_name = f'{self.table_id}_{col}'
+            seq_cmd1 = f'DROP SEQUENCE IF EXISTS {sequence_name}'
+            seq_cmd2 = f'CREATE SEQUENCE  IF NOT EXISTS {sequence_name}'
+            execute(self.conn, self.cursor, seq_cmd1)
+            execute(self.conn, self.cursor, seq_cmd2)
+
+            prefix = default['prefix']
+            cmd += f"SET DEFAULT '{prefix}' || nextval('{sequence_name}')"
+            execute(self.conn, self.cursor, cmd)
+
+            constraint_name = f'{sequence_name}_chk'
+            check_cmd = (f"ALTER TABLE {self.table_id} "
+                         f"ADD CONSTRAINT {constraint_name} "
+                         f"CHECK ({col} ~ '^{prefix}[0-9]+$')")
+            execute(self.conn, self.cursor, check_cmd)
+
     def add_column(self, col, dtype):
         """Add a new column to the table.
 
@@ -205,6 +240,21 @@ class Table:
         cmd += f'ADD COLUMN {col} {dtype};'
         execute(self.conn, self.cursor, cmd)
         self.column_names.append(col)
+
+    def drop_column(self, col):
+        """Drop a column from the table.
+
+        Parameters
+        ----------
+        col : str
+            The column name.
+        """
+        cmd = f'ALTER TABLE {self.table_id} '
+        cmd += f'DROP COLUMN {col} '
+        execute(self.conn, self.cursor, cmd)
+
+        idx = self.column_names.index(col)
+        del self.column_names[idx], self.data_types[idx]
 
     def insert_rows(self, vals, cols=None):
         """Manual insertion into tables

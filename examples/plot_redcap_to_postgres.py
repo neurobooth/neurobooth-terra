@@ -84,16 +84,32 @@ for df_row in df.iterrows():
                  df_row['last_name_birth'],
                  df_row['date_of_birth'],
                  df_row['country_of_birth'],
-                 df_row['gender_at_birth']))
+                 df_row['gender_at_birth'],
+                 df_row['birthplace']))
 
 ###############################################################################
 # Now, we will prepare the subject table in postgres
 
 import psycopg2
+from sshtunnel import SSHTunnelForwarder
 
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
+# Create an SSH tunnel
+tunnel = SSHTunnelForwarder(
+    'neurodoor.nmr.mgh.harvard.edu',
+    ssh_username='mj513',
+    ssh_config_file='~/.ssh/config',
+    ssh_pkey='~/.ssh/id_rsa',
+    remote_bind_address=('192.168.100.1', 5432),
+    local_bind_address=('localhost', 6543), # could be any available port
+)
+# Start the tunnel
+tunnel.start()
+
+connect_str = (f"dbname='neurobooth' user='neuroboother' host={tunnel.local_bind_host} "
+               f" port={tunnel.local_bind_port} password='neuroboothrocks'")
 
 conn = psycopg2.connect(connect_str)
 table_subject = Table('subject', conn, primary_key='subject_id')
 table_subject.insert_rows(rows)
+
+tunnel.close()

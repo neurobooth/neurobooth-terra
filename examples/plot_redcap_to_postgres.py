@@ -24,8 +24,8 @@ from neurobooth_terra.ingest_redcap import fetch_survey, infer_schema
 # You will need to request for the Redcap API token from Redcap interface.
 
 survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
-              'clinical': 84431, 'falls': 85031, 'guid': 84426}
-survey_ids = {'guid': 84426}
+              'clinical': 84431, 'falls': 85031, 'subject': 84426}
+survey_ids = {'subject': 84426}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -64,7 +64,7 @@ print(json.dumps(json_schema[survey_name], indent=4, sort_keys=True))
 import pandas as pd
 import hashlib
 
-df = fetch_survey(project, 'guid', survey_ids['guid'])
+df = fetch_survey(project, 'subject', survey_ids['subject'])
 df = df.where(pd.notnull(df), None)
 
 rows = list()
@@ -94,22 +94,17 @@ import psycopg2
 from sshtunnel import SSHTunnelForwarder
 
 # Create an SSH tunnel
-tunnel = SSHTunnelForwarder(
+with SSHTunnelForwarder(
     'neurodoor.nmr.mgh.harvard.edu',
     ssh_username='mj513',
     ssh_config_file='~/.ssh/config',
     ssh_pkey='~/.ssh/id_rsa',
     remote_bind_address=('192.168.100.1', 5432),
-    local_bind_address=('localhost', 6543), # could be any available port
-)
-# Start the tunnel
-tunnel.start()
+    local_bind_address=('localhost', 6543)) as tunnel:
 
-connect_str = (f"dbname='neurobooth' user='neuroboother' host={tunnel.local_bind_host} "
-               f" port={tunnel.local_bind_port} password='neuroboothrocks'")
+    with psycopg2.connect(database='neurobooth', user='neuroboother',
+                          password='neuroboothrocks', host=tunnel.local_bind_host,
+                          port=tunnel.local_bind_port) as conn:
 
-conn = psycopg2.connect(connect_str)
-table_subject = Table('subject', conn, primary_key='subject_id')
-table_subject.insert_rows(rows)
-
-tunnel.close()
+        table_subject = Table('subject', conn, primary_key='subject_id')
+        table_subject.insert_rows(rows)

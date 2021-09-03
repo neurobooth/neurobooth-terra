@@ -61,29 +61,30 @@ print(json.dumps(json_schema[survey_name], indent=4, sort_keys=True))
 ###############################################################################
 # Now, we will prepare the subject table in postgres
 
+import pandas as pd
 import hashlib
-import datetime
 
 df = fetch_survey(project, 'guid', survey_ids['guid'])
-df = df[df['guid_information_complete'] == 2]  # take only complete rows
+df = df.where(pd.notnull(df), None)
 
 rows = list()
 for df_row in df.iterrows():
     df_row = df_row[1]
-    subject_id = df_row['guid_firstname'] + df_row['guid_lastname']
-    subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
-    dob = datetime.date(year=int(df_row['guid_yearofbirth']),
-                        month=int(df_row['guid_monthofbirth']),
-                        day=int(df_row['guid_dayofbirth']))
-    dob = dob.strftime("%y-%m-%d")
-    rows.append((subject_id,
-                 df_row['guid_firstname'],
-                 df_row['guid_middlename'],
-                 df_row['guid_lastname'],
-                 dob,
-                 df_row['guid_countryofbirth'],
-                 df_row['guid_birthgender']))
 
+    # need at least name to add to table
+    if df_row['first_name_birth'] is None:
+        continue
+
+    subject_id = df_row['first_name_birth'] + df_row['last_name_birth']
+    subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
+
+    rows.append((subject_id,
+                 df_row['first_name_birth'],
+                 df_row['middle_name_birth'],
+                 df_row['last_name_birth'],
+                 df_row['date_of_birth'],
+                 df_row['country_of_birth'],
+                 df_row['gender_at_birth']))
 
 ###############################################################################
 # Now, we will prepare the subject table in postgres
@@ -95,3 +96,4 @@ connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
 
 conn = psycopg2.connect(connect_str)
 table_subject = Table('subject', conn, primary_key='subject_id')
+table_subject.insert_rows(rows)

@@ -30,6 +30,9 @@ def fetch_survey(project, survey_name, survey_id):
     """
     print(f'Fetching report {survey_name} from Redcap')
     data = project.export_reports(report_id=survey_id)
+    if 'error' in data:
+        raise ValueError(data['error'])
+
     # format = 'df' didn't work
     df = pd.DataFrame(data)
     with tempfile.TemporaryDirectory() as temp_dir:

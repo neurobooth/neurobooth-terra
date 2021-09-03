@@ -266,7 +266,13 @@ class Table:
             is one row.
         cols : list of str | None
             The columns to insert into. If None, use
-            all columns
+            all columns.
+
+        Returns
+        -------
+        pk_val : str | None
+            The primary keys of the row inserted into.
+            If multiple rows are inserted, returns None.
         """
         if cols is None:
             cols = self.column_names
@@ -279,8 +285,12 @@ class Table:
                 raise ValueError(f'tuple length must match number of columns ({len(cols)})')
         str_format = ','.join(len(cols) * ['%s'])
         cols = ','.join(cols)
-        insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format})'
+        insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format}) '
+        insert_cmd += f'RETURNING {self.primary_key}'
+
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)
+        if len(vals) == 1:
+            return self.cursor.fetchone()[0]
 
     def update_row(self, pk_val, vals, cols=None):
         """Update values in a row

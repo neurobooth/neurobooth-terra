@@ -66,8 +66,9 @@ def test_psql_connection():
     # test adding an auto-incrementing default value to the column
     table_test.add_column(col='subject_id', dtype='VARCHAR')
     table_test.alter_column(col='subject_id', default=dict(prefix='SUBJ'))
-    table_test.insert_rows([('mainak', 'jas', 21)],
-                           cols=['first_name_birth', 'last_name_birth', 'age'])
+    pk_val = table_test.insert_rows([('mainak', 'jas', 21)],
+                                    cols=['first_name_birth', 'last_name_birth', 'age'])
+    assert pk_val == 'SUBJ1'
     df = table_test.query('SELECT * from test')
     assert 'SUBJ1' in df.index
 

@@ -25,7 +25,7 @@ from neurobooth_terra.ingest_redcap import fetch_survey, infer_schema
 
 survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
               'clinical': 84431, 'falls': 85031, 'subject': 84426}
-survey_ids = {'subject': 84426}
+survey_ids = {'subject': 84426, 'consent': 84349}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -52,23 +52,33 @@ print('[Done]')
 
 ###############################################################################
 # Finally, we loop over the surveys and print out the schema.
+import pandas as pd
+
 json_schema = dict()
+dfs = dict()
 for survey_name, survey_id in survey_ids.items():
     df = fetch_survey(project, survey_name, survey_id)
     json_schema[survey_name] = infer_schema(df, metadata)
+    # convert to None for psycopg2
+    df = df.where(pd.notnull(df), None)
+    dfs[survey_name] = df
 print(json.dumps(json_schema[survey_name], indent=4, sort_keys=True))
+
+###############################################################################
+# Now, we will add the consent table to the subject table so we can
+# match subjects based on record_id
+
+df_joined = dfs['subject'].join(dfs['consent'], rsuffix='consent')
 
 ###############################################################################
 # Now, we will prepare the subject table in postgres
 
-import pandas as pd
 import hashlib
 
-df = fetch_survey(project, 'subject', survey_ids['subject'])
-df = df.where(pd.notnull(df), None)
+rows_subject = list()
+rows_consent = list()
 
-rows = list()
-for df_row in df.iterrows():
+for df_row in df_joined.iterrows():
     df_row = df_row[1]
 
     # need at least name to add to table
@@ -78,14 +88,24 @@ for df_row in df.iterrows():
     subject_id = df_row['first_name_birth'] + df_row['last_name_birth']
     subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
 
-    rows.append((subject_id,
-                 df_row['first_name_birth'],
-                 df_row['middle_name_birth'],
-                 df_row['last_name_birth'],
-                 df_row['date_of_birth'],
-                 df_row['country_of_birth'],
-                 df_row['gender_at_birth'],
-                 df_row['birthplace']))
+    rows_subject.append((subject_id,
+                        df_row['first_name_birth'],
+                        df_row['middle_name_birth'],
+                        df_row['last_name_birth'],
+                        df_row['date_of_birth'],
+                        df_row['country_of_birth'],
+                        df_row['gender_at_birth'],
+                        df_row['birthplace']))
+    rows_consent.append((subject_id,
+                        'study1',  # study_id
+                        'Neuroboother',  # staff_id
+                        'REDCAP',  # application_id
+                        'MGH',  # site_id
+                        # None, # date (missing)
+                        df_row['educate_clinicians_adults'],
+                        df_row['educate_clinicians_initials_adult'],
+                        bool(df_row['future_research_consent_adult'])
+    ))
 
 ###############################################################################
 # Now, we will prepare the subject table in postgres
@@ -106,5 +126,8 @@ with SSHTunnelForwarder(
                           password='neuroboothrocks', host=tunnel.local_bind_host,
                           port=tunnel.local_bind_port) as conn:
 
+        table_consent = Table('consent', conn, primary_key='subject_id')
+        table_consent.insert_rows(rows_consent)
+
         table_subject = Table('subject', conn, primary_key='subject_id')
-        table_subject.insert_rows(rows)
+        table_subject.insert_rows(rows_subject)

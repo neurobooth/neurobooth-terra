@@ -19,7 +19,7 @@ def test_psql_connection():
     table_id = 'test'
     drop_table(table_id, conn)
 
-    column_names = ['subject_id', 'first_name_birth', 'last_name_birth', 'age']
+    column_names = ['subject_id', 'first_name_birth', 'last_name_birth', 'Age']
     dtypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'INTEGER']
     table_subject = create_table(table_id, conn=conn,
                                  column_names=column_names,
@@ -67,7 +67,7 @@ def test_psql_connection():
     table_test.add_column(col='subject_id', dtype='VARCHAR')
     table_test.alter_column(col='subject_id', default=dict(prefix='SUBJ'))
     pk_val = table_test.insert_rows([('mainak', 'jas', 21)],
-                                    cols=['first_name_birth', 'last_name_birth', 'age'])
+                                    cols=['first_name_birth', 'last_name_birth', 'Age'])
     assert pk_val == 'SUBJ1'
     df = table_test.query('SELECT * from test')
     assert 'SUBJ1' in df.index

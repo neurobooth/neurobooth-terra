@@ -284,7 +284,7 @@ class Table:
             if len(val) != len(cols):
                 raise ValueError(f'tuple length must match number of columns ({len(cols)})')
         str_format = ','.join(len(cols) * ['%s'])
-        cols = ','.join(cols)
+        cols = ','.join([f'"{col}"' for col in cols])
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format}) '
         insert_cmd += f'RETURNING {self.primary_key}'
 
@@ -321,7 +321,7 @@ class Table:
         for col, val in zip(cols, vals):
             if col not in self.column_names:
                 raise ValueError(f'column {col} is not present in table')
-            cmd += f"{col} = '{val}', "
+            cmd += f"\"{col}\" = '{val}', "
         cmd = cmd[:-2]  # remove last comma
         cmd += f" WHERE {self.primary_key} = '{pk_val}';"
         execute(self.conn, self.cursor, cmd)

@@ -24,7 +24,7 @@ Ingest table from Redcap into Postgres
 
 This example demonstrates how to create table from Redcap.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-20
+.. GENERATED FROM PYTHON SOURCE LINES 8-21
 
 .. code-block:: default
 
@@ -37,7 +37,8 @@ This example demonstrates how to create table from Redcap.
     import json
     from redcap import Project, RedcapError
 
-    from neurobooth_terra import Table
+    import psycopg2
+    from neurobooth_terra import Table, create_table, drop_table
     from neurobooth_terra.ingest_redcap import fetch_survey, infer_schema
 
 
@@ -47,21 +48,21 @@ This example demonstrates how to create table from Redcap.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-25
+.. GENERATED FROM PYTHON SOURCE LINES 22-26
 
 Let us first define the surveys and their survey IDs that we want to fetch.
 This information can be found on Redcap. To fetch Redcap data, you will
 also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 You will need to request for the Redcap API token from Redcap interface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-38
+.. GENERATED FROM PYTHON SOURCE LINES 26-39
 
 .. code-block:: default
 
 
     survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
-                  'clinical': 84431, 'falls': 85031, 'guid': 84426}
-    survey_ids = {'guid': 84426}
+                  'clinical': 84431, 'falls': 85031, 'subject': 84426}
+    survey_ids = {'subject': 84426, 'consent': 84349}
 
     URL = 'https://redcap.partners.org/redcap/api/'
     API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -78,14 +79,14 @@ You will need to request for the Redcap API token from Redcap interface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-43
+.. GENERATED FROM PYTHON SOURCE LINES 40-44
 
 Next, we fetch the metadata table. This table is the master table
 that contains columns and their informations. It can be used to infer
 information about the columns: example, what choices are available for a
 particular question.
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-53
+.. GENERATED FROM PYTHON SOURCE LINES 44-54
 
 .. code-block:: default
 
@@ -115,18 +116,24 @@ particular question.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-55
+.. GENERATED FROM PYTHON SOURCE LINES 55-56
 
 Finally, we loop over the surveys and print out the schema.
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-61
+.. GENERATED FROM PYTHON SOURCE LINES 56-68
 
 .. code-block:: default
 
+    import pandas as pd
+
     json_schema = dict()
+    dfs = dict()
     for survey_name, survey_id in survey_ids.items():
         df = fetch_survey(project, survey_name, survey_id)
         json_schema[survey_name] = infer_schema(df, metadata)
+        # convert to None for psycopg2
+        df = df.where(pd.notnull(df), None)
+        dfs[survey_name] = df
     print(json.dumps(json_schema[survey_name], indent=4, sort_keys=True))
 
 
@@ -139,267 +146,18 @@ Finally, we loop over the surveys and print out the schema.
 
  .. code-block:: none
 
-    Fetching report guid from Redcap
+    Fetching report subject from Redcap
     [Done]
     Skipping redcap_event_name
     Skipping redcap_repeat_instrument
     Skipping redcap_repeat_instance
+    Fetching report consent from Redcap
+    [Done]
+    Skipping redcap_event_name
+    Skipping redcap_repeat_instrument
+    Skipping redcap_repeat_instance
+    Skipping redcap_survey_identifier
     {
-        "birthplace": {
-            "choices": {},
-            "field_type": "text",
-            "mode": "NULLABLE",
-            "name": "birthplace",
-            "question": "Name of City/municipality at birth (as it appears on birth certificate)",
-            "type": "string"
-        },
-        "country_of_birth": {
-            "choices": {
-                "1": "United States of America",
-                "10": "Austria",
-                "100": "Macedonia",
-                "101": "Madagascar",
-                "102": "Malawi",
-                "103": "Malaysia",
-                "104": "Maldives",
-                "105": "Mali",
-                "106": "Malta",
-                "107": "Marshall Islands",
-                "108": "Mauritania",
-                "109": "Mauritius",
-                "11": "Azerbaijan",
-                "110": "Mexico",
-                "111": "Moldova",
-                "112": "Monaco",
-                "113": "Mongolia",
-                "114": "Montenegro",
-                "115": "Morocco",
-                "116": "Mozambique",
-                "117": "Myanmar (Burma)",
-                "118": "Namibia",
-                "119": "Nauru",
-                "12": "The Bahamas",
-                "120": "Nepal",
-                "121": "Netherlands",
-                "122": "New Zealand",
-                "123": "Nicaragua",
-                "124": "Niger",
-                "125": "Nigeria",
-                "126": "Norway",
-                "127": "Oman",
-                "128": "Pakistan",
-                "129": "Palau",
-                "13": "Bahrain",
-                "130": "Panama",
-                "131": "Papua New Guinea",
-                "132": "Paraguay",
-                "133": "Peru",
-                "134": "Philippines",
-                "135": "Poland",
-                "136": "Portugal",
-                "137": "Qatar",
-                "138": "Romania",
-                "139": "Russia",
-                "14": "Bangladesh",
-                "140": "Rwanda",
-                "141": "Saint Kitts and Nevis",
-                "142": "Saint Lucia",
-                "143": "Saint Vincent and the Grenadines",
-                "144": "Samoa",
-                "145": "San Marino",
-                "146": "Sao Tome and Principe",
-                "147": "Saudi Arabia",
-                "148": "Senegal",
-                "149": "Serbia",
-                "15": "Barbados",
-                "150": "Seychelles",
-                "151": "Sierra Leone",
-                "152": "Singapore",
-                "153": "Slovakia",
-                "154": "Slovenia",
-                "155": "Solomon Islands",
-                "156": "Somalia",
-                "157": "South Africa",
-                "158": "South Sudan",
-                "159": "Spain",
-                "16": "Belarus",
-                "160": "Sri Lanka",
-                "161": "Sudan",
-                "162": "Suriname",
-                "163": "Swaziland",
-                "164": "Sweden",
-                "165": "Switzerland",
-                "166": "Syria",
-                "167": "Taiwan",
-                "168": "Tajikistan",
-                "169": "Tanzania",
-                "17": "Belgium",
-                "170": "Thailand",
-                "171": "Togo",
-                "172": "Tonga",
-                "173": "Trinidad and Tobago",
-                "174": "Tunisia",
-                "175": "Turkey",
-                "176": "Turkmenistan",
-                "177": "Tuvalu",
-                "178": "Uganda",
-                "179": "Ukraine",
-                "18": "Belize",
-                "180": "United Arab Emirates",
-                "181": "United Kingdom",
-                "183": "Uruguay",
-                "184": "Uzbekistan",
-                "185": "Vanuatu",
-                "186": "Vatican City (Holy See)",
-                "187": "Venezuela",
-                "188": "Vietnam",
-                "189": "Yemen",
-                "19": "Benin",
-                "190": "Zambia",
-                "191": "Zimbabwe",
-                "192": "Republic of the Congo",
-                "193": "North Korea",
-                "194": "South Korea",
-                "195": "Afghanistan",
-                "2": "Albania",
-                "20": "Bhutan",
-                "21": "Bolivia",
-                "22": "Bosnia and Herzegovina",
-                "23": "Botswana",
-                "24": "Brazil",
-                "25": "Brunei",
-                "26": "Bulgaria",
-                "27": "Burkina Faso",
-                "28": "Burundi",
-                "29": "Cambodia",
-                "3": "Algeria",
-                "30": "Cameroon",
-                "31": "Canada",
-                "32": "Cape Verde",
-                "33": "Central African Republic",
-                "34": "Chad",
-                "35": "Chile",
-                "36": "China",
-                "37": "Colombia",
-                "38": "Comoros",
-                "39": "Costa Rica",
-                "4": "Andorra",
-                "40": "Cote d'Ivoire",
-                "41": "Croatia",
-                "42": "Cuba",
-                "43": "Cyprus",
-                "44": "Czech Republic",
-                "45": "Denmark",
-                "46": "Djibouti",
-                "47": "Dominica",
-                "48": "Dominican Republic",
-                "49": "East Timor (Timor-Leste)",
-                "5": "Angola",
-                "50": "Ecuador",
-                "51": "Egypt",
-                "52": "El Salvador",
-                "53": "Equatorial Guinea",
-                "54": "Eritrea",
-                "55": "Estonia",
-                "56": "Ethiopia",
-                "57": "Fiji",
-                "58": "Finland",
-                "59": "France",
-                "6": "Antigua and Barbuda",
-                "60": "Gabon",
-                "61": "The Gambia",
-                "62": "Georgia",
-                "63": "Germany",
-                "64": "Ghana",
-                "65": "Greece",
-                "66": "Grenada",
-                "67": "Guatemala",
-                "68": "Guinea",
-                "69": "Guinea-Bissau",
-                "7": "Argentina",
-                "70": "Guyana",
-                "71": "Haiti",
-                "72": "Honduras",
-                "73": "Hungary",
-                "74": "Iceland",
-                "75": "India",
-                "76": "Indonesia",
-                "77": "Iran",
-                "78": "Iraq",
-                "79": "Ireland",
-                "8": "Armenia",
-                "80": "Israel",
-                "81": "Italy",
-                "82": "Jamaica",
-                "83": "Japan",
-                "84": "Jordan",
-                "85": "Kazakhstan",
-                "86": "Kenya",
-                "87": "Kiribati",
-                "88": "Kosovo",
-                "89": "Kuwait",
-                "9": "Australia",
-                "90": "Kyrgyzstan",
-                "91": "Laos",
-                "92": "Latvia",
-                "93": "Lebanon",
-                "94": "Lesotho",
-                "95": "Liberia",
-                "96": "Libya",
-                "97": "Liechtenstein",
-                "98": "Lithuania",
-                "99": "Luxembourg",
-                "Micronesia": "Federated States of"
-            },
-            "field_type": "dropdown",
-            "mode": "NULLABLE",
-            "name": "country_of_birth",
-            "question": "Country of Birth",
-            "type": "float"
-        },
-        "date_of_birth": {
-            "choices": {},
-            "field_type": "text",
-            "mode": "NULLABLE",
-            "name": "date_of_birth",
-            "question": "Date of Birth",
-            "type": "datetime"
-        },
-        "first_name_birth": {
-            "choices": {},
-            "field_type": "text",
-            "mode": "NULLABLE",
-            "name": "first_name_birth",
-            "question": "First Name at Birth",
-            "type": "string"
-        },
-        "gender_at_birth": {
-            "choices": {
-                "1": "Male",
-                "2": "Female"
-            },
-            "field_type": "radio",
-            "mode": "NULLABLE",
-            "name": "gender_at_birth",
-            "question": "Physical Gender at birth",
-            "type": "float"
-        },
-        "last_name_birth": {
-            "choices": {},
-            "field_type": "text",
-            "mode": "NULLABLE",
-            "name": "last_name_birth",
-            "question": "Last Name at Birth",
-            "type": "string"
-        },
-        "middle_name_birth": {
-            "choices": {},
-            "field_type": "text",
-            "mode": "NULLABLE",
-            "name": "middle_name_birth",
-            "question": "Middle Name at Birth",
-            "type": "string"
-        },
         "record_id": {
             "choices": {},
             "field_type": "text",
@@ -431,84 +189,172 @@ Finally, we loop over the surveys and print out the schema.
             "name": "redcap_repeat_instrument",
             "question": "",
             "type": "float"
+        },
+        "redcap_survey_identifier": {
+            "choices": {},
+            "field_type": "",
+            "mode": "NULLABLE",
+            "name": "redcap_survey_identifier",
+            "question": "",
+            "type": "float"
         }
     }
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-63
+.. GENERATED FROM PYTHON SOURCE LINES 69-71
+
+Now, we will add the consent table to the subject table so we can
+match subjects based on record_id
+
+.. GENERATED FROM PYTHON SOURCE LINES 71-74
+
+.. code-block:: default
+
+
+    df_joined = dfs['subject'].join(dfs['consent'], rsuffix='consent')
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 75-76
 
 Now, we will prepare the subject table in postgres
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-88
+.. GENERATED FROM PYTHON SOURCE LINES 76-118
 
 .. code-block:: default
 
 
     import hashlib
-    import datetime
 
-    df = fetch_survey(project, 'guid', survey_ids['guid'])
-    df = df[df['guid_information_complete'] == 2]  # take only complete rows
+    rows_subject = list()
+    rows_consent = list()
 
-    rows = list()
-    for df_row in df.iterrows():
+    subject_ids = list()
+
+    for df_row in df_joined.iterrows():
         df_row = df_row[1]
-        subject_id = df_row['guid_firstname'] + df_row['guid_lastname']
+
+        # need at least name to add to table
+        if df_row['first_name_birth'] is None:
+            continue
+
+        subject_id = df_row['first_name_birth'] + df_row['last_name_birth']
         subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
-        dob = datetime.date(year=int(df_row['guid_yearofbirth']),
-                            month=int(df_row['guid_monthofbirth']),
-                            day=int(df_row['guid_dayofbirth']))
-        dob = dob.strftime("%y-%m-%d")
-        rows.append((subject_id,
-                     df_row['guid_firstname'],
-                     df_row['guid_middlename'],
-                     df_row['guid_lastname'],
-                     dob,
-                     df_row['guid_countryofbirth'],
-                     df_row['guid_birthgender']))
+
+        # XXX: hack, why are there duplicate subjects?
+        if subject_id in subject_ids:
+            continue
+        subject_ids.append(subject_id)
+
+        rows_subject.append((subject_id,
+                            df_row['first_name_birth'],
+                            df_row['middle_name_birth'],
+                            df_row['last_name_birth'],
+                            df_row['date_of_birth'],
+                            df_row['country_of_birth'],
+                            df_row['gender_at_birth'],
+                            df_row['birthplace']))
+        rows_consent.append((subject_id,
+                            'study1',  # study_id
+                            'Neuroboother',  # staff_id
+                            'REDCAP',  # application_id
+                            'MGH',  # site_id
+                            # None, # date (missing)
+                            # df_row['educate_clinicians_adults'],
+                            # df_row['educate_clinicians_initials_adult'],
+                            # bool(df_row['future_research_consent_adult'])
+        ))
 
 
 
 
-.. rst-class:: sphx-glr-script-out
-
-.. code-block:: pytb
-
-    Traceback (most recent call last):
-      File "/Users/mainak/Documents/github_repos/neurobooth-terra/examples/plot_redcap_to_postgres.py", line 68, in <module>
-        df = df[df['guid_information_complete'] == 2]  # take only complete rows
-      File "/Users/mainak/anaconda3/envs/neurobooth/lib/python3.8/site-packages/pandas/core/frame.py", line 3024, in __getitem__
-        indexer = self.columns.get_loc(key)
-      File "/Users/mainak/anaconda3/envs/neurobooth/lib/python3.8/site-packages/pandas/core/indexes/base.py", line 3082, in get_loc
-        raise KeyError(key) from err
-    KeyError: 'guid_information_complete'
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-90
+.. GENERATED FROM PYTHON SOURCE LINES 119-120
 
-Now, we will prepare the subject table in postgres
+Now, we will first create a connection to the database
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-98
+.. GENERATED FROM PYTHON SOURCE LINES 120-125
 
 .. code-block:: default
-
-
-    import psycopg2
 
     connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                    "password='neuroboothrocks'")
 
     conn = psycopg2.connect(connect_str)
-    table_subject = Table('subject', conn, primary_key='subject_id')
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 126-129
+
+We will drop our tables if they already exist
+this is just for convenience so we can re-run this script
+and create a new mock subject table and consent table to test our script
+
+.. GENERATED FROM PYTHON SOURCE LINES 129-147
+
+.. code-block:: default
+
+    drop_table('subject', conn)
+    drop_table('consent', conn)
+
+    table_id = 'subject'
+    cols_subject = ['subject_id', 'first_name_birth', 'middle_name_birth',
+               'last_name_birth', 'date_of_birth', 'country_of_birth',
+               'gender_at_birth', 'birthplace']
+    datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
+                 'date', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)']
+    table_subject = create_table(table_id, conn, cols_subject, datatypes)
+
+    table_id = 'consent'
+    cols_consent = ['subject_id', 'study_id', 'staff_id', 'application_id',
+                    'site_id']
+    datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
+                 'VARCHAR (255)']
+    table_consent = create_table(table_id, conn, cols_consent, datatypes)
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 148-149
+
+Then we insert the rows in this table
+
+.. GENERATED FROM PYTHON SOURCE LINES 149-151
+
+.. code-block:: default
+
+    table_subject.insert_rows(rows_subject, cols_subject)
+    table_consent.insert_rows(rows_consent, cols_consent)
+
+
+
+
+
+
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  5.288 seconds)
+   **Total running time of the script:** ( 0 minutes  1.434 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_redcap_to_postgres.py:

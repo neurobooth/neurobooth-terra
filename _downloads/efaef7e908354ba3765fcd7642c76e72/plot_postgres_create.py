@@ -6,7 +6,7 @@ Export from dbdesigner
 This example demonstrates how to create postgres table with neurobooth-terra.
 """
 
-from neurobooth_terra.create_psql import drop_table
+from neurobooth_terra import drop_table
 import psycopg2
 from neurobooth_terra import execute, drop_table
 

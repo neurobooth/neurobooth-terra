@@ -115,30 +115,31 @@ to download the full example code</p>
 <section class="sphx-glr-example-title" id="export-from-dbdesigner">
 <span id="sphx-glr-auto-examples-plot-postgres-create-py"></span><h1>Export from dbdesigner<a class="headerlink" href="#export-from-dbdesigner" title="Permalink to this headline">¶</a></h1>
 <p>This example demonstrates how to create postgres table with neurobooth-terra.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra.create_psql</span> <span class="kn">import</span> <span class="n">drop_table</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <a href="../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table" title="neurobooth_terra.drop_table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><span class="n">drop_table</span></a>
 <span class="kn">import</span> <span class="nn">psycopg2</span>
-<span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">drop_table</span>
+<span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <a href="../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table" title="neurobooth_terra.drop_table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><span class="n">drop_table</span></a>
 
 <span class="c1"># drop all tables</span>
 </pre></div>
 </div>
 <p>First, we will create a connection using <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
                <span class="s2">&quot;password=&#39;neuroboothrocks&#39;&quot;</span><span class="p">)</span>
 
-<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a><span class="p">)</span>
 
-<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;consent&#39;</span><span class="p">,</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> <span class="s1">&#39;register&#39;</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;clinical&#39;</span><span class="p">,</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;consent&#39;</span><span class="p">,</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> <span class="s1">&#39;register&#39;</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;clinical&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;demograph&#39;</span><span class="p">,</span> <span class="s1">&#39;human_obs_log&#39;</span><span class="p">,</span> <span class="s1">&#39;observer&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;tech_obs_data&#39;</span><span class="p">,</span> <span class="s1">&#39;tech_obs_log&#39;</span><span class="p">,</span> <span class="s1">&#39;stimulus&#39;</span><span class="p">,</span> <span class="s1">&#39;sensor&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;instruction&#39;</span><span class="p">,</span> <span class="s1">&#39;human_obs_data&#39;</span><span class="p">,</span> <span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="s1">&#39;collection&#39;</span><span class="p">]:</span>
-    <span class="n">drop_table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+                 <span class="s1">&#39;instruction&#39;</span><span class="p">,</span> <span class="s1">&#39;human_obs_data&#39;</span><span class="p">,</span> <span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="s1">&#39;collection&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;sensor_file_log&#39;</span><span class="p">]:</span>
+    <a href="../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table" title="neurobooth_terra.drop_table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><span class="n">drop_table</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then comes our sql command to create the SQL tables. This comes from
 dbdesigner.
 6/7/2021, 17:02:05</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">CREATE TABLE &quot;consent&quot; (</span>
 <span class="s2">    &quot;subject_id&quot; VARCHAR(255) NOT NULL,</span>
 <span class="s2">    &quot;study_id&quot; VARCHAR(255) NOT NULL,</span>
@@ -483,15 +484,7 @@ dbdesigner.
 </div>
 <p>Now we create the tables.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-<span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a></a><span class="p">)</span>
-</pre></div>
-</div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/Users/mainak/Documents/github_repos/neurobooth-terra/examples/plot_postgres_create.py&quot;</span>, line <span class="m">376</span>, in <span class="n">&lt;module&gt;</span>
-    <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a></a><span class="p">)</span>
-  File <span class="nb">&quot;/Users/mainak/Documents/github_repos/neurobooth-terra/neurobooth_terra/create_psql.py&quot;</span>, line <span class="m">15</span>, in <span class="n">execute</span>
-    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-<span class="gr">psycopg2.errors.DuplicateTable</span>: <span class="n">relation &quot;sensor_file_log&quot; already exists</span>
+<span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">create_cmd</span></a><span class="p">)</span>
 </pre></div>
 </div>
 <p>Don’t forget to close the connection once done!</p>
@@ -499,7 +492,7 @@ dbdesigner.
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.206 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.377 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-create-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/efaef7e908354ba3765fcd7642c76e72/plot_postgres_create.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres_create.py</span></code></a></p>

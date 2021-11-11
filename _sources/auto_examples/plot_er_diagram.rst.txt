@@ -41,57 +41,31 @@ This example demonstrates how to create postgres table with neurobooth-terra.
                     splines=curved
             ];
             node [label="\N"];
-            sensor   [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>sensor</b></td></th>
-    <tr><td port="sensor_id">sensor_id</td></tr>
-    <tr><td port="temporal_res">temporal_res</td></tr>
-    <tr><td port="spatial_res_x">spatial_res_x</td></tr>
-    <tr><td port="spatial_res_y">spatial_res_y</td></tr></table>>,
-                    shape=plaintext];
-            device   [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>device</b></td></th>
-    <tr><td port="device_id">device_id</td></tr>
-    <tr><td port="device_sn">device_sn</td></tr>
-    <tr><td port="wearable_bool">wearable_bool</td></tr>
-    <tr><td port="device_location">device_location</td></tr>
-    <tr><td port="device_name">device_name</td></tr>
-    <tr><td port="device_make">device_make</td></tr>
-    <tr><td port="device_model">device_model</td></tr>
-    <tr><td port="device_firmware">device_firmware</td></tr>
-    <tr><td port="sensor_id_array">sensor_id_array</td></tr></table>>,
-                    shape=plaintext];
             subject  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>subject</b></td></th>
-    <tr><td port="subject_id">subject_id</td></tr>
+    <tr><td port="date_of_birth">date_of_birth</td></tr>
     <tr><td port="first_name_birth">first_name_birth</td></tr>
     <tr><td port="middle_name_birth">middle_name_birth</td></tr>
     <tr><td port="last_name_birth">last_name_birth</td></tr>
-    <tr><td port="date of birth">date of birth</td></tr>
-    <tr><td port="country of birth">country of birth</td></tr>
-    <tr><td port="gender at birth">gender at birth</td></tr></table>>,
-                    shape=plaintext];
-            consent  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>consent</b></td></th>
+    <tr><td port="country_of_birth">country_of_birth</td></tr>
+    <tr><td port="gender_at_birth">gender_at_birth</td></tr>
     <tr><td port="subject_id">subject_id</td></tr>
-    <tr><td port="study_id">study_id</td></tr>
-    <tr><td port="staff_id">staff_id</td></tr>
-    <tr><td port="application_id">application_id</td></tr>
-    <tr><td port="site_date">site_date</td></tr></table>>,
+    <tr><td port="birthplace">birthplace</td></tr></table>>,
                     shape=plaintext];
-            consent:subject_id -> subject:subject_id         [arrowtype=normal];
             study    [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>study</b></td></th>
-    <tr><td port="study_id">study_id</td></tr>
-    <tr><td port="IRB_protocol_number">IRB_protocol_number</td></tr>
-    <tr><td port="study_title">study_title</td></tr>
     <tr><td port="protocol_version_array">protocol_version_array</td></tr>
+    <tr><td port="IRB_protocol_number">IRB_protocol_number</td></tr>
     <tr><td port="protocol_date_array">protocol_date_array</td></tr>
+    <tr><td port="consent_date_array">consent_date_array</td></tr>
     <tr><td port="consent_version_array">consent_version_array</td></tr>
-    <tr><td port="consent_date_array">consent_date_array</td></tr></table>>,
+    <tr><td port="study_title">study_title</td></tr>
+    <tr><td port="study_id">study_id</td></tr></table>>,
                     shape=plaintext];
-            consent:study_id -> study:study_id       [arrowtype=normal];
             register         [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>register</b></td></th>
     <tr><td port="subject_id">subject_id</td></tr>
     <tr><td port="study_id">study_id</td></tr>
     <tr><td port="application_id">application_id</td></tr>
     <tr><td port="site_date">site_date</td></tr></table>>,
                     shape=plaintext];
-            register:subject_id -> subject:subject_id        [arrowtype=normal];
             contact  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>contact</b></td></th>
     <tr><td port="subject_id">subject_id</td></tr>
     <tr><td port="study_id">study_id</td></tr>
@@ -100,59 +74,55 @@ This example demonstrates how to create postgres table with neurobooth-terra.
     <tr><td port="email">email</td></tr>
     <tr><td port="phone">phone</td></tr></table>>,
                     shape=plaintext];
-            contact:subject_id -> subject:subject_id         [arrowtype=normal];
             contact:study_id -> study:study_id       [arrowtype=normal];
             clinical         [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>clinical</b></td></th>
-    <tr><td port="subject_id">subject_id</td></tr>
-    <tr><td port="study_id">study_id</td></tr>
-    <tr><td port="application_id">application_id</td></tr>
-    <tr><td port="site_date">site_date</td></tr>
-    <tr><td port="diagnosis">diagnosis</td></tr>
-    <tr><td port="relevant_diagnosis">relevant_diagnosis</td></tr>
+    <tr><td port="MRN">MRN</td></tr>
     <tr><td port="symptom_age_onset">symptom_age_onset</td></tr>
-    <tr><td port="handedness">handedness</td></tr>
     <tr><td port="height">height</td></tr>
     <tr><td port="weight">weight</td></tr>
-    <tr><td port="medications">medications</td></tr>
-    <tr><td port="MRN">MRN</td></tr></table>>,
-                    shape=plaintext];
-            clinical:subject_id -> subject:subject_id        [arrowtype=normal];
-            clinical:study_id -> study:study_id      [arrowtype=normal];
-            demograph        [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>demograph</b></td></th>
+    <tr><td port="diagnosis">diagnosis</td></tr>
+    <tr><td port="relevant_diagnosis">relevant_diagnosis</td></tr>
     <tr><td port="subject_id">subject_id</td></tr>
+    <tr><td port="handedness">handedness</td></tr>
+    <tr><td port="medications">medications</td></tr>
     <tr><td port="study_id">study_id</td></tr>
     <tr><td port="application_id">application_id</td></tr>
-    <tr><td port="site_date">site_date</td></tr>
-    <tr><td port="date_of_birth">date_of_birth</td></tr>
+    <tr><td port="site_date">site_date</td></tr></table>>,
+                    shape=plaintext];
+            clinical:study_id -> study:study_id      [arrowtype=normal];
+            demograph        [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>demograph</b></td></th>
     <tr><td port="age_study_start">age_study_start</td></tr>
     <tr><td port="symptom_age_onset">symptom_age_onset</td></tr>
+    <tr><td port="date_of_birth">date_of_birth</td></tr>
+    <tr><td port="site_date">site_date</td></tr>
     <tr><td port="sex">sex</td></tr>
     <tr><td port="race">race</td></tr>
     <tr><td port="ethnicity">ethnicity</td></tr>
-    <tr><td port="recruit_mechanism">recruit_mechanism</td></tr></table>>,
+    <tr><td port="subject_id">subject_id</td></tr>
+    <tr><td port="recruit_mechanism">recruit_mechanism</td></tr>
+    <tr><td port="study_id">study_id</td></tr>
+    <tr><td port="application_id">application_id</td></tr></table>>,
                     shape=plaintext];
-            demograph:subject_id -> subject:subject_id       [arrowtype=normal];
             demograph:study_id -> study:study_id     [arrowtype=normal];
             human_obs_log    [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>human_obs_log</b></td></th>
-    <tr><td port="subject_id">subject_id</td></tr>
+    <tr><td port="site_date">site_date</td></tr>
     <tr><td port="study_id">study_id</td></tr>
     <tr><td port="observer_id">observer_id</td></tr>
-    <tr><td port="human_obs_id">human_obs_id</td></tr>
+    <tr><td port="subject_id">subject_id</td></tr>
     <tr><td port="application_id">application_id</td></tr>
-    <tr><td port="site_date">site_date</td></tr>
-    <tr><td port="response_array">response_array</td></tr></table>>,
+    <tr><td port="response_array">response_array</td></tr>
+    <tr><td port="human_obs_id">human_obs_id</td></tr></table>>,
                     shape=plaintext];
-            human_obs_log:subject_id -> subject:subject_id   [arrowtype=normal];
             human_obs_log:study_id -> study:study_id         [arrowtype=normal];
             observer         [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>observer</b></td></th>
-    <tr><td port="observer_id">observer_id</td></tr>
+    <tr><td port="age">age</td></tr>
     <tr><td port="subject_id">subject_id</td></tr>
     <tr><td port="first_name">first_name</td></tr>
     <tr><td port="last_name">last_name</td></tr>
-    <tr><td port="age">age</td></tr>
     <tr><td port="sex">sex</td></tr>
     <tr><td port="race">race</td></tr>
     <tr><td port="ethnicity">ethnicity</td></tr>
+    <tr><td port="observer_id">observer_id</td></tr>
     <tr><td port="relationship">relationship</td></tr></table>>,
                     shape=plaintext];
             human_obs_log:observer_id -> observer:observer_id        [arrowtype=normal];
@@ -196,35 +166,91 @@ This example demonstrates how to create postgres table with neurobooth-terra.
                     shape=plaintext];
             tech_obs_data:instruction_id -> instruction:instruction_id       [arrowtype=normal];
             stimulus         [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>stimulus</b></td></th>
+    <tr><td port="duration">duration</td></tr>
     <tr><td port="stimulus_id">stimulus_id</td></tr>
     <tr><td port="stimulus_description">stimulus_description</td></tr>
     <tr><td port="num_iterations">num_iterations</td></tr>
-    <tr><td port="duration">duration</td></tr>
     <tr><td port="stimulus_filetype">stimulus_filetype</td></tr>
     <tr><td port="stimulus_file">stimulus_file</td></tr></table>>,
                     shape=plaintext];
             tech_obs_data:stimulus_id -> stimulus:stimulus_id        [arrowtype=normal];
             tech_obs_log     [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>tech_obs_log</b></td></th>
+    <tr><td port="site_date">site_date</td></tr>
     <tr><td port="subject_id">subject_id</td></tr>
     <tr><td port="study_id">study_id</td></tr>
     <tr><td port="tech_obs_id">tech_obs_id</td></tr>
     <tr><td port="staff_id">staff_id</td></tr>
     <tr><td port="application_id">application_id</td></tr>
-    <tr><td port="site_date">site_date</td></tr>
     <tr><td port="event_array">event_array</td></tr>
-    <tr><td port="date_time_array">date_time_array</td></tr></table>>,
+    <tr><td port="date_time_array">date_time_array</td></tr>
+    <tr><td port="sensor_file_id_array">sensor_file_id_array</td></tr>
+    <tr><td port="tech_obs_log_id">tech_obs_log_id</td></tr>
+    <tr><td port="collection_id">collection_id</td></tr></table>>,
                     shape=plaintext];
-            tech_obs_log:subject_id -> subject:subject_id    [arrowtype=normal];
             tech_obs_log:study_id -> study:study_id  [arrowtype=normal];
             tech_obs_log:tech_obs_id -> tech_obs_data:tech_obs_id    [arrowtype=normal];
+            sensor_file_log  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>sensor_file_log</b></td></th>
+    <tr><td port="file_start_time">file_start_time</td></tr>
+    <tr><td port="file_end_time">file_end_time</td></tr>
+    <tr><td port="true_temporal_resolution">true_temporal_resolution</td></tr>
+    <tr><td port="true_spatial_resolution">true_spatial_resolution</td></tr>
+    <tr><td port="tech_obs_id">tech_obs_id</td></tr>
+    <tr><td port="collection_id">collection_id</td></tr>
+    <tr><td port="device_id">device_id</td></tr>
+    <tr><td port="sensor_file_id">sensor_file_id</td></tr>
+    <tr><td port="sensor_id">sensor_id</td></tr>
+    <tr><td port="subject_id">subject_id</td></tr>
+    <tr><td port="study_id">study_id</td></tr>
+    <tr><td port="tech_obs_log_id">tech_obs_log_id</td></tr></table>>,
+                    shape=plaintext];
+            tech_obs_log:sensor_file_id_array -> sensor_file_log:sensor_file_id_array        [arrowtype=normal];
             collection       [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>collection</b></td></th>
+    <tr><td port="active">active</td></tr>
     <tr><td port="collection_name">collection_name</td></tr>
     <tr><td port="tech_obs_array">tech_obs_array</td></tr>
-    <tr><td port="human_obs_array">human_obs_array</td></tr></table>>,
+    <tr><td port="human_obs_array">human_obs_array</td></tr>
+    <tr><td port="collection_id">collection_id</td></tr></table>>,
                     shape=plaintext];
+            tech_obs_log:collection_id -> collection:collection_id   [arrowtype=normal];
+            sensor_file_log:study_id -> study:study_id       [arrowtype=normal];
+            sensor_file_log:tech_obs_id -> tech_obs_data:tech_obs_id         [arrowtype=normal];
+            sensor_file_log:tech_obs_log_id -> tech_obs_log:tech_obs_log_id  [arrowtype=normal];
+            sensor_file_log:collection_id -> collection:collection_id        [arrowtype=normal];
+            device   [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>device</b></td></th>
+    <tr><td port="wearable_bool">wearable_bool</td></tr>
+    <tr><td port="sensor_id_array">sensor_id_array</td></tr>
+    <tr><td port="device_location">device_location</td></tr>
+    <tr><td port="device_id">device_id</td></tr>
+    <tr><td port="device_make">device_make</td></tr>
+    <tr><td port="device_model">device_model</td></tr>
+    <tr><td port="device_firmware">device_firmware</td></tr>
+    <tr><td port="device_name">device_name</td></tr>
+    <tr><td port="device_sn">device_sn</td></tr></table>>,
+                    shape=plaintext];
+            sensor_file_log:device_id -> device:device_id    [arrowtype=normal];
+            sensor   [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>sensor</b></td></th>
+    <tr><td port="temporal_res">temporal_res</td></tr>
+    <tr><td port="spatial_res_x">spatial_res_x</td></tr>
+    <tr><td port="spatial_res_y">spatial_res_y</td></tr>
+    <tr><td port="sensor_id">sensor_id</td></tr>
+    <tr><td port="file_type">file_type</td></tr></table>>,
+                    shape=plaintext];
+            sensor_file_log:sensor_id -> sensor:sensor_id    [arrowtype=normal];
             collection:human_obs_array -> human_obs_data:human_obs_array     [arrowtype=normal];
             collection:tech_obs_array -> tech_obs_data:tech_obs_array        [arrowtype=normal];
+            consent  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>consent</b></td></th>
+    <tr><td port="subject_id">subject_id</td></tr>
+    <tr><td port="study_id">study_id</td></tr>
+    <tr><td port="staff_id">staff_id</td></tr>
+    <tr><td port="application_id">application_id</td></tr>
+    <tr><td port="site_id">site_id</td></tr></table>>,
+                    shape=plaintext];
+            test_consent     [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>test_consent</b></td></th>
+    <tr><td port="consent_date">consent_date</td></tr>
+    <tr><td port="subject_id">subject_id</td></tr></table>>,
+                    shape=plaintext];
             test     [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>test</b></td></th>
+    <tr><td port="Age">Age</td></tr>
     <tr><td port="subject_id">subject_id</td></tr>
     <tr><td port="first_name_birth">first_name_birth</td></tr>
     <tr><td port="last_name_birth">last_name_birth</td></tr></table>>,
@@ -333,7 +359,7 @@ This example demonstrates how to create postgres table with neurobooth-terra.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  4.020 seconds)
+   **Total running time of the script:** ( 0 minutes  1.884 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_er_diagram.py:

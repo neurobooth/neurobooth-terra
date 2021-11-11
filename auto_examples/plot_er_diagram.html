@@ -122,57 +122,31 @@ to download the full example code</p>
                 splines=curved
         ];
         node [label=&quot;\N&quot;];
-        sensor   [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;sensor&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;sensor_id&quot;&gt;sensor_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;temporal_res&quot;&gt;temporal_res&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;spatial_res_x&quot;&gt;spatial_res_x&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;spatial_res_y&quot;&gt;spatial_res_y&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
-                shape=plaintext];
-        device   [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;device&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;device_id&quot;&gt;device_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;device_sn&quot;&gt;device_sn&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;wearable_bool&quot;&gt;wearable_bool&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;device_location&quot;&gt;device_location&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;device_name&quot;&gt;device_name&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;device_make&quot;&gt;device_make&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;device_model&quot;&gt;device_model&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;device_firmware&quot;&gt;device_firmware&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;sensor_id_array&quot;&gt;sensor_id_array&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
-                shape=plaintext];
         subject  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;subject&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;date_of_birth&quot;&gt;date_of_birth&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;first_name_birth&quot;&gt;first_name_birth&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;middle_name_birth&quot;&gt;middle_name_birth&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;last_name_birth&quot;&gt;last_name_birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;date of birth&quot;&gt;date of birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;country of birth&quot;&gt;country of birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;gender at birth&quot;&gt;gender at birth&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
-                shape=plaintext];
-        consent  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;consent&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;country_of_birth&quot;&gt;country_of_birth&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;gender_at_birth&quot;&gt;gender_at_birth&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;staff_id&quot;&gt;staff_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+&lt;tr&gt;&lt;td port=&quot;birthplace&quot;&gt;birthplace&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
-        consent:subject_id -&gt; subject:subject_id         [arrowtype=normal];
         study    [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;study&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;IRB_protocol_number&quot;&gt;IRB_protocol_number&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;study_title&quot;&gt;study_title&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;protocol_version_array&quot;&gt;protocol_version_array&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;IRB_protocol_number&quot;&gt;IRB_protocol_number&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;protocol_date_array&quot;&gt;protocol_date_array&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;consent_date_array&quot;&gt;consent_date_array&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;consent_version_array&quot;&gt;consent_version_array&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;consent_date_array&quot;&gt;consent_date_array&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+&lt;tr&gt;&lt;td port=&quot;study_title&quot;&gt;study_title&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
-        consent:study_id -&gt; study:study_id       [arrowtype=normal];
         register         [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;register&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
 &lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
-        register:subject_id -&gt; subject:subject_id        [arrowtype=normal];
         contact  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;contact&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
 &lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
@@ -181,59 +155,55 @@ to download the full example code</p>
 &lt;tr&gt;&lt;td port=&quot;email&quot;&gt;email&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;phone&quot;&gt;phone&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
-        contact:subject_id -&gt; subject:subject_id         [arrowtype=normal];
         contact:study_id -&gt; study:study_id       [arrowtype=normal];
         clinical         [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;clinical&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;diagnosis&quot;&gt;diagnosis&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;relevant_diagnosis&quot;&gt;relevant_diagnosis&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;MRN&quot;&gt;MRN&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;symptom_age_onset&quot;&gt;symptom_age_onset&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;handedness&quot;&gt;handedness&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;height&quot;&gt;height&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;weight&quot;&gt;weight&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;medications&quot;&gt;medications&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;MRN&quot;&gt;MRN&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
-                shape=plaintext];
-        clinical:subject_id -&gt; subject:subject_id        [arrowtype=normal];
-        clinical:study_id -&gt; study:study_id      [arrowtype=normal];
-        demograph        [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;demograph&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;diagnosis&quot;&gt;diagnosis&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;relevant_diagnosis&quot;&gt;relevant_diagnosis&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;handedness&quot;&gt;handedness&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;medications&quot;&gt;medications&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;date_of_birth&quot;&gt;date_of_birth&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+                shape=plaintext];
+        clinical:study_id -&gt; study:study_id      [arrowtype=normal];
+        demograph        [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;demograph&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
 &lt;tr&gt;&lt;td port=&quot;age_study_start&quot;&gt;age_study_start&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;symptom_age_onset&quot;&gt;symptom_age_onset&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;date_of_birth&quot;&gt;date_of_birth&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;sex&quot;&gt;sex&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;race&quot;&gt;race&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;ethnicity&quot;&gt;ethnicity&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;recruit_mechanism&quot;&gt;recruit_mechanism&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;recruit_mechanism&quot;&gt;recruit_mechanism&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
-        demograph:subject_id -&gt; subject:subject_id       [arrowtype=normal];
         demograph:study_id -&gt; study:study_id     [arrowtype=normal];
         human_obs_log    [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;human_obs_log&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;observer_id&quot;&gt;observer_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;human_obs_id&quot;&gt;human_obs_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;response_array&quot;&gt;response_array&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+&lt;tr&gt;&lt;td port=&quot;response_array&quot;&gt;response_array&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;human_obs_id&quot;&gt;human_obs_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
-        human_obs_log:subject_id -&gt; subject:subject_id   [arrowtype=normal];
         human_obs_log:study_id -&gt; study:study_id         [arrowtype=normal];
         observer         [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;observer&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;observer_id&quot;&gt;observer_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;age&quot;&gt;age&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;first_name&quot;&gt;first_name&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;last_name&quot;&gt;last_name&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;age&quot;&gt;age&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;sex&quot;&gt;sex&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;race&quot;&gt;race&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;ethnicity&quot;&gt;ethnicity&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;observer_id&quot;&gt;observer_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;relationship&quot;&gt;relationship&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
         human_obs_log:observer_id -&gt; observer:observer_id        [arrowtype=normal];
@@ -277,35 +247,91 @@ to download the full example code</p>
                 shape=plaintext];
         tech_obs_data:instruction_id -&gt; instruction:instruction_id       [arrowtype=normal];
         stimulus         [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;stimulus&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;duration&quot;&gt;duration&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;stimulus_id&quot;&gt;stimulus_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;stimulus_description&quot;&gt;stimulus_description&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;num_iterations&quot;&gt;num_iterations&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;duration&quot;&gt;duration&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;stimulus_filetype&quot;&gt;stimulus_filetype&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;stimulus_file&quot;&gt;stimulus_file&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
         tech_obs_data:stimulus_id -&gt; stimulus:stimulus_id        [arrowtype=normal];
         tech_obs_log     [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;tech_obs_log&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;tech_obs_id&quot;&gt;tech_obs_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;staff_id&quot;&gt;staff_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;event_array&quot;&gt;event_array&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;date_time_array&quot;&gt;date_time_array&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+&lt;tr&gt;&lt;td port=&quot;date_time_array&quot;&gt;date_time_array&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;sensor_file_id_array&quot;&gt;sensor_file_id_array&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;tech_obs_log_id&quot;&gt;tech_obs_log_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;collection_id&quot;&gt;collection_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
-        tech_obs_log:subject_id -&gt; subject:subject_id    [arrowtype=normal];
         tech_obs_log:study_id -&gt; study:study_id  [arrowtype=normal];
         tech_obs_log:tech_obs_id -&gt; tech_obs_data:tech_obs_id    [arrowtype=normal];
+        sensor_file_log  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;sensor_file_log&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;file_start_time&quot;&gt;file_start_time&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;file_end_time&quot;&gt;file_end_time&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;true_temporal_resolution&quot;&gt;true_temporal_resolution&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;true_spatial_resolution&quot;&gt;true_spatial_resolution&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;tech_obs_id&quot;&gt;tech_obs_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;collection_id&quot;&gt;collection_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;device_id&quot;&gt;device_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;sensor_file_id&quot;&gt;sensor_file_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;sensor_id&quot;&gt;sensor_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;tech_obs_log_id&quot;&gt;tech_obs_log_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+                shape=plaintext];
+        tech_obs_log:sensor_file_id_array -&gt; sensor_file_log:sensor_file_id_array        [arrowtype=normal];
         collection       [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;collection&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;active&quot;&gt;active&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;collection_name&quot;&gt;collection_name&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;tech_obs_array&quot;&gt;tech_obs_array&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;human_obs_array&quot;&gt;human_obs_array&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+&lt;tr&gt;&lt;td port=&quot;human_obs_array&quot;&gt;human_obs_array&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;collection_id&quot;&gt;collection_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
+        tech_obs_log:collection_id -&gt; collection:collection_id   [arrowtype=normal];
+        sensor_file_log:study_id -&gt; study:study_id       [arrowtype=normal];
+        sensor_file_log:tech_obs_id -&gt; tech_obs_data:tech_obs_id         [arrowtype=normal];
+        sensor_file_log:tech_obs_log_id -&gt; tech_obs_log:tech_obs_log_id  [arrowtype=normal];
+        sensor_file_log:collection_id -&gt; collection:collection_id        [arrowtype=normal];
+        device   [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;device&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;wearable_bool&quot;&gt;wearable_bool&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;sensor_id_array&quot;&gt;sensor_id_array&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;device_location&quot;&gt;device_location&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;device_id&quot;&gt;device_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;device_make&quot;&gt;device_make&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;device_model&quot;&gt;device_model&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;device_firmware&quot;&gt;device_firmware&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;device_name&quot;&gt;device_name&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;device_sn&quot;&gt;device_sn&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+                shape=plaintext];
+        sensor_file_log:device_id -&gt; device:device_id    [arrowtype=normal];
+        sensor   [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;sensor&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;temporal_res&quot;&gt;temporal_res&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;spatial_res_x&quot;&gt;spatial_res_x&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;spatial_res_y&quot;&gt;spatial_res_y&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;sensor_id&quot;&gt;sensor_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;file_type&quot;&gt;file_type&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+                shape=plaintext];
+        sensor_file_log:sensor_id -&gt; sensor:sensor_id    [arrowtype=normal];
         collection:human_obs_array -&gt; human_obs_data:human_obs_array     [arrowtype=normal];
         collection:tech_obs_array -&gt; tech_obs_data:tech_obs_array        [arrowtype=normal];
+        consent  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;consent&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;staff_id&quot;&gt;staff_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;site_id&quot;&gt;site_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+                shape=plaintext];
+        test_consent     [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;test_consent&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;consent_date&quot;&gt;consent_date&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+                shape=plaintext];
         test     [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;test&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;Age&quot;&gt;Age&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;first_name_birth&quot;&gt;first_name_birth&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;last_name_birth&quot;&gt;last_name_birth&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
@@ -323,14 +349,14 @@ Warning: node tech_obs_data, port tech_obs_array unrecognized
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygraphviz</span> <span class="k">as</span> <span class="nn">pgv</span>
 
-<span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class"><span class="n">Table</span></a>
 <span class="kn">import</span> <span class="nn">psycopg2</span>
 
 <span class="c1">#### Initialize connection to database</span>
-<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;dbname=&#39;neurobooth&#39; user=&#39;neuroboother&#39; host=&#39;localhost&#39; &quot;</span>
                <span class="s2">&quot;password=&#39;neuroboothrocks&#39;&quot;</span><span class="p">)</span>
 
-<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a></a><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">connect_str</span></a><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
     <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -342,7 +368,7 @@ Warning: node tech_obs_data, port tech_obs_array unrecognized
     <span class="k">return</span> <span class="n">data</span>
 
 <span class="c1">#### Some useful postgres commands</span>
-<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fk_cmd_base</span></a></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fk_cmd_base</span></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    SELECT</span>
 <span class="s2">        tc.table_name,</span>
 <span class="s2">        kcu.column_name,</span>
@@ -359,15 +385,15 @@ Warning: node tech_obs_data, port tech_obs_array unrecognized
 <span class="s2">          AND ccu.table_schema = tc.table_schema</span>
 <span class="s2">    &quot;&quot;&quot;</span>
 
-<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">query_tables_cmd</span></a></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">query_tables_cmd</span></a> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">SELECT *</span>
 <span class="s2">FROM pg_catalog.pg_tables</span>
 <span class="s2">WHERE schemaname != &#39;pg_catalog&#39; AND</span>
 <span class="s2">    schemaname != &#39;information_schema&#39;;</span>
 <span class="s2">&quot;&quot;&quot;</span>
 
-<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tables</span></a></a> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">query_tables_cmd</span></a></a><span class="p">)</span>
-<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_ids</span></a></a> <span class="o">=</span> <span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tables</span></a></a><span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tables</span></a> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">query_tables_cmd</span></a><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_ids</span></a> <span class="o">=</span> <span class="p">[</span><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tables</span></a><span class="p">]</span>
 
 <span class="c1">#### Create graph</span>
 
@@ -375,31 +401,31 @@ Warning: node tech_obs_data, port tech_obs_array unrecognized
                <span class="n">overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">splines</span><span class="o">=</span><span class="s1">&#39;curved&#39;</span><span class="p">)</span>
 
 <span class="c1"># Add nodes</span>
-<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_ids</span></a></a><span class="p">:</span>
-    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_ids</span></a><span class="p">:</span>
+    <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table</span></a> <span class="o">=</span> <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class"><span class="n">Table</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
 
-    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rows</span></a></a> <span class="o">=</span> <span class="p">[]</span>
-    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rows</span></a></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="si">}</span><span class="s1">&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">column_name</span></a></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table</span><span class="o">.</span><span class="n">column_names</span></a></a><span class="p">:</span>
-        <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rows</span></a></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rows</span></a> <span class="o">=</span> <span class="p">[]</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rows</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s1">&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">column_name</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table</span><span class="o">.</span><span class="n">column_names</span></a><span class="p">:</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rows</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;</span>
         <span class="s1">&#39;&lt;tr&gt;&#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;&lt;td port=&quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">column_name</span></a></a><span class="si">}</span><span class="s1">&quot;&gt;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">column_name</span></a></a><span class="si">}</span><span class="s1">&lt;/td&gt;&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;&lt;td port=&quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">column_name</span></a><span class="si">}</span><span class="s1">&quot;&gt;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">column_name</span></a><span class="si">}</span><span class="s1">&lt;/td&gt;&#39;</span>
         <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
-    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a></a> <span class="o">=</span> <span class="s2">&quot;&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&quot;</span>
-    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a></a> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rows</span></a></a><span class="p">)</span>
-    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a></a> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&gt;&quot;</span>
-    <span class="n">A</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;plaintext&#39;</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a></a><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a> <span class="o">=</span> <span class="s2">&quot;&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&quot;</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rows</span></a><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&gt;&quot;</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;plaintext&#39;</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label</span></a><span class="p">)</span>
 
 <span class="c1"># Add edges</span>
-<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_ids</span></a></a><span class="p">:</span>
-    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">foreign_key_cmd</span></a></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fk_cmd_base</span></a></a> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;WHERE tc.constraint_type = &#39;FOREIGN KEY&#39;&quot;</span>
-                                    <span class="sa">f</span><span class="s2">&quot; AND tc.table_name=&#39;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_ids</span></a><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">foreign_key_cmd</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fk_cmd_base</span></a> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;WHERE tc.constraint_type = &#39;FOREIGN KEY&#39;&quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot; AND tc.table_name=&#39;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
 
-    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkeys</span></a></a> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">foreign_key_cmd</span></a></a><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkeys</span></a></a><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey</span></a></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkeys</span></a></a><span class="p">:</span>
-            <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey_table_id</span></a></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey</span></a></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">A</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey_table_id</span></a></a><span class="p">,</span> <span class="n">headport</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey</span></a></a><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tailport</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey</span></a></a><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkeys</span></a> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">foreign_key_cmd</span></a><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkeys</span></a><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkeys</span></a><span class="p">:</span>
+            <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey_table_id</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">A</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">table_id</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey_table_id</span></a><span class="p">,</span> <span class="n">headport</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey</span></a><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tailport</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fkey</span></a><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                        <span class="n">arrowtype</span><span class="o">=</span><span class="s1">&#39;normal&#39;</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">string</span><span class="p">())</span>  <span class="c1"># print to screen</span>
@@ -407,7 +433,7 @@ Warning: node tech_obs_data, port tech_obs_array unrecognized
 <span class="n">A</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s2">&quot;er_diagram.pdf&quot;</span><span class="p">)</span>  <span class="c1"># draw png</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  4.020 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.884 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-er-diagram-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/9673719f5e762fcb3d974f09eab85e23/plot_er_diagram.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_er_diagram.py</span></code></a></p>

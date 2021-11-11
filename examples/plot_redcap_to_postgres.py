@@ -14,10 +14,11 @@ import os.path as op
 import json
 from redcap import Project, RedcapError
 
-from neurobooth_terra import Table
+import psycopg2
+from neurobooth_terra import Table, create_table, drop_table
 from neurobooth_terra.ingest_redcap import fetch_survey, infer_schema
 
-###############################################################################
+# %%
 # Let us first define the surveys and their survey IDs that we want to fetch.
 # This information can be found on Redcap. To fetch Redcap data, you will
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
@@ -35,7 +36,7 @@ if API_KEY is None:
 
 project = Project(URL, API_KEY, lazy=True)
 
-###############################################################################
+# %%
 # Next, we fetch the metadata table. This table is the master table
 # that contains columns and their informations. It can be used to infer
 # information about the columns: example, what choices are available for a
@@ -50,7 +51,7 @@ metadata = metadata[metadata_fields]
 # metadata.to_csv(op.join(data_dir, 'data_dictionary.csv'), index=False)
 print('[Done]')
 
-###############################################################################
+# %%
 # Finally, we loop over the surveys and print out the schema.
 import pandas as pd
 
@@ -64,19 +65,21 @@ for survey_name, survey_id in survey_ids.items():
     dfs[survey_name] = df
 print(json.dumps(json_schema[survey_name], indent=4, sort_keys=True))
 
-###############################################################################
+# %%
 # Now, we will add the consent table to the subject table so we can
 # match subjects based on record_id
 
 df_joined = dfs['subject'].join(dfs['consent'], rsuffix='consent')
 
-###############################################################################
+# %%
 # Now, we will prepare the subject table in postgres
 
 import hashlib
 
 rows_subject = list()
 rows_consent = list()
+
+subject_ids = list()
 
 for df_row in df_joined.iterrows():
     df_row = df_row[1]
@@ -87,6 +90,11 @@ for df_row in df_joined.iterrows():
 
     subject_id = df_row['first_name_birth'] + df_row['last_name_birth']
     subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
+
+    # XXX: hack, why are there duplicate subjects?
+    if subject_id in subject_ids:
+        continue
+    subject_ids.append(subject_id)
 
     rows_subject.append((subject_id,
                         df_row['first_name_birth'],
@@ -102,32 +110,41 @@ for df_row in df_joined.iterrows():
                         'REDCAP',  # application_id
                         'MGH',  # site_id
                         # None, # date (missing)
-                        df_row['educate_clinicians_adults'],
-                        df_row['educate_clinicians_initials_adult'],
-                        bool(df_row['future_research_consent_adult'])
+                        # df_row['educate_clinicians_adults'],
+                        # df_row['educate_clinicians_initials_adult'],
+                        # bool(df_row['future_research_consent_adult'])
     ))
 
-###############################################################################
-# Now, we will prepare the subject table in postgres
+# %%
+# Now, we will first create a connection to the database
+connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
+               "password='neuroboothrocks'")
 
-import psycopg2
-from sshtunnel import SSHTunnelForwarder
+conn = psycopg2.connect(connect_str)
 
-# Create an SSH tunnel
-with SSHTunnelForwarder(
-    'neurodoor.nmr.mgh.harvard.edu',
-    ssh_username='mj513',
-    ssh_config_file='~/.ssh/config',
-    ssh_pkey='~/.ssh/id_rsa',
-    remote_bind_address=('192.168.100.1', 5432),
-    local_bind_address=('localhost', 6543)) as tunnel:
+# %%
+# We will drop our tables if they already exist
+# this is just for convenience so we can re-run this script
+# and create a new mock subject table and consent table to test our script
+drop_table('subject', conn)
+drop_table('consent', conn)
 
-    with psycopg2.connect(database='neurobooth', user='neuroboother',
-                          password='neuroboothrocks', host=tunnel.local_bind_host,
-                          port=tunnel.local_bind_port) as conn:
+table_id = 'subject'
+cols_subject = ['subject_id', 'first_name_birth', 'middle_name_birth',
+           'last_name_birth', 'date_of_birth', 'country_of_birth',
+           'gender_at_birth', 'birthplace']
+datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
+             'date', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)']
+table_subject = create_table(table_id, conn, cols_subject, datatypes)
 
-        table_consent = Table('consent', conn, primary_key='subject_id')
-        table_consent.insert_rows(rows_consent)
+table_id = 'consent'
+cols_consent = ['subject_id', 'study_id', 'staff_id', 'application_id',
+                'site_id']
+datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
+             'VARCHAR (255)']
+table_consent = create_table(table_id, conn, cols_consent, datatypes)
 
-        table_subject = Table('subject', conn, primary_key='subject_id')
-        table_subject.insert_rows(rows_subject)
+# %%
+# Then we insert the rows in this table
+table_subject.insert_rows(rows_subject, cols_subject)
+table_consent.insert_rows(rows_consent, cols_consent)

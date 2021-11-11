@@ -18,3 +18,17 @@ Tables (:py:mod:`neurobooth_terra`):
    create_table
    drop_table
    list_tables
+
+Redcap (:py:mod:`neurobooth_terra.ingest_redcap`)
+-------------------------------------------------
+
+.. currentmodule:: neurobooth_terra.ingest_redcap
+
+.. autosummary::
+   :toctree: generated/
+
+   fetch_survey
+
+
+Mock
+----

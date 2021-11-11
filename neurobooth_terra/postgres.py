@@ -256,7 +256,7 @@ class Table:
         idx = self.column_names.index(col)
         del self.column_names[idx], self.data_types[idx]
 
-    def insert_rows(self, vals, cols=None):
+    def insert_rows(self, vals, cols):
         """Manual insertion into tables
 
         Parameters
@@ -264,9 +264,8 @@ class Table:
         vals : list of tuple
             The records to insert. Each tuple
             is one row.
-        cols : list of str | None
-            The columns to insert into. If None, use
-            all columns.
+        cols : list of str
+            The columns to insert into.
 
         Returns
         -------
@@ -274,8 +273,6 @@ class Table:
             The primary keys of the row inserted into.
             If multiple rows are inserted, returns None.
         """
-        if cols is None:
-            cols = self.column_names
         if not isinstance(vals, list):
             raise ValueError(f'vals must be a list of tuple. Got {type(vals)}')
         for val in vals:

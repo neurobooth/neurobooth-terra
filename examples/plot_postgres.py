@@ -42,24 +42,29 @@ drop_table('consent', conn)
 # ------
 # Now we define the Table
 table_id = 'subject'
+column_names = ['subject_id', 'first_name_birth', 'last_name_birth']
+dtypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)']
 table_subject = create_table(table_id, conn,
-                             ['subject_id', 'first_name_birth', 'last_name_birth'],
-                             ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)'])
+                             column_names=column_names,
+                             dtypes=dtypes)
 
 # %%
 # and insert some data and retrieve the table as a dataframe
 table_subject.insert_rows([('x5dc', 'mainak', 'jas'),
-                           ('y5d3', 'anoopum', 'gupta')])
+                           ('y5d3', 'anoopum', 'gupta')],
+                           cols=column_names)
 
 # %%
 # We can create another table and relate it to the other table using
 # a foreign key
 table_id = 'contact'
+column_names = ['subject_id', 'email']
+dtypes = ['VARCHAR (255)', 'VARCHAR (255)']
 table_contact = create_table(table_id, conn,
-                             column_names=['subject_id', 'email'],
-                             dtypes=['VARCHAR (255)', 'VARCHAR (255)'],
+                             column_names=column_names,
+                             dtypes=dtypes,
                              foreign_key=dict(subject_id='subject'))
-table_contact.insert_rows([('x5dc',), ('y5d3',)], ['subject_id'])
+table_contact.insert_rows([('x5dc',), ('y5d3',)], cols=['subject_id'])
 
 # %% 
 # Read

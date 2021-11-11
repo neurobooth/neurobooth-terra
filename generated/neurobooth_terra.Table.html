@@ -153,7 +153,7 @@ as primary key.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert_rows" title="neurobooth_terra.Table.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(vals, cols)</p></td>
 <td><p>Manual insertion into tables</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(cmd)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>([column_names])</p></td>
 <td><p>Run a query.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.update_row" title="neurobooth_terra.Table.update_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_row</span></code></a>(pk_val, vals[, cols])</p></td>
@@ -215,7 +215,7 @@ as primary key.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert_rows" title="neurobooth_terra.Table.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(vals, cols)</p></td>
 <td><p>Manual insertion into tables</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(cmd)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>([column_names])</p></td>
 <td><p>Run a query.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.update_row" title="neurobooth_terra.Table.update_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_row</span></code></a>(pk_val, vals[, cols])</p></td>
@@ -299,11 +299,17 @@ If multiple rows are inserted, returns None.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="neurobooth_terra.Table.query">
-<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/postgres.html#Table.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.query" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/postgres.html#Table.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a query.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
+<dt><strong>column_names</strong><span class="classifier">None | list of str</span></dt><dd><p>If None, query all columns</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
 <dt><strong>df</strong><span class="classifier">instance of pd.Dataframe</span></dt><dd><p>A pandas dataframe object.</p>
 </dd>
 </dl>

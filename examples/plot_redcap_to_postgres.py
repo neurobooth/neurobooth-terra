@@ -9,14 +9,9 @@ This example demonstrates how to create table from Redcap.
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
 import os
-import os.path as op
 
-import json
 from redcap import Project, RedcapError
-
-import psycopg2
-from neurobooth_terra import Table, create_table, drop_table
-from neurobooth_terra.ingest_redcap import fetch_survey, infer_schema
+from neurobooth_terra.ingest_redcap import fetch_survey
 
 # %%
 # Let us first define the surveys and their survey IDs that we want to fetch.
@@ -52,27 +47,25 @@ metadata = metadata[metadata_fields]
 print('[Done]')
 
 # %%
-# Finally, we loop over the surveys and print out the schema.
+# Finally, we loop over the surveys and collect them.
 import pandas as pd
 
-json_schema = dict()
 dfs = dict()
 for survey_name, survey_id in survey_ids.items():
     df = fetch_survey(project, survey_name, survey_id)
-    json_schema[survey_name] = infer_schema(df, metadata)
-    # convert to None for psycopg2
+    # convert NaN to None for psycopg2
     df = df.where(pd.notnull(df), None)
     dfs[survey_name] = df
-print(json.dumps(json_schema[survey_name], indent=4, sort_keys=True))
 
 # %%
 # Now, we will add the consent table to the subject table so we can
 # match subjects based on record_id
 
 df_joined = dfs['subject'].join(dfs['consent'], rsuffix='consent')
+print(df_joined.columns)
 
 # %%
-# Now, we will prepare the subject table in postgres
+# Now, we will prepare the contents of the subject table in postgres
 
 import hashlib
 
@@ -114,9 +107,15 @@ for df_row in df_joined.iterrows():
                         # df_row['educate_clinicians_initials_adult'],
                         # bool(df_row['future_research_consent_adult'])
     ))
+for row_subject in rows_subject[:5]:
+    print(row_subject)
 
 # %%
 # Now, we will first create a connection to the database
+
+import psycopg2
+from neurobooth_terra import Table, create_table, drop_table
+
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                "password='neuroboothrocks'")
 
@@ -131,8 +130,8 @@ drop_table('consent', conn)
 
 table_id = 'subject'
 cols_subject = ['subject_id', 'first_name_birth', 'middle_name_birth',
-           'last_name_birth', 'date_of_birth', 'country_of_birth',
-           'gender_at_birth', 'birthplace']
+                'last_name_birth', 'date_of_birth', 'country_of_birth',
+                'gender_at_birth', 'birthplace']
 datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
              'date', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)']
 table_subject = create_table(table_id, conn, cols_subject, datatypes)
@@ -140,11 +139,15 @@ table_subject = create_table(table_id, conn, cols_subject, datatypes)
 table_id = 'consent'
 cols_consent = ['subject_id', 'study_id', 'staff_id', 'application_id',
                 'site_id']
-datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
-             'VARCHAR (255)']
+datatypes = ['VARCHAR (255)'] * len(cols_consent)
 table_consent = create_table(table_id, conn, cols_consent, datatypes)
 
 # %%
 # Then we insert the rows in this table
 table_subject.insert_rows(rows_subject, cols_subject)
 table_consent.insert_rows(rows_consent, cols_consent)
+
+# %%
+# Let's do a query to check that the content is in there
+print(table_subject.query())
+print(table_consent.query())

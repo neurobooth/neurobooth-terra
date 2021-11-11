@@ -323,16 +323,26 @@ class Table:
         cmd += f" WHERE {self.primary_key} = '{pk_val}';"
         execute(self.conn, self.cursor, cmd)
 
-    def query(self, cmd):
+    def query(self, column_names=None):
         """Run a query.
+
+        Parameters
+        ----------
+        column_names : None | list of str
+            If None, query all columns
 
         Returns
         -------
         df : instance of pd.Dataframe
             A pandas dataframe object.
         """
+        if column_names is None:
+            column_names = self.column_names
+        cols = ', '.join(column_names)
+
+        cmd = f"SELECT {cols} FROM {self.table_id};"
         data = execute(self.conn, self.cursor, cmd, fetch=True)
-        df = pd.DataFrame(data, columns=self.column_names)
+        df = pd.DataFrame(data, columns=column_names)
         df = df.set_index(self.primary_key)
         return df
 

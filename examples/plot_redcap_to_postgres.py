@@ -14,7 +14,26 @@ from redcap import Project, RedcapError
 from neurobooth_terra.redcap import fetch_survey, iter_interval
 
 import psycopg2
+from sshtunnel import SSHTunnelForwarder
+
 from neurobooth_terra import Table, create_table, drop_table
+
+# %%
+# The ssh arguments and connection arguments
+
+ssh_args = dict(
+        ssh_address_or_host='neurodoor.nmr.mgh.harvard.edu',
+        ssh_username='mj513',
+        ssh_config_file='~/.ssh/config',
+        ssh_pkey='~/.ssh/id_rsa',
+        remote_bind_address=('192.168.100.1', 5432),
+        local_bind_address=('localhost', 6543)
+)
+
+db_args = dict(
+    database='neurobooth', user='neuroboother', password='neuroboothrocks',
+    # host='localhost'
+)
 
 # %%
 # Let us first define the surveys and their survey IDs that we want to fetch.
@@ -29,16 +48,10 @@ survey_ids = {'subject': 84426, 'consent': 84349}
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
 
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
-
 if API_KEY is None:
     raise ValueError('Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first')
 
 project = Project(URL, API_KEY, lazy=True)
-
-# First create a connection to the database
-conn = psycopg2.connect(connect_str)
 
 # %%
 # Next, we fetch the metadata table. This table is the master table
@@ -111,13 +124,17 @@ for _ in iter_interval(wait=5, exit_after=2):
     cols_subject = ['subject_id', 'first_name_birth', 'middle_name_birth',
                     'last_name_birth', 'date_of_birth', 'country_of_birth',
                     'gender_at_birth', 'birthplace']
-    table_subject = Table('subject', conn)
-    table_subject.insert_rows(rows_subject, cols_subject)
-
-    table_consent = Table('consent', conn)
     cols_consent = ['subject_id', 'study_id', 'staff_id', 'application_id',
                     'site_id']
-    table_consent.insert_rows(rows_consent, cols_consent)
+    with SSHTunnelForwarder(**ssh_args) as tunnel:
+        with psycopg2.connect(port=tunnel.local_bind_port,
+                              host=tunnel.local_bind_host, **db_args) as conn:
+
+            table_subject = Table('subject', conn)
+            table_subject.insert_rows(rows_subject, cols_subject)
+
+            table_consent = Table('consent', conn)
+            table_consent.insert_rows(rows_consent, cols_consent)
 
 # %%
 # We will drop our tables if they already exist

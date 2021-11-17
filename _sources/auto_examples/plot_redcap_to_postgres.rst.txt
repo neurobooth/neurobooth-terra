@@ -24,7 +24,7 @@ Ingest table from Redcap into Postgres
 
 This example demonstrates how to create table from Redcap.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-16
+.. GENERATED FROM PYTHON SOURCE LINES 8-19
 
 .. code-block:: default
 
@@ -34,7 +34,10 @@ This example demonstrates how to create table from Redcap.
     import os
 
     from redcap import Project, RedcapError
-    from neurobooth_terra.ingest_redcap import fetch_survey
+    from neurobooth_terra.ingest_redcap import fetch_survey, iter_interval
+
+    import psycopg2
+    from neurobooth_terra import Table, create_table, drop_table
 
 
 
@@ -43,14 +46,14 @@ This example demonstrates how to create table from Redcap.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 17-21
+.. GENERATED FROM PYTHON SOURCE LINES 20-24
 
 Let us first define the surveys and their survey IDs that we want to fetch.
 This information can be found on Redcap. To fetch Redcap data, you will
 also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 You will need to request for the Redcap API token from Redcap interface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-34
+.. GENERATED FROM PYTHON SOURCE LINES 24-43
 
 .. code-block:: default
 
@@ -62,11 +65,16 @@ You will need to request for the Redcap API token from Redcap interface.
     URL = 'https://redcap.partners.org/redcap/api/'
     API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
 
+    connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
+                   "password='neuroboothrocks'")
+
     if API_KEY is None:
         raise ValueError('Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first')
 
     project = Project(URL, API_KEY, lazy=True)
 
+    # First create a connection to the database
+    conn = psycopg2.connect(connect_str)
 
 
 
@@ -74,14 +82,15 @@ You will need to request for the Redcap API token from Redcap interface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-39
+
+.. GENERATED FROM PYTHON SOURCE LINES 44-48
 
 Next, we fetch the metadata table. This table is the master table
 that contains columns and their informations. It can be used to infer
 information about the columns: example, what choices are available for a
 particular question.
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-49
+.. GENERATED FROM PYTHON SOURCE LINES 48-58
 
 .. code-block:: default
 
@@ -111,22 +120,75 @@ particular question.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-51
+.. GENERATED FROM PYTHON SOURCE LINES 59-60
 
 Finally, we loop over the surveys and collect them.
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-60
+.. GENERATED FROM PYTHON SOURCE LINES 60-122
 
 .. code-block:: default
 
     import pandas as pd
+    import hashlib
 
-    dfs = dict()
-    for survey_name, survey_id in survey_ids.items():
-        df = fetch_survey(project, survey_name, survey_id)
-        # convert NaN to None for psycopg2
-        df = df.where(pd.notnull(df), None)
-        dfs[survey_name] = df
+    # TODO: add test for iter_interval
+    for _ in iter_interval(wait=5, exit_after=2):
+
+        dfs = dict()
+        for survey_name, survey_id in survey_ids.items():
+            df = fetch_survey(project, survey_name, survey_id)
+            # convert NaN to None for psycopg2
+            dfs[survey_name] = df
+
+        # Now, we will add the consent table to the subject table so we can
+        # match subjects based on record_id
+        df_redcap = dfs['subject'].join(dfs['consent'], rsuffix='consent')
+        print(df_redcap.columns)
+
+        # Now, we will prepare the contents of the subject table in postgres
+        rows_subject = list()
+        rows_consent = list()
+
+        df_redcap = df_redcap[~pd.isna(df_redcap['first_name_birth'])]
+
+        for df_row in df_redcap.iterrows():
+            df_row = df_row[1]
+
+            subject_id = df_row['first_name_birth'] + df_row['last_name_birth']
+            subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
+
+            rows_subject.append((subject_id,
+                                df_row['first_name_birth'],
+                                df_row['middle_name_birth'],
+                                df_row['last_name_birth'],
+                                df_row['date_of_birth'],
+                                df_row['country_of_birth'],
+                                df_row['gender_at_birth'],
+                                df_row['birthplace']))
+            rows_consent.append((subject_id,
+                                'study1',  # study_id
+                                'Neuroboother',  # staff_id
+                                'REDCAP',  # application_id
+                                'MGH',  # site_id
+                                # None, # date (missing)
+                                # df_row['educate_clinicians_adults'],
+                                # df_row['educate_clinicians_initials_adult'],
+                                # bool(df_row['future_research_consent_adult'])
+            ))
+        for row_subject in rows_subject[:5]:
+            print(row_subject)
+
+        # Then we insert the rows in this table
+        cols_subject = ['subject_id', 'first_name_birth', 'middle_name_birth',
+                        'last_name_birth', 'date_of_birth', 'country_of_birth',
+                        'gender_at_birth', 'birthplace']
+        table_subject = Table('subject', conn)
+        table_subject.insert_rows(rows_subject, cols_subject)
+
+        table_consent = Table('consent', conn)
+        cols_consent = ['subject_id', 'study_id', 'staff_id', 'application_id',
+                        'site_id']
+        table_consent.insert_rows(rows_consent, cols_consent)
 
 
 
@@ -142,33 +204,6 @@ Finally, we loop over the surveys and collect them.
     [Done]
     Fetching report consent from Redcap
     [Done]
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 61-63
-
-Now, we will add the consent table to the subject table so we can
-match subjects based on record_id
-
-.. GENERATED FROM PYTHON SOURCE LINES 63-67
-
-.. code-block:: default
-
-
-    df_joined = dfs['subject'].join(dfs['consent'], rsuffix='consent')
-    print(df_joined.columns)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
     Index(['record_id', 'redcap_event_name', 'redcap_repeat_instrument',
            'redcap_repeat_instance', 'first_name_birth', 'middle_name_birth',
            'last_name_birth', 'date_of_birth', 'country_of_birth', 'birthplace',
@@ -176,149 +211,36 @@ match subjects based on record_id
            'redcap_repeat_instrumentconsent', 'redcap_repeat_instanceconsent',
            'redcap_survey_identifier'],
           dtype='object')
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 68-69
-
-Now, we will prepare the contents of the subject table in postgres
-
-.. GENERATED FROM PYTHON SOURCE LINES 69-113
-
-.. code-block:: default
-
-
-    import hashlib
-
-    rows_subject = list()
-    rows_consent = list()
-
-    subject_ids = list()
-
-    for df_row in df_joined.iterrows():
-        df_row = df_row[1]
-
-        # need at least name to add to table
-        if df_row['first_name_birth'] is None:
-            continue
-
-        subject_id = df_row['first_name_birth'] + df_row['last_name_birth']
-        subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
-
-        # XXX: hack, why are there duplicate subjects?
-        if subject_id in subject_ids:
-            continue
-        subject_ids.append(subject_id)
-
-        rows_subject.append((subject_id,
-                            df_row['first_name_birth'],
-                            df_row['middle_name_birth'],
-                            df_row['last_name_birth'],
-                            df_row['date_of_birth'],
-                            df_row['country_of_birth'],
-                            df_row['gender_at_birth'],
-                            df_row['birthplace']))
-        rows_consent.append((subject_id,
-                            'study1',  # study_id
-                            'Neuroboother',  # staff_id
-                            'REDCAP',  # application_id
-                            'MGH',  # site_id
-                            # None, # date (missing)
-                            # df_row['educate_clinicians_adults'],
-                            # df_row['educate_clinicians_initials_adult'],
-                            # bool(df_row['future_research_consent_adult'])
-        ))
-    for row_subject in rows_subject[:5]:
-        print(row_subject)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
     ('11253c82a3365f445047eb6c652b7b9e', 'Louis', 'Ron', 'Hernandez', '1966-09-05', 1.0, 1.0, 'Worcester')
     ('056c329596bfe609d731e046a9578b31', 'Marcella', 'Catherine ', 'Russell', '1984-08-19', 1.0, 2.0, 'Denver')
     ('a2f3512e457f0e63197c01cd863901af', 'Colleen', 'Mary', 'Gordon', '1924-07-15', 1.0, 2.0, 'Portland')
     ('1d45fcd6e1cfda61971a6c840b40730c', 'Ann', 'Marie', 'Benson', '1958-04-16', 1.0, 2.0, 'Toledo')
     ('ea5b85adb4af96fce82882048b1ff02a', 'Grady', 'Burt', 'Fleming', '1943-07-25', 1.0, 1.0, 'Boston')
+    Time left: 3.17 s
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 114-115
-
-Now, we will first create a connection to the database
-
-.. GENERATED FROM PYTHON SOURCE LINES 115-124
-
-.. code-block:: default
-
-
-    import psycopg2
-    from neurobooth_terra import Table, create_table, drop_table
-
-    connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-                   "password='neuroboothrocks'")
-
-    conn = psycopg2.connect(connect_str)
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 125-128
+.. GENERATED FROM PYTHON SOURCE LINES 123-128
 
 We will drop our tables if they already exist
 this is just for convenience so we can re-run this script
 and create a new mock subject table and consent table to test our script
+drop_table('subject', conn)
+drop_table('consent', conn)
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-145
-
-.. code-block:: default
-
-    drop_table('subject', conn)
-    drop_table('consent', conn)
-
-    table_id = 'subject'
-    cols_subject = ['subject_id', 'first_name_birth', 'middle_name_birth',
-                    'last_name_birth', 'date_of_birth', 'country_of_birth',
-                    'gender_at_birth', 'birthplace']
-    datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
-                 'date', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)']
-    table_subject = create_table(table_id, conn, cols_subject, datatypes)
-
-    table_id = 'consent'
-    cols_consent = ['subject_id', 'study_id', 'staff_id', 'application_id',
-                    'site_id']
-    datatypes = ['VARCHAR (255)'] * len(cols_consent)
-    table_consent = create_table(table_id, conn, cols_consent, datatypes)
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 146-147
-
-Then we insert the rows in this table
-
-.. GENERATED FROM PYTHON SOURCE LINES 147-150
+.. GENERATED FROM PYTHON SOURCE LINES 128-138
 
 .. code-block:: default
 
-    table_subject.insert_rows(rows_subject, cols_subject)
-    table_consent.insert_rows(rows_consent, cols_consent)
+
+    # table_id = 'subject'
+    # datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
+    #              'date', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)']
+    # table_subject = create_table(table_id, conn, cols_subject, datatypes)
+
+    # table_id = 'consent'
+    # datatypes = ['VARCHAR (255)'] * len(cols_consent)
+    # table_consent = create_table(table_id, conn, cols_consent, datatypes)
 
 
 
@@ -327,66 +249,16 @@ Then we insert the rows in this table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 151-152
+.. GENERATED FROM PYTHON SOURCE LINES 139-142
 
 Let's do a query to check that the content is in there
-
-.. GENERATED FROM PYTHON SOURCE LINES 152-154
-
-.. code-block:: default
-
-    print(table_subject.query())
-    print(table_consent.query())
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-                                     date_of_birth  ...      birthplace
-    subject_id                                      ...                
-    11253c82a3365f445047eb6c652b7b9e    1966-09-05  ...       Worcester
-    056c329596bfe609d731e046a9578b31    1984-08-19  ...          Denver
-    a2f3512e457f0e63197c01cd863901af    1924-07-15  ...        Portland
-    1d45fcd6e1cfda61971a6c840b40730c    1958-04-16  ...          Toledo
-    ea5b85adb4af96fce82882048b1ff02a    1943-07-25  ...          Boston
-    6e119410857519b61cefda204dab8fe8    1968-11-17  ...     Cincinnati 
-    25902514a6064f2e2579840c9f4d0264    1963-10-27  ...  San Francisco 
-    44ec7a449f47cd156b8d4de7c207909b    1980-04-20  ...           Paris
-    405ec3d4e94fed218c3fdb333665d1dd    1963-06-08  ...          Dallas
-    bc60e302c748ed4dde344bc475f80e46    1934-04-03  ...       Cambridge
-    f3140a00a23e579cc721a0c6675e726c    1997-07-25  ...       Worcester
-    50f2d3ff596aa167ae10a3557320d857    1984-04-07  ...   New York City
-    afe2d37341100f1619d55fc8cad1a13f    1984-04-07  ...   New York City
-
-    [13 rows x 7 columns]
-                                     study_id      staff_id application_id site_id
-    subject_id                                                                    
-    11253c82a3365f445047eb6c652b7b9e   study1  Neuroboother         REDCAP     MGH
-    056c329596bfe609d731e046a9578b31   study1  Neuroboother         REDCAP     MGH
-    a2f3512e457f0e63197c01cd863901af   study1  Neuroboother         REDCAP     MGH
-    1d45fcd6e1cfda61971a6c840b40730c   study1  Neuroboother         REDCAP     MGH
-    ea5b85adb4af96fce82882048b1ff02a   study1  Neuroboother         REDCAP     MGH
-    6e119410857519b61cefda204dab8fe8   study1  Neuroboother         REDCAP     MGH
-    25902514a6064f2e2579840c9f4d0264   study1  Neuroboother         REDCAP     MGH
-    44ec7a449f47cd156b8d4de7c207909b   study1  Neuroboother         REDCAP     MGH
-    405ec3d4e94fed218c3fdb333665d1dd   study1  Neuroboother         REDCAP     MGH
-    bc60e302c748ed4dde344bc475f80e46   study1  Neuroboother         REDCAP     MGH
-    f3140a00a23e579cc721a0c6675e726c   study1  Neuroboother         REDCAP     MGH
-    50f2d3ff596aa167ae10a3557320d857   study1  Neuroboother         REDCAP     MGH
-    afe2d37341100f1619d55fc8cad1a13f   study1  Neuroboother         REDCAP     MGH
-
-
-
+print(table_subject.query())
+print(table_consent.query())
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.922 seconds)
+   **Total running time of the script:** ( 0 minutes  5.202 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_redcap_to_postgres.py:

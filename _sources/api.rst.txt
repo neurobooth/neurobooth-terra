@@ -28,6 +28,7 @@ Redcap (:py:mod:`neurobooth_terra.ingest_redcap`)
    :toctree: generated/
 
    fetch_survey
+   iter_interval
 
 
 Mock

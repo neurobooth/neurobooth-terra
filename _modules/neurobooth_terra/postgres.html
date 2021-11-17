@@ -47,6 +47,7 @@
             
                 <li><a href="../../auto_examples/index.html">Examples</a></li>
                 <li><a href="../../api.html">API</a></li>
+                <li><a href="../../whats_new.html">Changes</a></li>
                 <li><a href="https://github.com/neurobooth/neurobooth-terra">GitHub</a></li>
             
             
@@ -361,6 +362,8 @@
 <div class="viewcode-block" id="Table.insert_rows"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Manual insertion into tables</span>
 
+<span class="sd">        If conflicts, does nothing.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        vals : list of tuple</span>
@@ -385,13 +388,14 @@
         <span class="n">str_format</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">])</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">])</span>
         <span class="n">insert_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;INSERT INTO </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">cols</span><span class="si">}</span><span class="s1">) VALUES(</span><span class="si">{</span><span class="n">str_format</span><span class="si">}</span><span class="s1">) &#39;</span>
+        <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;ON CONFLICT DO NOTHING &#39;</span>
         <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;RETURNING </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="n">_execute_batch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">insert_cmd</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Table.update_row"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.update_row">[docs]</a>    <span class="k">def</span> <span class="nf">update_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pk_val</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Table.update_row"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.update_row">[docs]</a>    <span class="k">def</span> <span class="nf">update_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pk_val</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update values in a row</span>
 
 <span class="sd">        Parameters</span>
@@ -401,9 +405,8 @@
 <span class="sd">            the row to replace.</span>
 <span class="sd">        vals : tuple</span>
 <span class="sd">            The values in the row to replace.</span>
-<span class="sd">        cols : list of str | None</span>
-<span class="sd">            The columns to insert into. If None, use</span>
-<span class="sd">            all columns</span>
+<span class="sd">        cols : list of str</span>
+<span class="sd">            The columns to insert into.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;UPDATE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s2"> SET &quot;</span>
 
@@ -440,7 +443,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span>
+        <span class="c1"># use quotes to be case sensitive</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">])</span>
 
         <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SELECT </span><span class="si">{</span><span class="n">cols</span><span class="si">}</span><span class="s2"> FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s2">;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

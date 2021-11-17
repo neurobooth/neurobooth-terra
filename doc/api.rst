@@ -19,10 +19,10 @@ Tables (:py:mod:`neurobooth_terra`):
    drop_table
    list_tables
 
-Redcap (:py:mod:`neurobooth_terra.ingest_redcap`)
--------------------------------------------------
+Redcap (:py:mod:`neurobooth_terra.redcap`)
+------------------------------------------
 
-.. currentmodule:: neurobooth_terra.ingest_redcap
+.. currentmodule:: neurobooth_terra.redcap
 
 .. autosummary::
    :toctree: generated/

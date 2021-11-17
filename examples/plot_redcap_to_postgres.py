@@ -11,7 +11,7 @@ This example demonstrates how to create table from Redcap.
 import os
 
 from redcap import Project, RedcapError
-from neurobooth_terra.ingest_redcap import fetch_survey, iter_interval
+from neurobooth_terra.redcap import fetch_survey, iter_interval
 
 import psycopg2
 from neurobooth_terra import Table, create_table, drop_table

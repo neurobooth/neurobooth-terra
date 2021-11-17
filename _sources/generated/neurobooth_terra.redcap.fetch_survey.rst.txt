@@ -1,0 +1,6 @@
+﻿neurobooth\_terra.redcap.fetch\_survey
+======================================
+
+.. currentmodule:: neurobooth_terra.redcap
+
+.. autofunction:: fetch_survey

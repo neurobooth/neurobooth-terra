@@ -52,7 +52,7 @@ def test_psql_connection():
     # test updating row partially
     table_test.update_row('blah', ('mainak',), ['first_name_birth'])
     df = table_test.query()
-    assert df[df.index == 'blah']['first_name_birth'][0] == 'mainak'
+    assert df.loc['blah']['first_name_birth'] == 'mainak'
 
     with pytest.raises(ValueError, match='column blah is not present'):
         table_test.update_row('blah', ('mainak',), ['blah'])

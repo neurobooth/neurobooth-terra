@@ -8,11 +8,11 @@ from numpy.testing import assert_raises
 from neurobooth_terra import Table, create_table, drop_table
 
 
+connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
+                "password='neuroboothrocks'")
+
 def test_psql_connection():
     """Test that we can connect to the database"""
-
-    connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-                   "password='neuroboothrocks'")
 
     conn = psycopg2.connect(connect_str)
 
@@ -25,23 +25,25 @@ def test_psql_connection():
                                  column_names=column_names,
                                  dtypes=dtypes)
     table_subject.insert_rows([('x5dc', 'mainak', 'jas', 21),
-                               ('y5d3', 'anoopum', 'gupta', 25)])
+                               ('y5d3', 'anoopum', 'gupta', 25)],
+                               cols=column_names)
     with pytest.raises(ValueError, match='vals must be a list of tuple'):
-        table_subject.insert_rows('blah')
+        table_subject.insert_rows('blah', ['subject_id'])
     with pytest.raises(ValueError, match='entries in vals must be tuples'):
-        table_subject.insert_rows(['blah'])
+        table_subject.insert_rows(['blah'], ['subject_id'])
     with pytest.raises(ValueError, match='tuple length must match'):
-        table_subject.insert_rows([('x5dc', 'mainak', 'jas')])
+        table_subject.insert_rows([('x5dc', 'mainak', 'jas')], ['subject_id'])
 
-    assert table_subject.data_types == dtypes
+    assert sorted(table_subject.data_types) == sorted(dtypes)
     table_subject.close()
 
     table_test = Table('test', conn)
     assert table_test.primary_key == 'subject_id'
 
     # test updating row
-    table_test.update_row('y5d3', ('blah', 'anupum', 'gupta', 32))
-    df = table_test.query('SELECT * FROM test')
+    table_test.update_row('y5d3', ('blah', 'anupum', 'gupta', 32),
+                          cols=column_names)
+    df = table_test.query()
     assert 'blah' in df.index
 
     with pytest.raises(ValueError, match='vals must be a tuple'):
@@ -49,7 +51,7 @@ def test_psql_connection():
 
     # test updating row partially
     table_test.update_row('blah', ('mainak',), ['first_name_birth'])
-    df = table_test.query('SELECT * FROM test')
+    df = table_test.query()
     assert df[df.index == 'blah']['first_name_birth'][0] == 'mainak'
 
     with pytest.raises(ValueError, match='column blah is not present'):
@@ -69,7 +71,7 @@ def test_psql_connection():
     pk_val = table_test.insert_rows([('mainak', 'jas', 21)],
                                     cols=['first_name_birth', 'last_name_birth', 'Age'])
     assert pk_val == 'SUBJ1'
-    df = table_test.query('SELECT * from test')
+    df = table_test.query()
     assert 'SUBJ1' in df.index
 
     # test insertion of date
@@ -80,16 +82,13 @@ def test_psql_connection():
     dtypes = ['VARCHAR (255)', 'date']
     table_consent = create_table(table_id, conn, column_names, dtypes)
     date = datetime.datetime.today().strftime('%Y-%m-%d')
-    table_consent.insert_rows([('x5dc', date)])
+    table_consent.insert_rows([('x5dc', date)], cols=column_names)
 
     conn.close()
 
 
 def test_delete():
     """Test deleting rows"""
-
-    connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-                   "password='neuroboothrocks'")
 
     conn = psycopg2.connect(connect_str)
 
@@ -103,7 +102,8 @@ def test_delete():
                                  dtypes=dtypes)
     table_subject.insert_rows([('x5dc', 'mainak', 'jas', 21),
                                ('y5d3', 'anoopum', 'gupta', 25),
-                               ('abcd', 'mayank', 'jas', 25)])
+                               ('abcd', 'mayank', 'jas', 25)],
+                               cols=column_names)
     table_subject.delete_row("first_name_birth LIKE 'ma%'")
-    df = table_subject.query("SELECT * FROM test")
+    df = table_subject.query()
     assert len(df['first_name_birth']) == 1

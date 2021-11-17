@@ -259,6 +259,8 @@ class Table:
     def insert_rows(self, vals, cols):
         """Manual insertion into tables
 
+        If conflicts, does nothing.
+
         Parameters
         ----------
         vals : list of tuple
@@ -283,13 +285,14 @@ class Table:
         str_format = ','.join(len(cols) * ['%s'])
         cols = ','.join([f'"{col}"' for col in cols])
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format}) '
+        insert_cmd += f'ON CONFLICT DO NOTHING '
         insert_cmd += f'RETURNING {self.primary_key}'
 
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)
         if len(vals) == 1:
             return self.cursor.fetchone()[0]
 
-    def update_row(self, pk_val, vals, cols=None):
+    def update_row(self, pk_val, vals, cols):
         """Update values in a row
 
         Parameters
@@ -299,9 +302,8 @@ class Table:
             the row to replace.
         vals : tuple
             The values in the row to replace.
-        cols : list of str | None
-            The columns to insert into. If None, use
-            all columns
+        cols : list of str
+            The columns to insert into.
         """
         cmd = f"UPDATE {self.table_id} SET "
 
@@ -338,7 +340,8 @@ class Table:
         """
         if column_names is None:
             column_names = self.column_names
-        cols = ', '.join(column_names)
+        # use quotes to be case sensitive
+        cols = ', '.join([f'\"{col}\"' for col in column_names])
 
         cmd = f"SELECT {cols} FROM {self.table_id};"
         data = execute(self.conn, self.cursor, cmd, fetch=True)

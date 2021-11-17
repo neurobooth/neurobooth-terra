@@ -102,6 +102,7 @@ html_theme_options = {
     'navbar_links': [
         ("Examples", "auto_examples/index"),
         ("API", "api"),
+        ("Changes", "whats_new"),
         ("GitHub", "https://github.com/neurobooth/neurobooth-terra", True)
     ],
     'bootswatch_theme': "yeti"

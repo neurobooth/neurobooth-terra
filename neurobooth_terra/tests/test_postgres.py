@@ -107,3 +107,28 @@ def test_delete():
     table_subject.delete_row("first_name_birth LIKE 'ma%'")
     df = table_subject.query()
     assert len(df['first_name_birth']) == 1
+
+
+def test_upsert():
+    """Test upsert operation."""
+
+    conn = psycopg2.connect(connect_str)
+
+    table_id = 'test'
+    drop_table(table_id, conn)
+
+    column_names = ['subject_id', 'first_name_birth', 'last_name_birth', 'Age']
+    dtypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'INTEGER']
+    table_subject = create_table(table_id, conn=conn,
+                                 column_names=column_names,
+                                 dtypes=dtypes)
+    table_subject.insert_rows([('x5dc', 'mainak', 'jas', 21),
+                               ('y5d3', 'anoopum', 'gupta', 25),
+                               ('abcd', 'mayank', 'jas', 25)],
+                               cols=column_names)
+    table_subject.insert_rows([('x5dc', 'mainak_new', 'jas_new', 21),
+                               ('zzzz', 'deepak', 'singh', 32)],
+                               cols=column_names)
+    df = table_subject.query()
+    assert 'x5dc' in df.index
+    assert df.loc['x5dc']['first_name_birth'] == 'mainak'  # not mainak_new

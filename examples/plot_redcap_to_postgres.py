@@ -11,7 +11,7 @@ This example demonstrates how to create table from Redcap.
 import os
 
 from redcap import Project, RedcapError
-from neurobooth_terra.ingest_redcap import fetch_survey, redcap_service
+from neurobooth_terra.ingest_redcap import fetch_survey, iter_interval
 
 import psycopg2
 from neurobooth_terra import Table, create_table, drop_table
@@ -60,9 +60,8 @@ print('[Done]')
 import pandas as pd
 import hashlib
 
-# TODO: add test for redcap_service and rename function to
-# iter_interval
-for _ in redcap_service(update_interval=5, exit_after=6):
+# TODO: add test for iter_interval
+for _ in iter_interval(wait=5, exit_after=2):
 
     dfs = dict()
     for survey_name, survey_id in survey_ids.items():

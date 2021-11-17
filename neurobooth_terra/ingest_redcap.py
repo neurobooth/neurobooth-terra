@@ -2,6 +2,7 @@
 
 # Authors: Mainak Jas <mjas@mgh.harvard.edu>
 
+import time
 import json
 import tempfile
 import os
@@ -12,27 +13,26 @@ import pandas as pd
 from pandas.api.types import infer_dtype
 
 
-def redcap_service(update_interval=60, exit_after=np.inf):
+def iter_interval(wait=60, exit_after=np.inf):
     """Run redcap service in a loop.
 
     Exit loop with Ctrl + C
 
     Parameters
     ----------
-    update_interval : float
-        The update interval in seconds.
+    wait : float
+        The time to wait in seconds.
     exit_after : float
         The time after which to exit in seconds.
     """
-    import time
-
     start_time = start_time_t0 = time.time()
+    yield
     while True:
         try:
             time.sleep(1)
             curr_time = time.time()
             time_elapsed = curr_time - start_time
-            time_left = update_interval - time_elapsed
+            time_left = wait - time_elapsed
             if time_left < 0:
                 start_time = time.time()
                 print('')

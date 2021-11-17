@@ -61,3 +61,6 @@ install: html
 	git add .nojekyll && \
 	git commit -a -m 'Make install' && \
 	git push
+
+view:
+	@python -c "import webbrowser; webbrowser.open_new_tab('file://$(PWD)/_build/html/index.html')"

@@ -7,8 +7,43 @@ import tempfile
 import os
 import os.path as op
 
+import numpy as np
 import pandas as pd
 from pandas.api.types import infer_dtype
+
+
+def redcap_service(update_interval=60, exit_after=np.inf):
+    """Run redcap service in a loop.
+
+    Exit loop with Ctrl + C
+
+    Parameters
+    ----------
+    update_interval : float
+        The update interval in seconds.
+    exit_after : float
+        The time after which to exit in seconds.
+    """
+    import time
+
+    start_time = start_time_t0 = time.time()
+    while True:
+        try:
+            time.sleep(1)
+            curr_time = time.time()
+            time_elapsed = curr_time - start_time
+            time_left = update_interval - time_elapsed
+            if time_left < 0:
+                start_time = time.time()
+                print('')
+                yield
+                continue
+            if curr_time - start_time_t0 > exit_after:
+                break
+            print(f'Time left: {time_left:2.2f} s', end='\r')
+        except KeyboardInterrupt:
+            break
+
 
 def fetch_survey(project, survey_name, survey_id):
     """Get schema of table from redcap
@@ -41,6 +76,8 @@ def fetch_survey(project, survey_name, survey_id):
         # XXX: read back again so pandas casts data to right type
         df = pd.read_csv(csv_fname)
     print('[Done]')
+
+    df = df.where(pd.notnull(df), None)
 
     return df
 

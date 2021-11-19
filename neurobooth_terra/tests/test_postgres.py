@@ -131,4 +131,9 @@ def test_upsert():
                                cols=column_names)
     df = table_subject.query()
     assert 'x5dc' in df.index
+    assert 'zzzz' in df.index
     assert df.loc['x5dc']['first_name_birth'] == 'mainak'  # not mainak_new
+
+    df = table_subject.query(where="subject_id = 'x5dc'")
+    assert 'x5dc' in df.index
+    assert 'zzzz' not in df.index

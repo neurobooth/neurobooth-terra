@@ -25,3 +25,5 @@ API
 
 - ``table.query()`` now does not take a query as a string and returns the
    entire table as a dataframe.
+
+- ``table.query()`` now accepts ``where`` as an argument for filtering rows.

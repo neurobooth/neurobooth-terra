@@ -325,13 +325,16 @@ class Table:
         cmd += f" WHERE {self.primary_key} = '{pk_val}';"
         execute(self.conn, self.cursor, cmd)
 
-    def query(self, column_names=None):
+    def query(self, column_names=None, where=None):
         """Run a query.
 
         Parameters
         ----------
         column_names : None | list of str
             If None, query all columns
+        where : str | None
+            Condition to filter rows by. If None,
+            keep all rows
 
         Returns
         -------
@@ -343,7 +346,11 @@ class Table:
         # use quotes to be case sensitive
         cols = ', '.join([f'\"{col}\"' for col in column_names])
 
-        cmd = f"SELECT {cols} FROM {self.table_id};"
+        cmd = f"SELECT {cols} FROM {self.table_id} "
+        if where is not None:
+            cmd += f"WHERE {where}"
+        cmd += ';'
+
         data = execute(self.conn, self.cursor, cmd, fetch=True)
         df = pd.DataFrame(data, columns=column_names)
         df = df.set_index(self.primary_key)

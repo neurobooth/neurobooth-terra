@@ -136,6 +136,8 @@ for _ in iter_interval(wait=5, exit_after=2):
             table_consent = Table('consent', conn)
             table_consent.insert_rows(rows_consent, cols_consent)
 
+            # df_subject_db = table_subject.query()
+
 # %%
 # We will drop our tables if they already exist
 # this is just for convenience so we can re-run this script

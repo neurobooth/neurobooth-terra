@@ -256,7 +256,7 @@ class Table:
         idx = self.column_names.index(col)
         del self.column_names[idx], self.data_types[idx]
 
-    def insert_rows(self, vals, cols):
+    def insert_rows(self, vals, cols, on_conflict='nothing'):
         """Manual insertion into tables
 
         If conflicts, does nothing.
@@ -268,6 +268,8 @@ class Table:
             is one row.
         cols : list of str
             The columns to insert into.
+        on_conflict : 'nothing' | 'update'
+            What to do when a conflict is encountered
 
         Returns
         -------
@@ -282,10 +284,22 @@ class Table:
                 raise ValueError(f'entries in vals must be tuples. Got {type(val)}')
             if len(val) != len(cols):
                 raise ValueError(f'tuple length must match number of columns ({len(cols)})')
+        if on_conflict not in ('nothing', 'update'):
+            raise ValueError(f'on_conflict must be one of (nothing, update)',
+                             f'Got {on_conflict}')
+
         str_format = ','.join(len(cols) * ['%s'])
+        col_names = cols.copy()
         cols = ','.join([f'"{col}"' for col in cols])
         insert_cmd = f'INSERT INTO {self.table_id}({cols}) VALUES({str_format}) '
-        insert_cmd += f'ON CONFLICT DO NOTHING '
+        if on_conflict == 'nothing':
+            insert_cmd += f'ON CONFLICT DO NOTHING '
+        elif on_conflict == 'update':
+            insert_cmd += f'ON CONFLICT ({self.primary_key}) DO UPDATE SET '
+            update_cmd = list()
+            for col_name in col_names:
+                update_cmd.append(f'"{col_name}" = excluded."{col_name}"')
+            insert_cmd += ', '.join(update_cmd) + ' '
         insert_cmd += f'RETURNING {self.primary_key}'
 
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)

@@ -10,6 +10,9 @@ Changelog
 - Add new function ``redcap_service`` that's runs a loop and waits for
   ``update_interval`` seconds before going to next iteration.
 
+- ``table.insert_rows`` now has an argument ``on_conflict`` to determine
+  what action to take when there is a conflict.
+
 Bug
 ~~~
 

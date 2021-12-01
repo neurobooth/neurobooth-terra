@@ -137,3 +137,8 @@ def test_upsert():
     df = table_subject.query(where="subject_id = 'x5dc'")
     assert 'x5dc' in df.index
     assert 'zzzz' not in df.index
+
+    table_subject.insert_rows([('x5dc', 'mainak', 'jazz', 32)],
+                               cols=column_names, on_conflict='update')
+    df = table_subject.query(where="subject_id = 'x5dc'")
+    assert df.loc['x5dc']['last_name_birth'] == 'jazz'

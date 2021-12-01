@@ -42,8 +42,8 @@ db_args = dict(
 # You will need to request for the Redcap API token from Redcap interface.
 
 survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
-              'clinical': 84431, 'falls': 85031, 'subject': 84426}
-survey_ids = {'subject': 84426, 'consent': 84349}
+              'clinical': 84431, 'falls': 85031, 'subject': 96398}
+survey_ids = {'subject': 96397, 'consent': 96398}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')

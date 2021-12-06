@@ -111,20 +111,21 @@ def compare_dataframes(src_df, target_df):
         The target dataframe that is compared against.
     """
     # print extra columns in src_df
-    src_columns = src_df.columns
-    target_columns = target_df.columns
-    if not src_columns.equals(target_columns):
-        print('Extra columns:')
-        print([col for col in src_columns if col not in target_columns])
+    src_columns = set(src_df.columns)
+    target_columns = set(target_df.columns)
+    common_columns = src_columns.intersection(target_columns)
+    print(f'extra columns: {src_columns - common_columns}')
 
     # differences in rows ignoring extra columns
     print('Changed rows')
+    src_df = src_df[common_columns]
+    target_df = target_df[common_columns]
     for index, src_row in src_df.iterrows():
         target_row = target_df.loc[index]
 
         # if not src_row[target_columns].equals(target_row):
         if not _is_series_equal(src_row, target_row):
-            print(src_row[target_columns])
+            print(src_row[common_columns])
             print('')
             print(target_row)
             print('')

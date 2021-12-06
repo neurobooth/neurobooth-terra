@@ -82,41 +82,44 @@ for _ in iter_interval(wait=5, exit_after=2):
         # convert NaN to None for psycopg2
         dfs[survey_name] = df
 
-    # Now, we will add the consent table to the subject table so we can
-    # match subjects based on record_id
-    df_redcap = dfs['subject'].join(dfs['consent'], rsuffix='consent')
-    print(df_redcap.columns)
-
     # Now, we will prepare the contents of the subject table in postgres
+    dfs['consent'] = dfs['consent'].set_index('record_id')
+    dfs['subject'] = dfs['subject'].set_index('record_id')
+
+    drop_rows = pd.isna(dfs['subject']['first_name_birth'])
+    drop_record_ids = dfs['subject'].index[drop_rows]
+
+    dfs['subject'] = dfs['subject'].drop(drop_record_ids)
+    dfs['consent'] = dfs['consent'].drop(drop_record_ids, errors='ignore')
+
     rows_subject = list()
+    for record_id, df_row in dfs['subject'].iterrows():
+
+        mainak_hash = 'hash'
+
+        rows_subject.append((record_id,
+                             df_row['first_name_birth'],
+                             df_row['middle_name_birth'],
+                             df_row['last_name_birth'],
+                             df_row['date_of_birth'],
+                             df_row['country_of_birth'],
+                             df_row['gender_at_birth'],
+                             df_row['birthplace']))
+
     rows_consent = list()
-
-    df_redcap = df_redcap[~pd.isna(df_redcap['first_name_birth'])]
-
-    for df_row in df_redcap.iterrows():
-        df_row = df_row[1]
-
-        subject_id = df_row['first_name_birth'] + df_row['last_name_birth']
-        subject_id = hashlib.md5(subject_id.encode('ascii')).hexdigest()
-
-        rows_subject.append((subject_id,
-                            df_row['first_name_birth'],
-                            df_row['middle_name_birth'],
-                            df_row['last_name_birth'],
-                            df_row['date_of_birth'],
-                            df_row['country_of_birth'],
-                            df_row['gender_at_birth'],
-                            df_row['birthplace']))
-        rows_consent.append((subject_id,
+    for record_id, df_row in dfs['consent'].iterrows():
+        rows_consent.append((record_id,
                             'study1',  # study_id
+                            df_row['redcap_event_name'],
                             'Neuroboother',  # staff_id
                             'REDCAP',  # application_id
                             'MGH',  # site_id
                             # None, # date (missing)
-                            # df_row['educate_clinicians_adults'],
-                            # df_row['educate_clinicians_initials_adult'],
+                            df_row['educate_clinicians'],
+                            df_row['educate_clinicians_initials'],
                             # bool(df_row['future_research_consent_adult'])
         ))
+
     for row_subject in rows_subject[:5]:
         print(row_subject)
 
@@ -124,19 +127,22 @@ for _ in iter_interval(wait=5, exit_after=2):
     cols_subject = ['subject_id', 'first_name_birth', 'middle_name_birth',
                     'last_name_birth', 'date_of_birth', 'country_of_birth',
                     'gender_at_birth', 'birthplace']
-    cols_consent = ['subject_id', 'study_id', 'staff_id', 'application_id',
-                    'site_id']
+    cols_consent = ['subject_id', 'study_id', 'event_name',
+                    'staff_id', 'application_id', 'site_id',
+                    'educate_clinicians', 'educate_clinicians_initials']
     with SSHTunnelForwarder(**ssh_args) as tunnel:
         with psycopg2.connect(port=tunnel.local_bind_port,
                               host=tunnel.local_bind_host, **db_args) as conn:
 
             table_subject = Table('subject', conn)
-            table_subject.insert_rows(rows_subject, cols_subject)
+            table_subject.insert_rows(rows_subject, cols_subject,
+                                      on_conflict='update')
 
             table_consent = Table('consent', conn)
-            table_consent.insert_rows(rows_consent, cols_consent)
+            table_consent.insert_rows(rows_consent, cols_consent,
+                                      on_conflict='update')
 
-            # df_subject_db = table_subject.query()
+            df_subject_db = table_subject.query()
 
 # %%
 # We will drop our tables if they already exist

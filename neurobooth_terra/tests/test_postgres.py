@@ -38,7 +38,7 @@ def test_psql_connection():
     table_subject.close()
 
     table_test = Table('test', conn)
-    assert table_test.primary_key == 'subject_id'
+    assert table_test.primary_key == ['subject_id']
 
     # test updating row
     table_test.update_row('y5d3', ('blah', 'anupum', 'gupta', 32),

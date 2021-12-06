@@ -21,7 +21,7 @@ def _execute_batch(conn, cursor, cmd, tuples, page_size=100):
     extras.execute_batch(cursor, cmd, tuples, page_size)
     conn.commit()
 
-def _get_primary_key(conn, cursor, table_id):
+def _get_primary_keys(conn, cursor, table_id):
     query = (
     "SELECT a.attname "
     "FROM   pg_index i "
@@ -31,8 +31,8 @@ def _get_primary_key(conn, cursor, table_id):
     "AND    i.indisprimary;"
     )
     column_names = execute(conn, cursor, query, fetch=True)
-    assert len(column_names[0]) == 1  # only one primary key
-    return column_names[0][0]
+    primary_keys = [col[0] for col in column_names]
+    return primary_keys
 
 #### Neurobooth related comands #####
 
@@ -149,6 +149,8 @@ class Table:
         The column names
     data_types : list of str
         The data types of the column names
+    primary_key : list of str
+        The primary key. May be more than one in case of compound primary key.
     """
     def __init__(self, table_id, conn, cursor=None,
                  primary_key=None):
@@ -174,8 +176,10 @@ class Table:
             self.data_types.append(dtype.upper())
 
         if primary_key is None:
-            primary_key = _get_primary_key(conn, cursor, table_id)
-        self.primary_key = primary_key
+            primary_key = _get_primary_keys(conn, cursor, table_id)
+            self.primary_key = primary_key
+        if isinstance(primary_key, str):
+            self.primary_key = [primary_key]
 
     def __repr__(self):
         repr_str = f'Table "{self.table_id}" '
@@ -295,12 +299,13 @@ class Table:
         if on_conflict == 'nothing':
             insert_cmd += f'ON CONFLICT DO NOTHING '
         elif on_conflict == 'update':
-            insert_cmd += f'ON CONFLICT ({self.primary_key}) DO UPDATE SET '
+            pk = ', '.join(self.primary_key)
+            insert_cmd += f'ON CONFLICT ({pk}) DO UPDATE SET '
             update_cmd = list()
             for col_name in col_names:
                 update_cmd.append(f'"{col_name}" = excluded."{col_name}"')
             insert_cmd += ', '.join(update_cmd) + ' '
-        insert_cmd += f'RETURNING {self.primary_key}'
+        insert_cmd += f'RETURNING {self.primary_key[0]}'
 
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)
         if len(vals) == 1:
@@ -336,7 +341,8 @@ class Table:
                 raise ValueError(f'column {col} is not present in table')
             cmd += f"\"{col}\" = '{val}', "
         cmd = cmd[:-2]  # remove last comma
-        cmd += f" WHERE {self.primary_key} = '{pk_val}';"
+        pk = self.primary_key[0]
+        cmd += f" WHERE {pk} = '{pk_val}';"
         execute(self.conn, self.cursor, cmd)
 
     def query(self, column_names=None, where=None):
@@ -367,7 +373,8 @@ class Table:
 
         data = execute(self.conn, self.cursor, cmd, fetch=True)
         df = pd.DataFrame(data, columns=column_names)
-        df = df.set_index(self.primary_key)
+        pk = self.primary_key[0]
+        df = df.set_index(pk)
         return df
 
     def delete_row(self, condition):

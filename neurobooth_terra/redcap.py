@@ -45,7 +45,7 @@ def iter_interval(wait=60, exit_after=np.inf):
             break
 
 
-def fetch_survey(project, survey_name, survey_id):
+def fetch_survey(project, survey_name, survey_id, index=None):
     """Get schema of table from redcap
 
     Parameters
@@ -57,6 +57,8 @@ def fetch_survey(project, survey_name, survey_id):
     survey_id : int
         The survey_id. See under Reports in
         Redap.
+    index : str
+        The column to set as index.
 
     Returns
     -------
@@ -78,6 +80,8 @@ def fetch_survey(project, survey_name, survey_id):
     print('[Done]')
 
     df = df.where(pd.notnull(df), None)
+    if index is not None:
+        df.set_index(index)
 
     return df
 

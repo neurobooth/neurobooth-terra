@@ -78,14 +78,11 @@ for _ in iter_interval(wait=5, exit_after=2):
 
     dfs = dict()
     for survey_name, survey_id in survey_ids.items():
-        df = fetch_survey(project, survey_name, survey_id)
+        df = fetch_survey(project, survey_name, survey_id, index='record_id')
         # convert NaN to None for psycopg2
         dfs[survey_name] = df
 
     # Now, we will prepare the contents of the subject table in postgres
-    dfs['consent'] = dfs['consent'].set_index('record_id')
-    dfs['subject'] = dfs['subject'].set_index('record_id')
-
     drop_rows = pd.isna(dfs['subject']['first_name_birth'])
     drop_record_ids = dfs['subject'].index[drop_rows]
 

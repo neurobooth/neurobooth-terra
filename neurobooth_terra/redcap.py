@@ -2,6 +2,7 @@
 
 # Authors: Mainak Jas <mjas@mgh.harvard.edu>
 
+from datetime import datetime, date
 import time
 import json
 import tempfile
@@ -81,9 +82,54 @@ def fetch_survey(project, survey_name, survey_id, index=None):
 
     df = df.where(pd.notnull(df), None)
     if index is not None:
-        df.set_index(index)
+        df = df.set_index(index)
+        df.index = df.index.astype(str)  # allow mixing int and str record_id
 
     return df
+
+def _is_series_equal(src_series, target_series):
+    """Check equality of two series by casting dtype when necessary."""
+
+    for col_index, target_item in target_series.iteritems():
+        src_item = src_series.loc[col_index]
+        if isinstance(target_item, date):  # ignore datetime column
+            continue
+        elif type(target_item) != type(src_item):
+            src_item = np.array([src_item]).astype(type(target_item))[0]
+        if target_item != src_item:
+            return False
+    return True
+
+def compare_dataframes(src_df, target_df):
+    """Compare dataframes.
+
+    Parameters
+    ----------
+    src_df : pandas dataframe
+        The source dataframe whose changes are printed.
+    target_df : pandas dataframe
+        The target dataframe that is compared against.
+    """
+    # print extra columns in src_df
+    src_columns = src_df.columns
+    target_columns = target_df.columns
+    if not src_columns.equals(target_columns):
+        print('Extra columns:')
+        print([col for col in src_columns if col not in target_columns])
+
+    # differences in rows ignoring extra columns
+    print('Changed rows')
+    for index, src_row in src_df.iterrows():
+        target_row = target_df.loc[index]
+
+        # if not src_row[target_columns].equals(target_row):
+        if not _is_series_equal(src_row, target_row):
+            print(src_row[target_columns])
+            print('')
+            print(target_row)
+            print('')
+            print('')
+
 
 def infer_schema(survey_df, metadata_df):
     """Get schema from dataframe.

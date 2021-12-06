@@ -11,7 +11,8 @@ This example demonstrates how to create table from Redcap.
 import os
 
 from redcap import Project, RedcapError
-from neurobooth_terra.redcap import fetch_survey, iter_interval
+from neurobooth_terra.redcap import (fetch_survey, iter_interval,
+                                     compare_dataframes)
 
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
@@ -132,14 +133,22 @@ for _ in iter_interval(wait=5, exit_after=2):
                               host=tunnel.local_bind_host, **db_args) as conn:
 
             table_subject = Table('subject', conn)
-            table_subject.insert_rows(rows_subject, cols_subject,
-                                      on_conflict='update')
-
             table_consent = Table('consent', conn)
-            table_consent.insert_rows(rows_consent, cols_consent,
-                                      on_conflict='update')
 
             df_subject_db = table_subject.query()
+            df_subject_db = df_subject_db.drop('guid', axis=1)  # extra column in DB
+            df_consent_db = table_consent.query()
+            df_consent_db = df_consent_db.drop(
+                ['study_id', 'staff_id', 'application_id', 'site_id',
+                 'future_research_consent_adult', 'educate_clinicians_adults',
+                 'educate_clinicians_initials_adult', 'event_name'], axis=1)
+            compare_dataframes(dfs['subject'], df_subject_db)
+            compare_dataframes(dfs['consent'], df_consent_db)
+
+            table_subject.insert_rows(rows_subject, cols_subject,
+                                      on_conflict='update')
+            table_consent.insert_rows(rows_consent, cols_consent,
+                                      on_conflict='update')
 
 # %%
 # We will drop our tables if they already exist

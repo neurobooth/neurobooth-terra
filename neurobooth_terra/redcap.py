@@ -121,6 +121,10 @@ def compare_dataframes(src_df, target_df):
     src_df = src_df[common_columns]
     target_df = target_df[common_columns]
     for index, src_row in src_df.iterrows():
+        if index not in target_df.index:
+            print(src_row[common_columns])
+            print('')
+            continue
         target_row = target_df.loc[index]
 
         # if not src_row[target_columns].equals(target_row):

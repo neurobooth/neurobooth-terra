@@ -100,6 +100,30 @@ def _is_series_equal(src_series, target_series):
             return False
     return True
 
+
+def combine_indicator_columns(df, src_cols, target_col):
+    """Combine indicator columns into categorical variable.
+
+    Parameters
+    ----------
+    df : pd.Dataframe
+        The dataframe
+    src_cols : dict
+        The names of the columns are keys and the value it
+        gets is the value. Example: dict(race___1=1, race___2=2).
+    target_col : str
+        The name of the target column to create
+    """
+    arr = None
+    for col_name, val in src_cols.items():
+        if arr is None:
+            arr = np.zeros_like(df[col_name])
+        arr[df[col_name] == 1.] = val
+    df[target_col] = arr
+    df = df.drop(src_cols.keys(), axis=1)
+    return df
+
+
 def compare_dataframes(src_df, target_df):
     """Compare dataframes.
 

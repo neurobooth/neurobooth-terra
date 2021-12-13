@@ -1,6 +1,0 @@
-﻿neurobooth\_terra.ingest\_redcap.iter\_interval
-===============================================
-
-.. currentmodule:: neurobooth_terra.ingest_redcap
-
-.. autofunction:: iter_interval

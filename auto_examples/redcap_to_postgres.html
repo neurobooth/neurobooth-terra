@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Ingest table from Redcap into Postgres &#8212; neurobooth-terra  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          neurobooth-terra</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="index.html">Examples</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../whats_new.html">Changes</a></li>
+                <li><a href="https://github.com/neurobooth/neurobooth-terra">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Ingest table from Redcap into Postgres</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/auto_examples/redcap_to_postgres.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-redcap-to-postgres-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="ingest-table-from-redcap-into-postgres">
+<span id="sphx-glr-auto-examples-redcap-to-postgres-py"></span><h1>Ingest table from Redcap into Postgres<a class="headerlink" href="#ingest-table-from-redcap-into-postgres" title="Permalink to this headline">¶</a></h1>
+<p>This example demonstrates how to create table from Redcap.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Mainak Jas &lt;mjas@harvard.mgh.edu&gt;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">redcap</span> <span class="kn">import</span> <span class="n">Project</span><span class="p">,</span> <span class="n">RedcapError</span>
+<span class="kn">from</span> <span class="nn">neurobooth_terra.redcap</span> <span class="kn">import</span> <span class="p">(</span><a href="../generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey" title="neurobooth_terra.redcap.fetch_survey" class="sphx-glr-backref-module-neurobooth_terra-redcap sphx-glr-backref-type-py-function"><a href="../generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey" title="neurobooth_terra.redcap.fetch_survey" class="sphx-glr-backref-module-neurobooth_terra-redcap sphx-glr-backref-type-py-function"><span class="n">fetch_survey</span></a></a><span class="p">,</span> <a href="../generated/neurobooth_terra.redcap.iter_interval.html#neurobooth_terra.redcap.iter_interval" title="neurobooth_terra.redcap.iter_interval" class="sphx-glr-backref-module-neurobooth_terra-redcap sphx-glr-backref-type-py-function"><a href="../generated/neurobooth_terra.redcap.iter_interval.html#neurobooth_terra.redcap.iter_interval" title="neurobooth_terra.redcap.iter_interval" class="sphx-glr-backref-module-neurobooth_terra-redcap sphx-glr-backref-type-py-function"><span class="n">iter_interval</span></a></a><span class="p">,</span>
+                                     <span class="n">compare_dataframes</span><span class="p">,</span>
+                                     <span class="n">combine_indicator_columns</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">from</span> <span class="nn">sshtunnel</span> <span class="kn">import</span> <span class="n">SSHTunnelForwarder</span>
+
+<span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">Table</span></a></a><span class="p">,</span> <span class="n">create_table</span><span class="p">,</span> <span class="n">drop_table</span>
+</pre></div>
+</div>
+<p>The ssh arguments and connection arguments</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ssh_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">ssh_address_or_host</span><span class="o">=</span><span class="s1">&#39;neurodoor.nmr.mgh.harvard.edu&#39;</span><span class="p">,</span>
+        <span class="n">ssh_username</span><span class="o">=</span><span class="s1">&#39;mj513&#39;</span><span class="p">,</span>
+        <span class="n">ssh_config_file</span><span class="o">=</span><span class="s1">&#39;~/.ssh/config&#39;</span><span class="p">,</span>
+        <span class="n">ssh_pkey</span><span class="o">=</span><span class="s1">&#39;~/.ssh/id_rsa&#39;</span><span class="p">,</span>
+        <span class="n">remote_bind_address</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;192.168.100.1&#39;</span><span class="p">,</span> <span class="mi">5432</span><span class="p">),</span>
+        <span class="n">local_bind_address</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">6543</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">db_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">database</span><span class="o">=</span><span class="s1">&#39;neurobooth&#39;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s1">&#39;neuroboother&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;neuroboothrocks&#39;</span><span class="p">,</span>
+    <span class="c1"># host=&#39;localhost&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Let us first define the surveys and their survey IDs that we want to fetch.
+This information can be found on Redcap. To fetch Redcap data, you will
+also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
+You will need to request for the Redcap API token from Redcap interface.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">survey_ids</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;consent&#39;</span><span class="p">:</span> <span class="mi">84349</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">:</span> <span class="mi">84427</span><span class="p">,</span> <span class="s1">&#39;demographics&#39;</span><span class="p">:</span> <span class="mi">84429</span><span class="p">,</span>
+              <span class="s1">&#39;clinical&#39;</span><span class="p">:</span> <span class="mi">84431</span><span class="p">,</span> <span class="s1">&#39;falls&#39;</span><span class="p">:</span> <span class="mi">85031</span><span class="p">,</span> <span class="s1">&#39;subject&#39;</span><span class="p">:</span> <span class="mi">96398</span><span class="p">}</span>
+<span class="n">survey_ids</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;subject&#39;</span><span class="p">:</span> <span class="mi">96397</span><span class="p">,</span> <span class="s1">&#39;consent&#39;</span><span class="p">:</span> <span class="mi">96398</span><span class="p">,</span> <span class="s1">&#39;demographics&#39;</span><span class="p">:</span> <span class="mi">84429</span><span class="p">,</span>
+              <span class="s1">&#39;clinical&#39;</span><span class="p">:</span> <span class="mi">84431</span><span class="p">}</span>
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;https://redcap.partners.org/redcap/api/&#39;</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NEUROBOOTH_REDCAP_TOKEN&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">API_KEY</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first&#39;</span><span class="p">)</span>
+
+<span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">API_KEY</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we fetch the metadata table. This table is the master table
+that contains columns and their informations. It can be used to infer
+information about the columns: example, what choices are available for a
+particular question.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fetching metadata ...&#39;</span><span class="p">)</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">export_metadata</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;df&#39;</span><span class="p">)</span>
+<span class="n">metadata_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;field_label&#39;</span><span class="p">,</span> <span class="s1">&#39;form_name&#39;</span><span class="p">,</span> <span class="s1">&#39;section_header&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;field_type&#39;</span><span class="p">,</span> <span class="s1">&#39;select_choices_or_calculations&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;required_field&#39;</span><span class="p">]</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">metadata_fields</span><span class="p">]</span>
+<span class="c1"># metadata.to_csv(op.join(data_dir, &#39;data_dictionary.csv&#39;), index=False)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[Done]&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we loop over the surveys and collect them.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+
+<span class="c1"># TODO: add test for iter_interval</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <a href="../generated/neurobooth_terra.redcap.iter_interval.html#neurobooth_terra.redcap.iter_interval" title="neurobooth_terra.redcap.iter_interval" class="sphx-glr-backref-module-neurobooth_terra-redcap sphx-glr-backref-type-py-function"><a href="../generated/neurobooth_terra.redcap.iter_interval.html#neurobooth_terra.redcap.iter_interval" title="neurobooth_terra.redcap.iter_interval" class="sphx-glr-backref-module-neurobooth_terra-redcap sphx-glr-backref-type-py-function"><span class="n">iter_interval</span></a></a><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">exit_after</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+
+    <span class="n">dfs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">survey_name</span><span class="p">,</span> <span class="n">survey_id</span> <span class="ow">in</span> <span class="n">survey_ids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">df</span> <span class="o">=</span> <a href="../generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey" title="neurobooth_terra.redcap.fetch_survey" class="sphx-glr-backref-module-neurobooth_terra-redcap sphx-glr-backref-type-py-function"><a href="../generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey" title="neurobooth_terra.redcap.fetch_survey" class="sphx-glr-backref-module-neurobooth_terra-redcap sphx-glr-backref-type-py-function"><span class="n">fetch_survey</span></a></a><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">survey_name</span><span class="p">,</span> <span class="n">survey_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;record_id&#39;</span><span class="p">)</span>
+        <span class="c1"># convert NaN to None for psycopg2</span>
+        <span class="n">dfs</span><span class="p">[</span><span class="n">survey_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+
+    <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s1">&#39;race___</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)}</span>
+    <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;demographics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">combine_indicator_columns</span><span class="p">(</span>
+        <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;demographics&#39;</span><span class="p">],</span> <span class="n">mapping</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">)</span>
+
+    <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s1">&#39;ancestry_cateogry___</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">)}</span>
+    <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;demographics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">combine_indicator_columns</span><span class="p">(</span>
+        <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;demographics&#39;</span><span class="p">],</span> <span class="n">mapping</span><span class="p">,</span> <span class="s1">&#39;ancestry_category&#39;</span><span class="p">)</span>
+
+    <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s1">&#39;health_history___</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">39</span><span class="p">)}</span>
+    <span class="c1"># mapping[&#39;health_history___diabetics&#39;] = 39</span>
+    <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;demographics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">combine_indicator_columns</span><span class="p">(</span>
+        <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;demographics&#39;</span><span class="p">],</span> <span class="n">mapping</span><span class="p">,</span> <span class="s1">&#39;health_history&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Now, we will prepare the contents of the subject table in postgres</span>
+    <span class="n">drop_rows</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">][</span><span class="s1">&#39;first_name_birth&#39;</span><span class="p">])</span>
+    <span class="n">drop_record_ids</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">drop_rows</span><span class="p">]</span>
+
+    <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drop_record_ids</span><span class="p">)</span>
+    <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;consent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;consent&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drop_record_ids</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+    <span class="n">rows_subject</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">record_id</span><span class="p">,</span> <span class="n">df_row</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+        <span class="n">mainak_hash</span> <span class="o">=</span> <span class="s1">&#39;hash&#39;</span>
+
+        <span class="n">rows_subject</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">record_id</span><span class="p">,</span>
+                             <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;first_name_birth&#39;</span><span class="p">],</span>
+                             <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;middle_name_birth&#39;</span><span class="p">],</span>
+                             <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;last_name_birth&#39;</span><span class="p">],</span>
+                             <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;date_of_birth&#39;</span><span class="p">],</span>
+                             <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;country_of_birth&#39;</span><span class="p">],</span>
+                             <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;gender_at_birth&#39;</span><span class="p">],</span>
+                             <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;birthplace&#39;</span><span class="p">]))</span>
+
+    <span class="n">rows_consent</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">record_id</span><span class="p">,</span> <span class="n">df_row</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;consent&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">rows_consent</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">record_id</span><span class="p">,</span>
+                            <span class="s1">&#39;study1&#39;</span><span class="p">,</span>  <span class="c1"># study_id</span>
+                            <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;redcap_event_name&#39;</span><span class="p">],</span>
+                            <span class="s1">&#39;Neuroboother&#39;</span><span class="p">,</span>  <span class="c1"># staff_id</span>
+                            <span class="s1">&#39;REDCAP&#39;</span><span class="p">,</span>  <span class="c1"># application_id</span>
+                            <span class="s1">&#39;MGH&#39;</span><span class="p">,</span>  <span class="c1"># site_id</span>
+                            <span class="c1"># None, # date (missing)</span>
+                            <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;educate_clinicians&#39;</span><span class="p">],</span>
+                            <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;educate_clinicians_initials&#39;</span><span class="p">],</span>
+                            <span class="c1"># bool(df_row[&#39;future_research_consent_adult&#39;])</span>
+        <span class="p">))</span>
+
+    <span class="n">rows_demographics</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">record_id</span><span class="p">,</span> <span class="n">df_row</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;demographics&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">rows_demographics</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">record_id</span><span class="p">,</span>
+                                  <span class="s1">&#39;study1&#39;</span><span class="p">,</span>  <span class="c1"># study_id</span>
+                                  <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;redcap_event_name&#39;</span><span class="p">],</span>
+                                  <span class="s1">&#39;REDCAP&#39;</span><span class="p">,</span>  <span class="c1"># application_id</span>
+                                  <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">],</span>
+                                  <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;ethnicity&#39;</span><span class="p">],</span>
+                                  <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;handedness&#39;</span><span class="p">],</span>
+                                  <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;health_history&#39;</span><span class="p">],</span>
+                                  <span class="n">df_row</span><span class="p">[</span><span class="s1">&#39;race&#39;</span><span class="p">]</span>
+        <span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">row_subject</span> <span class="ow">in</span> <span class="n">rows_subject</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">row_subject</span><span class="p">)</span>
+
+    <span class="c1"># Then we insert the rows in this table</span>
+    <span class="n">cols_subject</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;first_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;middle_name_birth&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;last_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;country_of_birth&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;gender_at_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;birthplace&#39;</span><span class="p">]</span>
+    <span class="n">cols_consent</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;study_id&#39;</span><span class="p">,</span> <span class="s1">&#39;event_name&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;staff_id&#39;</span><span class="p">,</span> <span class="s1">&#39;application_id&#39;</span><span class="p">,</span> <span class="s1">&#39;site_id&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;educate_clinicians&#39;</span><span class="p">,</span> <span class="s1">&#39;educate_clinicians_initials&#39;</span><span class="p">]</span>
+    <span class="n">cols_demographics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;study_id&#39;</span><span class="p">,</span> <span class="s1">&#39;event_name&#39;</span><span class="p">,</span> <span class="s1">&#39;application_id&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;ethnicity&#39;</span><span class="p">,</span> <span class="s1">&#39;handedness&#39;</span><span class="p">,</span> <span class="s1">&#39;health_history&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">SSHTunnelForwarder</span><span class="p">(</span><span class="o">**</span><span class="n">ssh_args</span><span class="p">)</span> <span class="k">as</span> <span class="n">tunnel</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">tunnel</span><span class="o">.</span><span class="n">local_bind_port</span><span class="p">,</span>
+                              <span class="n">host</span><span class="o">=</span><span class="n">tunnel</span><span class="o">.</span><span class="n">local_bind_host</span><span class="p">,</span> <span class="o">**</span><span class="n">db_args</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+
+            <span class="n">table_subject</span> <span class="o">=</span> <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">Table</span></a></a><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+            <span class="n">table_consent</span> <span class="o">=</span> <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">Table</span></a></a><span class="p">(</span><span class="s1">&#39;consent&#39;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+            <span class="n">table_demographics</span> <span class="o">=</span> <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">Table</span></a></a><span class="p">(</span><span class="s1">&#39;demographics&#39;</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+
+            <span class="n">df_subject_db</span> <span class="o">=</span> <span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+            <span class="n">df_consent_db</span> <span class="o">=</span> <span class="n">table_consent</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+            <span class="n">compare_dataframes</span><span class="p">(</span><span class="n">dfs</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">],</span> <span class="n">df_subject_db</span><span class="p">)</span>
+            <span class="c1"># compare_dataframes(dfs[&#39;consent&#39;], df_consent_db)</span>
+
+            <span class="n">table_subject</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span><span class="n">rows_subject</span><span class="p">,</span> <span class="n">cols_subject</span><span class="p">,</span>
+                                      <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">)</span>
+            <span class="n">table_consent</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span><span class="n">rows_consent</span><span class="p">,</span> <span class="n">cols_consent</span><span class="p">,</span>
+                                      <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">)</span>
+            <span class="n">table_demographics</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span><span class="n">rows_demographics</span><span class="p">,</span> <span class="n">cols_demographics</span><span class="p">,</span>
+                                           <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We will drop our tables if they already exist
+this is just for convenience so we can re-run this script
+and create a new mock subject table and consent table to test our script
+drop_table(‘subject’, conn)
+drop_table(‘consent’, conn)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># table_id = &#39;subject&#39;</span>
+<span class="c1"># datatypes = [&#39;VARCHAR (255)&#39;, &#39;VARCHAR (255)&#39;, &#39;VARCHAR (255)&#39;, &#39;VARCHAR (255)&#39;,</span>
+<span class="c1">#              &#39;date&#39;, &#39;VARCHAR (255)&#39;, &#39;VARCHAR (255)&#39;, &#39;VARCHAR (255)&#39;]</span>
+<span class="c1"># table_subject = create_table(table_id, conn, cols_subject, datatypes)</span>
+
+<span class="c1"># table_id = &#39;consent&#39;</span>
+<span class="c1"># datatypes = [&#39;VARCHAR (255)&#39;] * len(cols_consent)</span>
+<span class="c1"># table_consent = create_table(table_id, conn, cols_consent, datatypes)</span>
+</pre></div>
+</div>
+<p>Let’s do a query to check that the content is in there
+print(table_subject.query())
+print(table_consent.query())</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-redcap-to-postgres-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/561db8ae0720d36556c5b608b588d559/redcap_to_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">redcap_to_postgres.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/67b0f1627eb3aff4571df11b552c6f05/redcap_to_postgres.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">redcap_to_postgres.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Neurobooth Developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

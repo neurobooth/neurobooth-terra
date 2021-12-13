@@ -125,6 +125,8 @@
 <ul class="simple">
 <li><p>Add new function <code class="docutils literal notranslate"><span class="pre">redcap_service</span></code> that’s runs a loop and waits for
 <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> seconds before going to next iteration.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">table.insert_rows</span></code> now has an argument <code class="docutils literal notranslate"><span class="pre">on_conflict</span></code> to determine
+what action to take when there is a conflict.</p></li>
 </ul>
 </section>
 <section id="bug">
@@ -144,6 +146,7 @@ PostgreSQL.</p></li>
 </dd>
 </dl>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">table.query()</span></code> now accepts <code class="docutils literal notranslate"><span class="pre">where</span></code> as an argument for filtering rows.</p></li>
 </ul>
 </section>
 </section>

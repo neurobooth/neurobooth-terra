@@ -1,6 +1,0 @@
-﻿neurobooth\_terra.ingest\_redcap.fetch\_survey
-==============================================
-
-.. currentmodule:: neurobooth_terra.ingest_redcap
-
-.. autofunction:: fetch_survey

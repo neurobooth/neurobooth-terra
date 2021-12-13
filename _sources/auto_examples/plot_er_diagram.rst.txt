@@ -41,15 +41,12 @@ This example demonstrates how to create postgres table with neurobooth-terra.
                     splines=curved
             ];
             node [label="\N"];
+            contact  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>contact</b></td></th>
+    <tr><td port="email">email</td></tr></table>>,
+                    shape=plaintext];
             test_consent     [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>test_consent</b></td></th>
     <tr><td port="consent_date">consent_date</td></tr>
     <tr><td port="subject_id">subject_id</td></tr></table>>,
-                    shape=plaintext];
-            test     [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>test</b></td></th>
-    <tr><td port="Age">Age</td></tr>
-    <tr><td port="subject_id">subject_id</td></tr>
-    <tr><td port="first_name_birth">first_name_birth</td></tr>
-    <tr><td port="last_name_birth">last_name_birth</td></tr></table>>,
                     shape=plaintext];
             study    [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>study</b></td></th>
     <tr><td port="protocol_version_array">protocol_version_array</td></tr>
@@ -66,15 +63,6 @@ This example demonstrates how to create postgres table with neurobooth-terra.
     <tr><td port="application_id">application_id</td></tr>
     <tr><td port="site_date">site_date</td></tr></table>>,
                     shape=plaintext];
-            contact  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>contact</b></td></th>
-    <tr><td port="subject_id">subject_id</td></tr>
-    <tr><td port="study_id">study_id</td></tr>
-    <tr><td port="application_id">application_id</td></tr>
-    <tr><td port="site_date">site_date</td></tr>
-    <tr><td port="email">email</td></tr>
-    <tr><td port="phone">phone</td></tr></table>>,
-                    shape=plaintext];
-            contact:study_id -> study:study_id       [arrowtype=normal];
             clinical         [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>clinical</b></td></th>
     <tr><td port="MRN">MRN</td></tr>
     <tr><td port="symptom_age_onset">symptom_age_onset</td></tr>
@@ -238,22 +226,11 @@ This example demonstrates how to create postgres table with neurobooth-terra.
             sensor_file_log:sensor_id -> sensor:sensor_id    [arrowtype=normal];
             collection:human_obs_array -> human_obs_data:human_obs_array     [arrowtype=normal];
             collection:tech_obs_array -> tech_obs_data:tech_obs_array        [arrowtype=normal];
-            subject  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>subject</b></td></th>
-    <tr><td port="date_of_birth">date_of_birth</td></tr>
+            test     [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>test</b></td></th>
+    <tr><td port="Age">Age</td></tr>
+    <tr><td port="subject_id">subject_id</td></tr>
     <tr><td port="first_name_birth">first_name_birth</td></tr>
-    <tr><td port="middle_name_birth">middle_name_birth</td></tr>
-    <tr><td port="last_name_birth">last_name_birth</td></tr>
-    <tr><td port="country_of_birth">country_of_birth</td></tr>
-    <tr><td port="gender_at_birth">gender_at_birth</td></tr>
-    <tr><td port="subject_id">subject_id</td></tr>
-    <tr><td port="birthplace">birthplace</td></tr></table>>,
-                    shape=plaintext];
-            consent  [label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><th><td bgcolor="lightsalmon"><b>consent</b></td></th>
-    <tr><td port="subject_id">subject_id</td></tr>
-    <tr><td port="study_id">study_id</td></tr>
-    <tr><td port="staff_id">staff_id</td></tr>
-    <tr><td port="application_id">application_id</td></tr>
-    <tr><td port="site_id">site_id</td></tr></table>>,
+    <tr><td port="last_name_birth">last_name_birth</td></tr></table>>,
                     shape=plaintext];
     }
 
@@ -359,7 +336,7 @@ This example demonstrates how to create postgres table with neurobooth-terra.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  3.292 seconds)
+   **Total running time of the script:** ( 0 minutes  3.079 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_er_diagram.py:

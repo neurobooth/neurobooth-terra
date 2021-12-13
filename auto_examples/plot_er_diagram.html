@@ -123,15 +123,12 @@ to download the full example code</p>
                 splines=curved
         ];
         node [label=&quot;\N&quot;];
+        contact  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;contact&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;email&quot;&gt;email&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+                shape=plaintext];
         test_consent     [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;test_consent&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
 &lt;tr&gt;&lt;td port=&quot;consent_date&quot;&gt;consent_date&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
-                shape=plaintext];
-        test     [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;test&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;Age&quot;&gt;Age&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;first_name_birth&quot;&gt;first_name_birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;last_name_birth&quot;&gt;last_name_birth&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
         study    [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;study&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
 &lt;tr&gt;&lt;td port=&quot;protocol_version_array&quot;&gt;protocol_version_array&lt;/td&gt;&lt;/tr&gt;
@@ -148,15 +145,6 @@ to download the full example code</p>
 &lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
-        contact  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;contact&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;site_date&quot;&gt;site_date&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;email&quot;&gt;email&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;phone&quot;&gt;phone&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
-                shape=plaintext];
-        contact:study_id -&gt; study:study_id       [arrowtype=normal];
         clinical         [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;clinical&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
 &lt;tr&gt;&lt;td port=&quot;MRN&quot;&gt;MRN&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;symptom_age_onset&quot;&gt;symptom_age_onset&lt;/td&gt;&lt;/tr&gt;
@@ -320,22 +308,11 @@ to download the full example code</p>
         sensor_file_log:sensor_id -&gt; sensor:sensor_id    [arrowtype=normal];
         collection:human_obs_array -&gt; human_obs_data:human_obs_array     [arrowtype=normal];
         collection:tech_obs_array -&gt; tech_obs_data:tech_obs_array        [arrowtype=normal];
-        subject  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;subject&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;date_of_birth&quot;&gt;date_of_birth&lt;/td&gt;&lt;/tr&gt;
+        test     [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;test&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
+&lt;tr&gt;&lt;td port=&quot;Age&quot;&gt;Age&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td port=&quot;first_name_birth&quot;&gt;first_name_birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;middle_name_birth&quot;&gt;middle_name_birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;last_name_birth&quot;&gt;last_name_birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;country_of_birth&quot;&gt;country_of_birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;gender_at_birth&quot;&gt;gender_at_birth&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;birthplace&quot;&gt;birthplace&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
-                shape=plaintext];
-        consent  [label=&lt;&lt;table border=&#39;0&#39; cellborder=&#39;1&#39; cellspacing=&#39;0&#39; cellpadding=&#39;4&#39;&gt;&lt;th&gt;&lt;td bgcolor=&quot;lightsalmon&quot;&gt;&lt;b&gt;consent&lt;/b&gt;&lt;/td&gt;&lt;/th&gt;
-&lt;tr&gt;&lt;td port=&quot;subject_id&quot;&gt;subject_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;study_id&quot;&gt;study_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;staff_id&quot;&gt;staff_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;application_id&quot;&gt;application_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td port=&quot;site_id&quot;&gt;site_id&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
+&lt;tr&gt;&lt;td port=&quot;last_name_birth&quot;&gt;last_name_birth&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&gt;,
                 shape=plaintext];
 }
 
@@ -434,7 +411,7 @@ Warning: node tech_obs_data, port tech_obs_array unrecognized
 <span class="n">A</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s2">&quot;er_diagram.pdf&quot;</span><span class="p">)</span>  <span class="c1"># draw png</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  3.292 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  3.079 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-er-diagram-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/9673719f5e762fcb3d974f09eab85e23/plot_er_diagram.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_er_diagram.py</span></code></a></p>

@@ -105,6 +105,7 @@
 
 <span class="c1"># Authors: Mainak Jas &lt;mjas@mgh.harvard.edu&gt;</span>
 
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
@@ -148,7 +149,7 @@
             <span class="k">break</span></div>
 
 
-<div class="viewcode-block" id="fetch_survey"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey">[docs]</a><span class="k">def</span> <span class="nf">fetch_survey</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">survey_name</span><span class="p">,</span> <span class="n">survey_id</span><span class="p">):</span>
+<div class="viewcode-block" id="fetch_survey"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey">[docs]</a><span class="k">def</span> <span class="nf">fetch_survey</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">survey_name</span><span class="p">,</span> <span class="n">survey_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get schema of table from redcap</span>
 
 <span class="sd">    Parameters</span>
@@ -160,6 +161,8 @@
 <span class="sd">    survey_id : int</span>
 <span class="sd">        The survey_id. See under Reports in</span>
 <span class="sd">        Redap.</span>
+<span class="sd">    index : str</span>
+<span class="sd">        The column to set as index.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -181,8 +184,84 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[Done]&#39;</span><span class="p">)</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># allow mixing int and str record_id</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
+
+<span class="k">def</span> <span class="nf">_is_series_equal</span><span class="p">(</span><span class="n">src_series</span><span class="p">,</span> <span class="n">target_series</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check equality of two series by casting dtype when necessary.&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">col_index</span><span class="p">,</span> <span class="n">target_item</span> <span class="ow">in</span> <span class="n">target_series</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">src_item</span> <span class="o">=</span> <span class="n">src_series</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">col_index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_item</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>  <span class="c1"># ignore datetime column</span>
+            <span class="k">continue</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">target_item</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="n">src_item</span><span class="p">):</span>
+            <span class="n">src_item</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">src_item</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">target_item</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">target_item</span> <span class="o">!=</span> <span class="n">src_item</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">combine_indicator_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">src_cols</span><span class="p">,</span> <span class="n">target_col</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Combine indicator columns into categorical variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.Dataframe</span>
+<span class="sd">        The dataframe</span>
+<span class="sd">    src_cols : dict</span>
+<span class="sd">        The names of the columns are keys and the value it</span>
+<span class="sd">        gets is the value. Example: dict(race___1=1, race___2=2).</span>
+<span class="sd">    target_col : str</span>
+<span class="sd">        The name of the target column to create</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">src_cols</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">arr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">])</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">target_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">src_cols</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+
+<span class="k">def</span> <span class="nf">compare_dataframes</span><span class="p">(</span><span class="n">src_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compare dataframes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src_df : pandas dataframe</span>
+<span class="sd">        The source dataframe whose changes are printed.</span>
+<span class="sd">    target_df : pandas dataframe</span>
+<span class="sd">        The target dataframe that is compared against.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># print extra columns in src_df</span>
+    <span class="n">src_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">src_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">target_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">target_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">common_columns</span> <span class="o">=</span> <span class="n">src_columns</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">target_columns</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;extra columns: </span><span class="si">{</span><span class="n">src_columns</span> <span class="o">-</span> <span class="n">common_columns</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># differences in rows ignoring extra columns</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Changed rows&#39;</span><span class="p">)</span>
+    <span class="n">src_df</span> <span class="o">=</span> <span class="n">src_df</span><span class="p">[</span><span class="n">common_columns</span><span class="p">]</span>
+    <span class="n">target_df</span> <span class="o">=</span> <span class="n">target_df</span><span class="p">[</span><span class="n">common_columns</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">src_row</span> <span class="ow">in</span> <span class="n">src_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">src_row</span><span class="p">[</span><span class="n">common_columns</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">target_row</span> <span class="o">=</span> <span class="n">target_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="c1"># if not src_row[target_columns].equals(target_row):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_series_equal</span><span class="p">(</span><span class="n">src_row</span><span class="p">,</span> <span class="n">target_row</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">src_row</span><span class="p">[</span><span class="n">common_columns</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">target_row</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">infer_schema</span><span class="p">(</span><span class="n">survey_df</span><span class="p">,</span> <span class="n">metadata_df</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get schema from dataframe.</span>

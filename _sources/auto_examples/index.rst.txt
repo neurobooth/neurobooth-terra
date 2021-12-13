@@ -76,10 +76,10 @@
 
 .. only:: html
 
- .. figure:: /auto_examples/images/thumb/sphx_glr_plot_redcap_to_postgres_thumb.png
+ .. figure:: /auto_examples/images/thumb/sphx_glr_redcap_to_postgres_thumb.png
      :alt: Ingest table from Redcap into Postgres
 
-     :ref:`sphx_glr_auto_examples_plot_redcap_to_postgres.py`
+     :ref:`sphx_glr_auto_examples_redcap_to_postgres.py`
 
 .. raw:: html
 
@@ -89,7 +89,7 @@
 .. toctree::
    :hidden:
 
-   /auto_examples/plot_redcap_to_postgres
+   /auto_examples/redcap_to_postgres
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>

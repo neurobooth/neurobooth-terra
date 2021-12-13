@@ -82,7 +82,7 @@ print(table_subject)
 # %%
 # With this Table object, we can create a query that
 # returns a dataframe
-df_subject = table_subject.query(f'SELECT * FROM "{table_id}";')
+df_subject = table_subject.query()
 print(df_subject)
 
 # %%
@@ -90,26 +90,26 @@ print(df_subject)
 # ------
 # We can make changes such as adding a new column
 table_subject.add_column('dob', 'VARCHAR (255)')
-print(table_subject.query('SELECT * FROM subject'))
+print(table_subject.query())
 
 # %%
 # To update a row in the table we can do
 table_subject.update_row('y5d3',
                          cols=['first_name_birth', 'last_name_birth'],
                          vals=('anupum', 'gupta'))
-print(table_subject.query('SELECT * FROM subject'))
+print(table_subject.query())
 
 # %%
 # Delete
 # ------
 # We can also delete rows in our table
 table_subject.delete_row(condition="subject_id = 'yd53'")
-print(table_subject.query(f'SELECT * FROM "{table_id}";'))
+print(table_subject.query())
 
 # %%
 # Or drop columns
 table_contact.drop_column('subject_id')
-print(table_subject.query(f'SELECT * FROM "{table_id}";'))
+print(table_subject.query())
 
 # %%
 # To delete an entire table, we can do

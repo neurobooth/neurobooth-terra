@@ -45,11 +45,25 @@ on postgres tables with neurobooth-terra.
    :local:
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-19
+.. GENERATED FROM PYTHON SOURCE LINES 18-33
 
-Let us first import the necessary functions.
+To run this example, it is necessary to set up a local database called
+'neurobooth' with user 'neuroboother'. Make sure the Postgres server is
+running::
 
-.. GENERATED FROM PYTHON SOURCE LINES 19-25
+     $ pg_ctl -D /usr/local/var/postgres start
+
+Then create a database 'neurobooth'::
+
+     $ createdb neurobooth
+
+And a user 'neuroboother'::
+
+     $ createuser -P -s -e neuroboother
+
+Now, let us open python or ipython and import the necessary functions.
+
+.. GENERATED FROM PYTHON SOURCE LINES 33-39
 
 .. code-block:: default
 
@@ -66,11 +80,11 @@ Let us first import the necessary functions.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-27
+.. GENERATED FROM PYTHON SOURCE LINES 40-41
 
 Then, we will create a connection using ``psycopg2``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-32
+.. GENERATED FROM PYTHON SOURCE LINES 41-46
 
 .. code-block:: default
 
@@ -86,13 +100,13 @@ Then, we will create a connection using ``psycopg2``.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-36
+.. GENERATED FROM PYTHON SOURCE LINES 47-50
 
 We will drop tables if they already exist
 this is just for convenience so we can re-run this script
 even when changing some columns
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-40
+.. GENERATED FROM PYTHON SOURCE LINES 50-54
 
 .. code-block:: default
 
@@ -107,13 +121,13 @@ even when changing some columns
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-44
+.. GENERATED FROM PYTHON SOURCE LINES 55-58
 
 Create
 ------
 Now we define the Table
 
-.. GENERATED FROM PYTHON SOURCE LINES 44-51
+.. GENERATED FROM PYTHON SOURCE LINES 58-65
 
 .. code-block:: default
 
@@ -131,11 +145,11 @@ Now we define the Table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-53
+.. GENERATED FROM PYTHON SOURCE LINES 66-67
 
 and insert some data and retrieve the table as a dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-57
+.. GENERATED FROM PYTHON SOURCE LINES 67-71
 
 .. code-block:: default
 
@@ -150,12 +164,12 @@ and insert some data and retrieve the table as a dataframe
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-60
+.. GENERATED FROM PYTHON SOURCE LINES 72-74
 
 We can create another table and relate it to the other table using
 a foreign key
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-69
+.. GENERATED FROM PYTHON SOURCE LINES 74-83
 
 .. code-block:: default
 
@@ -175,13 +189,13 @@ a foreign key
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-73
+.. GENERATED FROM PYTHON SOURCE LINES 84-87
 
 Read
 ----
 We can get a list of tables in the database by doing
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-75
+.. GENERATED FROM PYTHON SOURCE LINES 87-89
 
 .. code-block:: default
 
@@ -198,16 +212,16 @@ We can get a list of tables in the database by doing
  .. code-block:: none
 
 
-    ['subject', 'contact', 'test_consent', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'sensor_file_log', 'collection', 'device', 'sensor', 'test']
+    ['device', 'sensor', 'subject', 'contact', 'test_consent', 'test', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'sensor_file_log', 'collection']
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 76-78
+.. GENERATED FROM PYTHON SOURCE LINES 90-92
 
 From the list of these table, we can select one to inspect by
 creating a :class:`~neurobooth_terra.Table` object.
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-82
+.. GENERATED FROM PYTHON SOURCE LINES 92-96
 
 .. code-block:: default
 
@@ -230,12 +244,12 @@ creating a :class:`~neurobooth_terra.Table` object.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 83-85
+.. GENERATED FROM PYTHON SOURCE LINES 97-99
 
 With this Table object, we can create a query that
 returns a dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-88
+.. GENERATED FROM PYTHON SOURCE LINES 99-102
 
 .. code-block:: default
 
@@ -260,13 +274,13 @@ returns a dataframe
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-92
+.. GENERATED FROM PYTHON SOURCE LINES 103-106
 
 Update
 ------
 We can make changes such as adding a new column
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-95
+.. GENERATED FROM PYTHON SOURCE LINES 106-109
 
 .. code-block:: default
 
@@ -291,11 +305,11 @@ We can make changes such as adding a new column
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 96-97
+.. GENERATED FROM PYTHON SOURCE LINES 110-111
 
 To update a row in the table we can do
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-102
+.. GENERATED FROM PYTHON SOURCE LINES 111-116
 
 .. code-block:: default
 
@@ -322,13 +336,13 @@ To update a row in the table we can do
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-106
+.. GENERATED FROM PYTHON SOURCE LINES 117-120
 
 Delete
 ------
 We can also delete rows in our table
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-109
+.. GENERATED FROM PYTHON SOURCE LINES 120-123
 
 .. code-block:: default
 
@@ -353,16 +367,16 @@ We can also delete rows in our table
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 110-111
+.. GENERATED FROM PYTHON SOURCE LINES 124-125
 
 Or drop columns
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-114
+.. GENERATED FROM PYTHON SOURCE LINES 125-128
 
 .. code-block:: default
 
-    table_contact.drop_column('subject_id')
-    print(table_subject.query())
+    table_contact.drop_column('email')
+    print(table_contact.query())
 
 
 
@@ -374,19 +388,18 @@ Or drop columns
 
  .. code-block:: none
 
-               first_name_birth last_name_birth   dob
-    subject_id                                       
-    x5dc                 mainak             jas  None
-    y5d3                 anupum           gupta  None
+    Empty DataFrame
+    Columns: []
+    Index: [x5dc, y5d3]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-116
+.. GENERATED FROM PYTHON SOURCE LINES 129-130
 
 To delete an entire table, we can do
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-118
+.. GENERATED FROM PYTHON SOURCE LINES 130-132
 
 .. code-block:: default
 
@@ -403,15 +416,15 @@ To delete an entire table, we can do
  .. code-block:: none
 
 
-    ['contact', 'test_consent', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'sensor_file_log', 'collection', 'device', 'sensor', 'test']
+    ['device', 'sensor', 'contact', 'test_consent', 'test', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'sensor_file_log', 'collection']
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 119-120
+.. GENERATED FROM PYTHON SOURCE LINES 133-134
 
 Don't forget to close the connection once done!
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-124
+.. GENERATED FROM PYTHON SOURCE LINES 134-138
 
 .. code-block:: default
 
@@ -426,14 +439,14 @@ Don't forget to close the connection once done!
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-126
+.. GENERATED FROM PYTHON SOURCE LINES 139-140
 
 .. _CRUD: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.983 seconds)
+   **Total running time of the script:** ( 0 minutes  1.233 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

@@ -135,7 +135,21 @@ on postgres tables with neurobooth-terra.</p>
 <li><p><a class="reference internal" href="#delete" id="id4">Delete</a></p></li>
 </ul>
 </div>
-<p>Let us first import the necessary functions.</p>
+<p>To run this example, it is necessary to set up a local database called
+‘neurobooth’ with user ‘neuroboother’. Make sure the Postgres server is
+running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pg_ctl -D /usr/local/var/postgres start
+</pre></div>
+</div>
+<p>Then create a database ‘neurobooth’:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ createdb neurobooth
+</pre></div>
+</div>
+<p>And a user ‘neuroboother’:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ createuser -P -s -e neuroboother
+</pre></div>
+</div>
+<p>Now, let us open python or ipython and import the necessary functions.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurobooth_terra</span> <span class="kn">import</span> <a href="../generated/neurobooth_terra.list_tables.html#neurobooth_terra.list_tables" title="neurobooth_terra.list_tables" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><a href="../generated/neurobooth_terra.list_tables.html#neurobooth_terra.list_tables" title="neurobooth_terra.list_tables" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><span class="n">list_tables</span></a></a><span class="p">,</span> <a href="../generated/neurobooth_terra.create_table.html#neurobooth_terra.create_table" title="neurobooth_terra.create_table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><a href="../generated/neurobooth_terra.create_table.html#neurobooth_terra.create_table" title="neurobooth_terra.create_table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><span class="n">create_table</span></a></a><span class="p">,</span> <a href="../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table" title="neurobooth_terra.drop_table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><a href="../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table" title="neurobooth_terra.drop_table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-function"><span class="n">drop_table</span></a></a><span class="p">,</span> <a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table" title="neurobooth_terra.Table" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-class"><span class="n">Table</span></a></a>
 
 <span class="kn">import</span> <span class="nn">psycopg2</span>
@@ -194,7 +208,7 @@ a foreign key</p>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;subject&#39;, &#39;contact&#39;, &#39;test_consent&#39;, &#39;study&#39;, &#39;register&#39;, &#39;clinical&#39;, &#39;demograph&#39;, &#39;human_obs_log&#39;, &#39;observer&#39;, &#39;human_obs_data&#39;, &#39;instruction&#39;, &#39;tech_obs_data&#39;, &#39;stimulus&#39;, &#39;tech_obs_log&#39;, &#39;sensor_file_log&#39;, &#39;collection&#39;, &#39;device&#39;, &#39;sensor&#39;, &#39;test&#39;]
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;device&#39;, &#39;sensor&#39;, &#39;subject&#39;, &#39;contact&#39;, &#39;test_consent&#39;, &#39;test&#39;, &#39;study&#39;, &#39;register&#39;, &#39;clinical&#39;, &#39;demograph&#39;, &#39;human_obs_log&#39;, &#39;observer&#39;, &#39;human_obs_data&#39;, &#39;instruction&#39;, &#39;tech_obs_data&#39;, &#39;stimulus&#39;, &#39;tech_obs_log&#39;, &#39;sensor_file_log&#39;, &#39;collection&#39;]
 </pre></div>
 </div>
 <p>From the list of these table, we can select one to inspect by
@@ -266,15 +280,14 @@ y5d3                 anupum           gupta  None
 </pre></div>
 </div>
 <p>Or drop columns</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.drop_column" title="neurobooth_terra.Table.drop_column" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-method"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.drop_column" title="neurobooth_terra.Table.drop_column" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-method"><span class="n">table_contact</span><span class="o">.</span><span class="n">drop_column</span></a></a><span class="p">(</span><span class="s1">&#39;subject_id&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-method"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-method"><span class="n">table_subject</span><span class="o">.</span><span class="n">query</span></a></a><span class="p">())</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.drop_column" title="neurobooth_terra.Table.drop_column" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-method"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.drop_column" title="neurobooth_terra.Table.drop_column" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-method"><span class="n">table_contact</span><span class="o">.</span><span class="n">drop_column</span></a></a><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-method"><a href="../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query" class="sphx-glr-backref-module-neurobooth_terra sphx-glr-backref-type-py-method"><span class="n">table_contact</span><span class="o">.</span><span class="n">query</span></a></a><span class="p">())</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>           first_name_birth last_name_birth   dob
-subject_id
-x5dc                 mainak             jas  None
-y5d3                 anupum           gupta  None
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Empty DataFrame
+Columns: []
+Index: [x5dc, y5d3]
 </pre></div>
 </div>
 <p>To delete an entire table, we can do</p>
@@ -283,7 +296,7 @@ y5d3                 anupum           gupta  None
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;contact&#39;, &#39;test_consent&#39;, &#39;study&#39;, &#39;register&#39;, &#39;clinical&#39;, &#39;demograph&#39;, &#39;human_obs_log&#39;, &#39;observer&#39;, &#39;human_obs_data&#39;, &#39;instruction&#39;, &#39;tech_obs_data&#39;, &#39;stimulus&#39;, &#39;tech_obs_log&#39;, &#39;sensor_file_log&#39;, &#39;collection&#39;, &#39;device&#39;, &#39;sensor&#39;, &#39;test&#39;]
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;device&#39;, &#39;sensor&#39;, &#39;contact&#39;, &#39;test_consent&#39;, &#39;test&#39;, &#39;study&#39;, &#39;register&#39;, &#39;clinical&#39;, &#39;demograph&#39;, &#39;human_obs_log&#39;, &#39;observer&#39;, &#39;human_obs_data&#39;, &#39;instruction&#39;, &#39;tech_obs_data&#39;, &#39;stimulus&#39;, &#39;tech_obs_log&#39;, &#39;sensor_file_log&#39;, &#39;collection&#39;]
 </pre></div>
 </div>
 <p>Don’t forget to close the connection once done!</p>
@@ -292,7 +305,7 @@ y5d3                 anupum           gupta  None
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.983 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.233 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-postgres-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d7f6b1c1accfe75c32c35dfe6b733449/plot_postgres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_postgres.py</span></code></a></p>

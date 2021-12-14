@@ -15,7 +15,21 @@ on postgres tables with neurobooth-terra.
 #
 
 # %%
-# Let us first import the necessary functions.
+# To run this example, it is necessary to set up a local database called
+# 'neurobooth' with user 'neuroboother'. Make sure the Postgres server is
+# running::
+#
+#      $ pg_ctl -D /usr/local/var/postgres start
+#
+# Then create a database 'neurobooth'::
+#
+#      $ createdb neurobooth
+#
+# And a user 'neuroboother'::
+#
+#      $ createuser -P -s -e neuroboother
+#
+# Now, let us open python or ipython and import the necessary functions.
 
 from neurobooth_terra import list_tables, create_table, drop_table, Table
 
@@ -108,8 +122,8 @@ print(table_subject.query())
 
 # %%
 # Or drop columns
-table_contact.drop_column('subject_id')
-print(table_subject.query())
+table_contact.drop_column('email')
+print(table_contact.query())
 
 # %%
 # To delete an entire table, we can do

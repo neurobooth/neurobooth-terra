@@ -4,6 +4,7 @@ neurobooth-terra
 Dependencies
 ------------
 
+* PostgreSQL (`https://www.postgresql.org/ <https://www.postgresql.org/>`_)
 * psycopg2
 * pandas
 

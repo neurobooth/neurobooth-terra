@@ -127,6 +127,8 @@
 <code class="docutils literal notranslate"><span class="pre">update_interval</span></code> seconds before going to next iteration.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">table.insert_rows</span></code> now has an argument <code class="docutils literal notranslate"><span class="pre">on_conflict</span></code> to determine
 what action to take when there is a conflict.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">table.query</span></code> argument <code class="docutils literal notranslate"><span class="pre">column_names</span></code> is now called <code class="docutils literal notranslate"><span class="pre">include_columns</span></code>.</p></li>
+<li><p>New function <code class="docutils literal notranslate"><span class="pre">query</span></code> to make arbitrarily complex queries.</p></li>
 </ul>
 </section>
 <section id="bug">
@@ -140,7 +142,6 @@ PostgreSQL.</p></li>
 <h3>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">cols</span></code> is a required column now in <code class="docutils literal notranslate"><span class="pre">table.update_row</span></code> and <code class="docutils literal notranslate"><span class="pre">table.insert_rows</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">table.insert_rows</span></code> now does nothing if conflict exists.</p></li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">table.query()</span></code> now does not take a query as a string and returns the</dt><dd><p>entire table as a dataframe.</p>
 </dd>

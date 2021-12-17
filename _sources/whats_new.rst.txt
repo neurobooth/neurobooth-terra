@@ -13,6 +13,10 @@ Changelog
 - ``table.insert_rows`` now has an argument ``on_conflict`` to determine
   what action to take when there is a conflict.
 
+- ``table.query`` argument ``column_names`` is now called ``include_columns``.
+
+- New function ``query`` to make arbitrarily complex queries.
+
 Bug
 ~~~
 
@@ -23,8 +27,6 @@ API
 ~~~
 
 - ``cols`` is a required column now in ``table.update_row`` and ``table.insert_rows``
-
-- ``table.insert_rows`` now does nothing if conflict exists.
 
 - ``table.query()`` now does not take a query as a string and returns the
    entire table as a dataframe.

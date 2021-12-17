@@ -169,11 +169,30 @@
     <span class="n">insert_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;INSERT INTO </span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">cols</span><span class="si">}</span><span class="s1">) VALUES(</span><span class="si">{</span><span class="n">vals</span><span class="si">}</span><span class="s1">)&#39;</span>
     <span class="n">_execute_batch</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">insert_cmd</span><span class="p">,</span> <span class="n">tuples</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">psql_to_df</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">column_names</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Tranform a SELECT query into a pandas dataframe&quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="query"><a class="viewcode-back" href="../../generated/neurobooth_terra.query.html#neurobooth_terra.query">[docs]</a><span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">column_names</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transform a SELECT query into a pandas dataframe</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    conn : instance of psycopg2.Postgres</span>
+<span class="sd">        The connection object</span>
+<span class="sd">    sql_query : str</span>
+<span class="sd">        The SQL query to perform</span>
+<span class="sd">    column_names : str | list of str</span>
+<span class="sd">        The columns to create</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df : instance of Dataframe</span>
+<span class="sd">        The pandas dataframe</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="drop_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table">[docs]</a><span class="k">def</span> <span class="nf">drop_table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
     <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -363,7 +382,7 @@
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Table.insert_rows"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;nothing&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Table.insert_rows"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Manual insertion into tables</span>
 
 <span class="sd">        If conflicts, does nothing.</span>
@@ -375,7 +394,7 @@
 <span class="sd">            is one row.</span>
 <span class="sd">        cols : list of str</span>
 <span class="sd">            The columns to insert into.</span>
-<span class="sd">        on_conflict : &#39;nothing&#39; | &#39;update&#39;</span>
+<span class="sd">        on_conflict : &#39;nothing&#39; | &#39;update&#39; | &#39;error&#39;</span>
 <span class="sd">            What to do when a conflict is encountered</span>
 
 <span class="sd">        Returns</span>
@@ -391,8 +410,8 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;entries in vals must be tuples. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tuple length must match number of columns (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">on_conflict</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;nothing&#39;</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;on_conflict must be one of (nothing, update)&#39;</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">on_conflict</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;nothing&#39;</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;on_conflict must be one of (nothing, update, error)&#39;</span><span class="p">,</span>
                              <span class="sa">f</span><span class="s1">&#39;Got </span><span class="si">{</span><span class="n">on_conflict</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">str_format</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">])</span>
@@ -411,7 +430,7 @@
         <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;RETURNING </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="n">_execute_batch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">insert_cmd</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">on_conflict</span> <span class="o">!=</span> <span class="s1">&#39;do_nothing&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Table.update_row"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.update_row">[docs]</a>    <span class="k">def</span> <span class="nf">update_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pk_val</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
@@ -448,26 +467,30 @@
         <span class="n">cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; WHERE </span><span class="si">{</span><span class="n">pk</span><span class="si">}</span><span class="s2"> = &#39;</span><span class="si">{</span><span class="n">pk_val</span><span class="si">}</span><span class="s2">&#39;;&quot;</span>
         <span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Table.query"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Table.query"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run a query.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        column_names : None | list of str</span>
+<span class="sd">        include_columns : str | list of str | None</span>
 <span class="sd">            If None, query all columns</span>
 <span class="sd">        where : str | None</span>
 <span class="sd">            Condition to filter rows by. If None,</span>
-<span class="sd">            keep all rows</span>
+<span class="sd">            keep all rows. E.g.,</span>
+<span class="sd">            table.query(where=&#39;&quot;wearable_bool&quot; = True&#39;)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        df : instance of pd.Dataframe</span>
 <span class="sd">            A pandas dataframe object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span>
+        <span class="k">if</span> <span class="n">include_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">include_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">include_columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">include_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">include_columns</span><span class="p">]</span>
+
         <span class="c1"># use quotes to be case sensitive</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">])</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">include_columns</span><span class="p">])</span>
 
         <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SELECT </span><span class="si">{</span><span class="n">cols</span><span class="si">}</span><span class="s2"> FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s2"> &quot;</span>
         <span class="k">if</span> <span class="n">where</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -475,9 +498,10 @@
         <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;;&#39;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">include_columns</span><span class="p">)</span>
         <span class="n">pk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pk</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">pk</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
     <span class="k">def</span> <span class="nf">delete_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>

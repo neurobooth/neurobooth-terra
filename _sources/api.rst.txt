@@ -18,6 +18,7 @@ Tables (:py:mod:`neurobooth_terra`):
    create_table
    drop_table
    list_tables
+   query
 
 Redcap (:py:mod:`neurobooth_terra.redcap`)
 ------------------------------------------

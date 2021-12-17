@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>neurobooth_terra.redcap &#8212; neurobooth-terra  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
 <meta charset='utf-8'>
@@ -105,7 +105,7 @@
 
 <span class="c1"># Authors: Mainak Jas &lt;mjas@mgh.harvard.edu&gt;</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
@@ -114,7 +114,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="kn">import</span> <span class="n">infer_dtype</span>
+<span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="k">import</span> <span class="n">infer_dtype</span>
 
 
 <div class="viewcode-block" id="iter_interval"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.iter_interval.html#neurobooth_terra.redcap.iter_interval">[docs]</a><span class="k">def</span> <span class="nf">iter_interval</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">exit_after</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
@@ -144,7 +144,7 @@
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">curr_time</span> <span class="o">-</span> <span class="n">start_time_t0</span> <span class="o">&gt;</span> <span class="n">exit_after</span><span class="p">:</span>
                 <span class="k">break</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Time left: </span><span class="si">{</span><span class="n">time_left</span><span class="si">:</span><span class="s1">2.2f</span><span class="si">}</span><span class="s1"> s&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Time left: </span><span class="si">{time_left:2.2f}</span><span class="s1"> s&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
             <span class="k">break</span></div>
 
@@ -169,7 +169,7 @@
 <span class="sd">    df : instance of DataFrame</span>
 <span class="sd">        The pandas dataframe.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fetching report </span><span class="si">{</span><span class="n">survey_name</span><span class="si">}</span><span class="s1"> from Redcap&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Fetching report </span><span class="si">{survey_name}</span><span class="s1"> from Redcap&#39;</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">export_reports</span><span class="p">(</span><span class="n">report_id</span><span class="o">=</span><span class="n">survey_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">])</span>
@@ -241,7 +241,7 @@
     <span class="n">src_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">src_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
     <span class="n">target_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">target_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
     <span class="n">common_columns</span> <span class="o">=</span> <span class="n">src_columns</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">target_columns</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;extra columns: </span><span class="si">{</span><span class="n">src_columns</span> <span class="o">-</span> <span class="n">common_columns</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;extra columns: {src_columns - common_columns}&#39;</span><span class="p">)</span>
 
     <span class="c1"># differences in rows ignoring extra columns</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Changed rows&#39;</span><span class="p">)</span>
@@ -301,7 +301,7 @@
                     <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
                     <span class="n">choice</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Skipping </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Skipping </span><span class="si">{column}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">infer_dtype</span><span class="p">(</span><span class="n">survey_df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="n">dtype</span><span class="p">]</span>
@@ -334,7 +334,7 @@
     </p>
     <p>
         &copy; Copyright 2021, Neurobooth Developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.<br/>
     </p>
   </div>
 </footer>

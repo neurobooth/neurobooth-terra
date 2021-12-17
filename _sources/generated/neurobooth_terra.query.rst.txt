@@ -1,0 +1,6 @@
+neurobooth\_terra.query
+=======================
+
+.. currentmodule:: neurobooth_terra
+
+.. autofunction:: query

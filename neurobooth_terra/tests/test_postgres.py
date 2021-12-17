@@ -5,7 +5,7 @@ import psycopg2
 import pytest
 from numpy.testing import assert_raises
 
-from neurobooth_terra import Table, create_table, drop_table
+from neurobooth_terra import Table, create_table, drop_table, query
 
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
@@ -137,6 +137,16 @@ def test_upsert():
     df = table_subject.query(where="subject_id = 'x5dc'")
     assert 'x5dc' in df.index
     assert 'zzzz' not in df.index
+
+    # smoke test include_columns
+    df = table_subject.query(include_columns='first_name_birth',
+                             where="subject_id = 'x5dc'")
+    df = table_subject.query(include_columns=['first_name_birth'],
+                             where="subject_id = 'x5dc'")
+
+    df = query(conn,
+               "SELECT first_name_birth FROM test where subject_id = 'x5dc' ",
+               column_names='first_name_birth')
 
     table_subject.insert_rows([('x5dc', 'mainak', 'jazz', 32)],
                                cols=column_names, on_conflict='update')

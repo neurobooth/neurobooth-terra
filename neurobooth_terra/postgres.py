@@ -66,10 +66,29 @@ def df_to_psql(conn, cursor, df, table_id):
     insert_cmd = f'INSERT INTO {table_id}({cols}) VALUES({vals})'
     _execute_batch(conn, cursor, insert_cmd, tuples)
 
-def psql_to_df(conn, cursor, query, column_names):
-    """Tranform a SELECT query into a pandas dataframe"""
-    data = execute(conn, cursor, query, fetch=True)
+def query(conn, sql_query, column_names):
+    """Transform a SELECT query into a pandas dataframe
+
+    Parameters
+    ----------
+    conn : instance of psycopg2.Postgres
+        The connection object
+    sql_query : str
+        The SQL query to perform
+    column_names : str | list of str
+        The columns to create
+
+    Returns
+    -------
+    df : instance of Dataframe
+        The pandas dataframe
+    """
+    if isinstance(column_names, str):
+        column_names = [column_names]
+    cursor = conn.cursor()
+    data = execute(conn, cursor, sql_query, fetch=True)
     df = pd.DataFrame(data, columns=column_names)
+    cursor.close()
     return df
 
 def drop_table(table_id, conn):
@@ -308,7 +327,7 @@ class Table:
         insert_cmd += f'RETURNING {self.primary_key[0]}'
 
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)
-        if len(vals) == 1:
+        if len(vals) == 1 and on_conflict != 'do_nothing':
             return self.cursor.fetchone()[0]
 
     def update_row(self, pk_val, vals, cols):
@@ -345,26 +364,30 @@ class Table:
         cmd += f" WHERE {pk} = '{pk_val}';"
         execute(self.conn, self.cursor, cmd)
 
-    def query(self, column_names=None, where=None):
+    def query(self, include_columns=None, where=None):
         """Run a query.
 
         Parameters
         ----------
-        column_names : None | list of str
+        include_columns : str | list of str | None
             If None, query all columns
         where : str | None
             Condition to filter rows by. If None,
-            keep all rows
+            keep all rows. E.g.,
+            table.query(where='"wearable_bool" = True')
 
         Returns
         -------
         df : instance of pd.Dataframe
             A pandas dataframe object.
         """
-        if column_names is None:
-            column_names = self.column_names
+        if include_columns is None:
+            include_columns = self.column_names
+        if isinstance(include_columns, str):
+            include_columns = [include_columns]
+
         # use quotes to be case sensitive
-        cols = ', '.join([f'\"{col}\"' for col in column_names])
+        cols = ', '.join([f'\"{col}\"' for col in include_columns])
 
         cmd = f"SELECT {cols} FROM {self.table_id} "
         if where is not None:
@@ -372,9 +395,10 @@ class Table:
         cmd += ';'
 
         data = execute(self.conn, self.cursor, cmd, fetch=True)
-        df = pd.DataFrame(data, columns=column_names)
+        df = pd.DataFrame(data, columns=include_columns)
         pk = self.primary_key[0]
-        df = df.set_index(pk)
+        if pk in df.columns:
+            df = df.set_index(pk)
         return df
 
     def delete_row(self, condition):

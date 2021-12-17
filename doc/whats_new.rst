@@ -13,6 +13,10 @@ Changelog
 - ``table.insert_rows`` now has an argument ``on_conflict`` to determine
   what action to take when there is a conflict.
 
+- ``table.query`` argument ``column_names`` is now called ``include_columns``.
+
+- New function ``query`` to make arbitrarily complex queries.
+
 Bug
 ~~~
 

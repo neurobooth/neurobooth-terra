@@ -128,7 +128,7 @@ def test_upsert():
                                cols=column_names)
     table_subject.insert_rows([('x5dc', 'mainak_new', 'jas_new', 21),
                                ('zzzz', 'deepak', 'singh', 32)],
-                               cols=column_names)
+                               cols=column_names, on_conflict='nothing')
     df = table_subject.query()
     assert 'x5dc' in df.index
     assert 'zzzz' in df.index

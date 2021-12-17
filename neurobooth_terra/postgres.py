@@ -260,7 +260,7 @@ class Table:
         idx = self.column_names.index(col)
         del self.column_names[idx], self.data_types[idx]
 
-    def insert_rows(self, vals, cols, on_conflict='nothing'):
+    def insert_rows(self, vals, cols, on_conflict='error'):
         """Manual insertion into tables
 
         If conflicts, does nothing.
@@ -272,7 +272,7 @@ class Table:
             is one row.
         cols : list of str
             The columns to insert into.
-        on_conflict : 'nothing' | 'update'
+        on_conflict : 'nothing' | 'update' | 'error'
             What to do when a conflict is encountered
 
         Returns
@@ -288,8 +288,8 @@ class Table:
                 raise ValueError(f'entries in vals must be tuples. Got {type(val)}')
             if len(val) != len(cols):
                 raise ValueError(f'tuple length must match number of columns ({len(cols)})')
-        if on_conflict not in ('nothing', 'update'):
-            raise ValueError(f'on_conflict must be one of (nothing, update)',
+        if on_conflict not in ('nothing', 'update', 'error'):
+            raise ValueError(f'on_conflict must be one of (nothing, update, error)',
                              f'Got {on_conflict}')
 
         str_format = ','.join(len(cols) * ['%s'])

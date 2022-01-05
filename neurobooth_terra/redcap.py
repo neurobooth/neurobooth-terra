@@ -34,13 +34,13 @@ def iter_interval(wait=60, exit_after=np.inf):
             curr_time = time.time()
             time_elapsed = curr_time - start_time
             time_left = wait - time_elapsed
-            if time_left < 0:
+            if curr_time - start_time_t0 > exit_after:
+                break
+            elif time_left < 0:
                 start_time = time.time()
                 print('')
                 yield
                 continue
-            if curr_time - start_time_t0 > exit_after:
-                break
             print(f'Time left: {time_left:2.2f} s', end='\r')
         except KeyboardInterrupt:
             break
@@ -122,6 +122,53 @@ def combine_indicator_columns(df, src_cols, target_col):
     df[target_col] = arr
     df = df.drop(src_cols.keys(), axis=1)
     return df
+
+
+def dataframe_to_tuple(df, column_names, fixed_columns=None):
+    """Dataframe to tuple.
+
+    Parameters
+    ----------
+    df : instance of pd.Dataframe
+        The dataframe whose index is record_id
+    df_columns : list of str
+        The column names of the dataframe to process. The column_name
+        'record_id' is special and inserts the record_id index.
+    fixed_columns : dict
+        The columns that have fixed values. E.g., dict(study_id=study1) makes
+        all the rows of column study_id to have value study1
+
+    Returns
+    -------
+    rows : list (n_rows,) of tuples
+        A list with each row having the columns of dataframe.
+    cols : list of str
+        Ordered list of columns in which the tuple entries are added
+    """
+    if fixed_columns is None:
+        fixed_columns = dict()
+
+    rows = list()
+    for record_id, df_row in df.iterrows():
+
+        row = list()
+        for column_name in column_names:
+            if column_name == 'record_id':
+                row.append(record_id)
+            else:
+                row.append(df_row[column_name])
+
+        for column_name in fixed_columns:
+            row.append(fixed_columns[column_name])
+
+        rows.append(tuple(row))
+
+    cols = column_names + list(fixed_columns.keys())
+    if 'record_id' in cols:
+        cols[cols.index('record_id')] = 'subject_id'
+    if 'redcap_event_name' in cols:
+        cols[cols.index('redcap_event_name')] = 'event_name'
+    return rows, cols
 
 
 def compare_dataframes(src_df, target_df):

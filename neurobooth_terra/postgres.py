@@ -17,9 +17,11 @@ def execute(conn, cursor, cmd, fetch=False):
     if fetch:
         return cursor.fetchall()
 
+
 def _execute_batch(conn, cursor, cmd, tuples, page_size=100):
     extras.execute_batch(cursor, cmd, tuples, page_size)
     conn.commit()
+
 
 def _get_primary_keys(conn, cursor, table_id):
     query = (
@@ -33,6 +35,7 @@ def _get_primary_keys(conn, cursor, table_id):
     column_names = execute(conn, cursor, query, fetch=True)
     primary_keys = [col[0] for col in column_names]
     return primary_keys
+
 
 #### Neurobooth related comands #####
 
@@ -66,6 +69,7 @@ def df_to_psql(conn, cursor, df, table_id):
     insert_cmd = f'INSERT INTO {table_id}({cols}) VALUES({vals})'
     _execute_batch(conn, cursor, insert_cmd, tuples)
 
+
 def query(conn, sql_query, column_names):
     """Transform a SELECT query into a pandas dataframe
 
@@ -90,6 +94,7 @@ def query(conn, sql_query, column_names):
     df = pd.DataFrame(data, columns=column_names)
     cursor.close()
     return df
+
 
 def drop_table(table_id, conn):
     cursor = conn.cursor()
@@ -422,7 +427,7 @@ def list_tables(conn):
     table_ids : list of str
         The table IDs
     """
-        
+
     query_tables_cmd = """
     SELECT *
     FROM pg_catalog.pg_tables

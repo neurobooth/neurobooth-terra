@@ -86,19 +86,6 @@ for _ in iter_interval(wait=5, exit_after=2):
         # convert NaN to None for psycopg2
         dfs[survey_name] = df
 
-    mapping = {f'race___{v}': v for v in range(1, 8)}
-    dfs['demographics'] = combine_indicator_columns(
-        dfs['demographics'], mapping, 'race')
-
-    mapping = {f'ancestry_cateogry___{v}': v for v in range(1, 13)}
-    dfs['demographics'] = combine_indicator_columns(
-        dfs['demographics'], mapping, 'ancestry_category')
-
-    mapping = {f'health_history___{v}': v for v in range(1, 39)}
-    # mapping['health_history___diabetics'] = 39
-    dfs['demographics'] = combine_indicator_columns(
-        dfs['demographics'], mapping, 'health_history')
-
     # Now, we will prepare the contents of the subject table in postgres
     drop_rows = pd.isna(dfs['subject']['first_name_birth'])
     drop_record_ids = dfs['subject'].index[drop_rows]
@@ -126,7 +113,8 @@ for _ in iter_interval(wait=5, exit_after=2):
         dfs['demographics'],
         column_names=['record_id', 'redcap_event_name', 'gender', 'ethnicity',
                       'handedness', 'health_history', 'race'],
-        fixed_columns=dict(study_id='study1', application_id='REDCAP')
+        fixed_columns=dict(study_id='study1', application_id='REDCAP'),
+        indicator_columns=['race', 'ancestry_category', 'health_history']
     )
 
     for row_subject in rows_subject[:5]:

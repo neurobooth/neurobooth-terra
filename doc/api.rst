@@ -30,6 +30,7 @@ Redcap (:py:mod:`neurobooth_terra.redcap`)
 
    fetch_survey
    iter_interval
+   dataframe_to_tuple
 
 
 Mock

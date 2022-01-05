@@ -87,6 +87,7 @@ def fetch_survey(project, survey_name, survey_id, index=None):
 
     return df
 
+
 def _is_series_equal(src_series, target_series):
     """Check equality of two series by casting dtype when necessary."""
 
@@ -124,7 +125,8 @@ def combine_indicator_columns(df, src_cols, target_col):
     return df
 
 
-def dataframe_to_tuple(df, column_names, fixed_columns=None):
+def dataframe_to_tuple(df, column_names, fixed_columns=None,
+                       indicator_columns=None):
     """Dataframe to tuple.
 
     Parameters
@@ -134,9 +136,11 @@ def dataframe_to_tuple(df, column_names, fixed_columns=None):
     df_columns : list of str
         The column names of the dataframe to process. The column_name
         'record_id' is special and inserts the record_id index.
-    fixed_columns : dict
+    fixed_columns : dict | None
         The columns that have fixed values. E.g., dict(study_id=study1) makes
         all the rows of column study_id to have value study1
+    indicator_columns : list of str | None
+        The indicator columns.
 
     Returns
     -------
@@ -147,6 +151,16 @@ def dataframe_to_tuple(df, column_names, fixed_columns=None):
     """
     if fixed_columns is None:
         fixed_columns = dict()
+
+    if indicator_columns is None:
+        indicator_columns = list()
+
+    for indicator_column in indicator_columns:
+        mapping = dict()
+        for col in df.columns:
+            if col.startswith(indicator_column):
+                mapping[col] = col.split('___')[1]
+        df = combine_indicator_columns(df, mapping, indicator_column)
 
     rows = list()
     for record_id, df_row in df.iterrows():

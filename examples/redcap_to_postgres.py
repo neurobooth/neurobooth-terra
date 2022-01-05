@@ -97,22 +97,22 @@ for _ in iter_interval(wait=5, exit_after=2):
     # Then we insert the rows in this table
     rows_subject, cols_subject = dataframe_to_tuple(
         dfs['subject'],
-        column_names=['record_id', 'first_name_birth', 'middle_name_birth',
-                      'last_name_birth', 'date_of_birth', 'country_of_birth',
-                      'gender_at_birth', 'birthplace'])
+        df_columns=['record_id', 'first_name_birth', 'middle_name_birth',
+                    'last_name_birth', 'date_of_birth', 'country_of_birth',
+                    'gender_at_birth', 'birthplace'])
 
     rows_consent, cols_consent = dataframe_to_tuple(
         dfs['consent'],
-        column_names=['record_id', 'redcap_event_name', 'educate_clinicians',
-                      'educate_clinicians_initials'],
+        df_columns=['record_id', 'redcap_event_name', 'educate_clinicians',
+                    'educate_clinicians_initials'],
         fixed_columns=dict(study_id='study1', staff_id='Neuroboother',
                            application_id='REDCAP', site_id='MGH')
     )
 
     rows_demographics, cols_demographics = dataframe_to_tuple(
         dfs['demographics'],
-        column_names=['record_id', 'redcap_event_name', 'gender', 'ethnicity',
-                      'handedness', 'health_history', 'race'],
+        df_columns=['record_id', 'redcap_event_name', 'gender', 'ethnicity',
+                    'handedness', 'health_history', 'race'],
         fixed_columns=dict(study_id='study1', application_id='REDCAP'),
         indicator_columns=['race', 'ancestry_category', 'health_history']
     )

@@ -139,24 +139,3 @@ for _ in iter_interval(wait=5, exit_after=2):
                                       on_conflict='update')
             table_demographics.insert_rows(rows_demographics, cols_demographics,
                                            on_conflict='update')
-
-# %%
-# We will drop our tables if they already exist
-# this is just for convenience so we can re-run this script
-# and create a new mock subject table and consent table to test our script
-# drop_table('subject', conn)
-# drop_table('consent', conn)
-
-# table_id = 'subject'
-# datatypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)',
-#              'date', 'VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)']
-# table_subject = create_table(table_id, conn, cols_subject, datatypes)
-
-# table_id = 'consent'
-# datatypes = ['VARCHAR (255)'] * len(cols_consent)
-# table_consent = create_table(table_id, conn, cols_consent, datatypes)
-
-# %%
-# Let's do a query to check that the content is in there
-# print(table_subject.query())
-# print(table_consent.query())

@@ -12,7 +12,9 @@ import os
 
 from redcap import Project, RedcapError
 from neurobooth_terra.redcap import (fetch_survey, iter_interval,
-                                     compare_dataframes)
+                                     compare_dataframes,
+                                     combine_indicator_columns,
+                                     dataframe_to_tuple)
 
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
@@ -44,7 +46,8 @@ db_args = dict(
 
 survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
               'clinical': 84431, 'falls': 85031, 'subject': 96398}
-survey_ids = {'subject': 96397, 'consent': 96398}
+survey_ids = {'subject': 96397, 'consent': 96398, 'demographics': 84429,
+              'clinical': 84431}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -83,67 +86,71 @@ for _ in iter_interval(wait=5, exit_after=2):
         # convert NaN to None for psycopg2
         dfs[survey_name] = df
 
+    mapping = {f'race___{v}': v for v in range(1, 8)}
+    dfs['demographics'] = combine_indicator_columns(
+        dfs['demographics'], mapping, 'race')
+
+    mapping = {f'ancestry_cateogry___{v}': v for v in range(1, 13)}
+    dfs['demographics'] = combine_indicator_columns(
+        dfs['demographics'], mapping, 'ancestry_category')
+
+    mapping = {f'health_history___{v}': v for v in range(1, 39)}
+    # mapping['health_history___diabetics'] = 39
+    dfs['demographics'] = combine_indicator_columns(
+        dfs['demographics'], mapping, 'health_history')
+
     # Now, we will prepare the contents of the subject table in postgres
     drop_rows = pd.isna(dfs['subject']['first_name_birth'])
     drop_record_ids = dfs['subject'].index[drop_rows]
 
     dfs['subject'] = dfs['subject'].drop(drop_record_ids)
     dfs['consent'] = dfs['consent'].drop(drop_record_ids, errors='ignore')
+    dfs['demographics'] = dfs['demographics'].drop(drop_record_ids, errors='ignore')
 
-    rows_subject = list()
-    for record_id, df_row in dfs['subject'].iterrows():
+    # Then we insert the rows in this table
+    rows_subject, cols_subject = dataframe_to_tuple(
+        dfs['subject'],
+        column_names=['record_id', 'first_name_birth', 'middle_name_birth',
+                      'last_name_birth', 'date_of_birth', 'country_of_birth',
+                      'gender_at_birth', 'birthplace'])
 
-        mainak_hash = 'hash'
+    rows_consent, cols_consent = dataframe_to_tuple(
+        dfs['consent'],
+        column_names=['record_id', 'redcap_event_name', 'educate_clinicians',
+                      'educate_clinicians_initials'],
+        fixed_columns=dict(study_id='study1', staff_id='Neuroboother',
+                           application_id='REDCAP', site_id='MGH')
+    )
 
-        rows_subject.append((record_id,
-                             df_row['first_name_birth'],
-                             df_row['middle_name_birth'],
-                             df_row['last_name_birth'],
-                             df_row['date_of_birth'],
-                             df_row['country_of_birth'],
-                             df_row['gender_at_birth'],
-                             df_row['birthplace']))
-
-    rows_consent = list()
-    for record_id, df_row in dfs['consent'].iterrows():
-        rows_consent.append((record_id,
-                            'study1',  # study_id
-                            df_row['redcap_event_name'],
-                            'Neuroboother',  # staff_id
-                            'REDCAP',  # application_id
-                            'MGH',  # site_id
-                            # None, # date (missing)
-                            df_row['educate_clinicians'],
-                            df_row['educate_clinicians_initials'],
-                            # bool(df_row['future_research_consent_adult'])
-        ))
+    rows_demographics, cols_demographics = dataframe_to_tuple(
+        dfs['demographics'],
+        column_names=['record_id', 'redcap_event_name', 'gender', 'ethnicity',
+                      'handedness', 'health_history', 'race'],
+        fixed_columns=dict(study_id='study1', application_id='REDCAP')
+    )
 
     for row_subject in rows_subject[:5]:
         print(row_subject)
 
-    # Then we insert the rows in this table
-    cols_subject = ['subject_id', 'first_name_birth', 'middle_name_birth',
-                    'last_name_birth', 'date_of_birth', 'country_of_birth',
-                    'gender_at_birth', 'birthplace']
-    cols_consent = ['subject_id', 'study_id', 'event_name',
-                    'staff_id', 'application_id', 'site_id',
-                    'educate_clinicians', 'educate_clinicians_initials']
     with SSHTunnelForwarder(**ssh_args) as tunnel:
         with psycopg2.connect(port=tunnel.local_bind_port,
                               host=tunnel.local_bind_host, **db_args) as conn:
 
             table_subject = Table('subject', conn)
             table_consent = Table('consent', conn)
+            table_demographics = Table('demographics', conn)
 
             df_subject_db = table_subject.query()
             df_consent_db = table_consent.query()
             compare_dataframes(dfs['subject'], df_subject_db)
-            compare_dataframes(dfs['consent'], df_consent_db)
+            # compare_dataframes(dfs['consent'], df_consent_db)
 
             table_subject.insert_rows(rows_subject, cols_subject,
                                       on_conflict='update')
             table_consent.insert_rows(rows_consent, cols_consent,
                                       on_conflict='update')
+            table_demographics.insert_rows(rows_demographics, cols_demographics,
+                                           on_conflict='update')
 
 # %%
 # We will drop our tables if they already exist

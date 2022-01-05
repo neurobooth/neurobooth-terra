@@ -125,7 +125,7 @@ def combine_indicator_columns(df, src_cols, target_col):
     return df
 
 
-def dataframe_to_tuple(df, column_names, fixed_columns=None,
+def dataframe_to_tuple(df, df_columns, fixed_columns=None,
                        indicator_columns=None):
     """Dataframe to tuple.
 
@@ -166,7 +166,7 @@ def dataframe_to_tuple(df, column_names, fixed_columns=None,
     for record_id, df_row in df.iterrows():
 
         row = list()
-        for column_name in column_names:
+        for column_name in df_columns:
             if column_name == 'record_id':
                 row.append(record_id)
             else:
@@ -177,7 +177,7 @@ def dataframe_to_tuple(df, column_names, fixed_columns=None,
 
         rows.append(tuple(row))
 
-    cols = column_names + list(fixed_columns.keys())
+    cols = df_columns + list(fixed_columns.keys())
     if 'record_id' in cols:
         cols[cols.index('record_id')] = 'subject_id'
     if 'redcap_event_name' in cols:

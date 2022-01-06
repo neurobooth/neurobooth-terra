@@ -156,7 +156,7 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         indicator_columns = list()
 
     for indicator_column in indicator_columns:
-        mapping = dict()
+        mapping = dict()  # {race___1: 1, race___2: 2}
         for col in df.columns:
             if col.startswith(indicator_column):
                 mapping[col] = col.split('___')[1]
@@ -168,7 +168,7 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         row = list()
         for column_name in df_columns:
             if column_name == 'record_id':
-                row.append(record_id)
+                row.append(record_id)  # record_id indexes df
             else:
                 row.append(df_row[column_name])
 
@@ -178,6 +178,8 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         rows.append(tuple(row))
 
     cols = df_columns + list(fixed_columns.keys())
+
+    # rename certain columns in database
     if 'record_id' in cols:
         cols[cols.index('record_id')] = 'subject_id'
     if 'redcap_event_name' in cols:

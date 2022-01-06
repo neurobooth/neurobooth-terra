@@ -44,8 +44,6 @@ db_args = dict(
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 # You will need to request for the Redcap API token from Redcap interface.
 
-survey_ids = {'consent': 84349, 'contact': 84427, 'demographics': 84429,
-              'clinical': 84431, 'falls': 85031, 'subject': 96398}
 survey_ids = {'subject': 96397, 'consent': 96398, 'demographics': 84429,
               'clinical': 84431}
 

@@ -75,65 +75,62 @@ print('[Done]')
 import pandas as pd
 import hashlib
 
-# TODO: add test for iter_interval
-for _ in iter_interval(wait=5, exit_after=2):
+dfs = dict()
+for survey_name, survey_id in survey_ids.items():
+    df = fetch_survey(project, survey_name, survey_id, index='record_id')
+    # convert NaN to None for psycopg2
+    dfs[survey_name] = df
 
-    dfs = dict()
-    for survey_name, survey_id in survey_ids.items():
-        df = fetch_survey(project, survey_name, survey_id, index='record_id')
-        # convert NaN to None for psycopg2
-        dfs[survey_name] = df
+# Now, we will prepare the contents of the subject table in postgres
+drop_rows = pd.isna(dfs['subject']['first_name_birth'])
+drop_record_ids = dfs['subject'].index[drop_rows]
 
-    # Now, we will prepare the contents of the subject table in postgres
-    drop_rows = pd.isna(dfs['subject']['first_name_birth'])
-    drop_record_ids = dfs['subject'].index[drop_rows]
+dfs['subject'] = dfs['subject'].drop(drop_record_ids)
+dfs['consent'] = dfs['consent'].drop(drop_record_ids, errors='ignore')
+dfs['demographics'] = dfs['demographics'].drop(drop_record_ids, errors='ignore')
 
-    dfs['subject'] = dfs['subject'].drop(drop_record_ids)
-    dfs['consent'] = dfs['consent'].drop(drop_record_ids, errors='ignore')
-    dfs['demographics'] = dfs['demographics'].drop(drop_record_ids, errors='ignore')
+# Then we insert the rows in this table
+rows_subject, cols_subject = dataframe_to_tuple(
+    dfs['subject'],
+    df_columns=['record_id', 'first_name_birth', 'middle_name_birth',
+                'last_name_birth', 'date_of_birth', 'country_of_birth',
+                'gender_at_birth', 'birthplace'])
 
-    # Then we insert the rows in this table
-    rows_subject, cols_subject = dataframe_to_tuple(
-        dfs['subject'],
-        df_columns=['record_id', 'first_name_birth', 'middle_name_birth',
-                    'last_name_birth', 'date_of_birth', 'country_of_birth',
-                    'gender_at_birth', 'birthplace'])
+rows_consent, cols_consent = dataframe_to_tuple(
+    dfs['consent'],
+    df_columns=['record_id', 'redcap_event_name', 'educate_clinicians',
+                'educate_clinicians_initials'],
+    fixed_columns=dict(study_id='study1', staff_id='Neuroboother',
+                        application_id='REDCAP', site_id='MGH')
+)
 
-    rows_consent, cols_consent = dataframe_to_tuple(
-        dfs['consent'],
-        df_columns=['record_id', 'redcap_event_name', 'educate_clinicians',
-                    'educate_clinicians_initials'],
-        fixed_columns=dict(study_id='study1', staff_id='Neuroboother',
-                           application_id='REDCAP', site_id='MGH')
-    )
+rows_demographics, cols_demographics = dataframe_to_tuple(
+    dfs['demographics'],
+    df_columns=['record_id', 'redcap_event_name', 'gender', 'ethnicity',
+                'handedness', 'health_history', 'race'],
+    fixed_columns=dict(study_id='study1', application_id='REDCAP'),
+    indicator_columns=['race', 'ancestry_category', 'health_history']
+)
 
-    rows_demographics, cols_demographics = dataframe_to_tuple(
-        dfs['demographics'],
-        df_columns=['record_id', 'redcap_event_name', 'gender', 'ethnicity',
-                    'handedness', 'health_history', 'race'],
-        fixed_columns=dict(study_id='study1', application_id='REDCAP'),
-        indicator_columns=['race', 'ancestry_category', 'health_history']
-    )
+for row_subject in rows_subject[:5]:
+    print(row_subject)
 
-    for row_subject in rows_subject[:5]:
-        print(row_subject)
+with SSHTunnelForwarder(**ssh_args) as tunnel:
+    with psycopg2.connect(port=tunnel.local_bind_port,
+                            host=tunnel.local_bind_host, **db_args) as conn:
 
-    with SSHTunnelForwarder(**ssh_args) as tunnel:
-        with psycopg2.connect(port=tunnel.local_bind_port,
-                              host=tunnel.local_bind_host, **db_args) as conn:
+        table_subject = Table('subject', conn)
+        table_consent = Table('consent', conn)
+        table_demographics = Table('demographics', conn)
 
-            table_subject = Table('subject', conn)
-            table_consent = Table('consent', conn)
-            table_demographics = Table('demographics', conn)
+        df_subject_db = table_subject.query()
+        df_consent_db = table_consent.query()
+        compare_dataframes(dfs['subject'], df_subject_db)
+        # compare_dataframes(dfs['consent'], df_consent_db)
 
-            df_subject_db = table_subject.query()
-            df_consent_db = table_consent.query()
-            compare_dataframes(dfs['subject'], df_subject_db)
-            # compare_dataframes(dfs['consent'], df_consent_db)
-
-            table_subject.insert_rows(rows_subject, cols_subject,
-                                      on_conflict='update')
-            table_consent.insert_rows(rows_consent, cols_consent,
-                                      on_conflict='update')
-            table_demographics.insert_rows(rows_demographics, cols_demographics,
-                                           on_conflict='update')
+        table_subject.insert_rows(rows_subject, cols_subject,
+                                    on_conflict='update')
+        table_consent.insert_rows(rows_consent, cols_consent,
+                                    on_conflict='update')
+        table_demographics.insert_rows(rows_demographics, cols_demographics,
+                                        on_conflict='update')

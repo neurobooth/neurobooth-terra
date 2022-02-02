@@ -44,7 +44,7 @@ db_args = dict(
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 # You will need to request for the Redcap API token from Redcap interface.
 
-survey_ids = {'subject': 96397, 'consent': 96398, 'demographics': 84429,
+survey_ids = {'subject': 96397, 'consent': 96398, 'demographics': 98294,
               'clinical': 84431}
 
 URL = 'https://redcap.partners.org/redcap/api/'
@@ -88,6 +88,9 @@ drop_record_ids = dfs['subject'].index[drop_rows]
 dfs['subject'] = dfs['subject'].drop(drop_record_ids)
 dfs['consent'] = dfs['consent'].drop(drop_record_ids, errors='ignore')
 dfs['demographics'] = dfs['demographics'].drop(drop_record_ids, errors='ignore')
+
+dfs['consent'] = dfs['consent'][~pd.isna(dfs['consent']['consent_date'])]
+dfs['demographics'] = dfs['demographics'][~pd.isna(dfs['demographics']['end_time_demographics'])]
 
 # Then we insert the rows in this table
 rows_subject, cols_subject = dataframe_to_tuple(

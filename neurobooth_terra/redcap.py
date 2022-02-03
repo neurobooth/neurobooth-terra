@@ -115,13 +115,13 @@ def combine_indicator_columns(df, src_cols, target_col):
     target_col : str
         The name of the target column to create
     """
-    arr = None
+    arr = [list() for _ in range(df.shape[0])]
     for col_name, val in src_cols.items():
-        if arr is None:
-            arr = np.zeros_like(df[col_name])
-        arr[df[col_name] == 1.] = val
+        for idx, this_element in enumerate(df[col_name]):
+            if this_element == 1.:
+                arr[idx].append(int(val))
     df[target_col] = arr
-    df = df.drop(src_cols.keys(), axis=1)
+    df.drop(src_cols.keys(), axis=1, inplace=True)
     return df
 
 
@@ -160,6 +160,8 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         for col in df.columns:
             if col.startswith(indicator_column):
                 mapping[col] = col.split('___')[1]
+        if len(mapping) == 0:
+            raise ValueError(f'No column found starting with {indicator_column}')
         df = combine_indicator_columns(df, mapping, indicator_column)
 
     rows = list()

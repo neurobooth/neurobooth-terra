@@ -110,9 +110,9 @@ rows_consent, cols_consent = dataframe_to_tuple(
 rows_demographics, cols_demographics = dataframe_to_tuple(
     dfs['demographics'],
     df_columns=['record_id', 'redcap_event_name', 'gender', 'ethnicity',
-                'handedness', 'health_history', 'race'],
+                'handedness', 'race'],
     fixed_columns=dict(study_id='study1', application_id='REDCAP'),
-    indicator_columns=['race', 'ancestry_category', 'health_history']
+    indicator_columns=['race', 'ancestry_cateogry']  # health_history?
 )
 
 for row_subject in rows_subject[:5]:

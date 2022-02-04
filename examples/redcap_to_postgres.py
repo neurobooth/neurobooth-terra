@@ -14,7 +14,7 @@ from redcap import Project, RedcapError
 from neurobooth_terra.redcap import (fetch_survey, iter_interval,
                                      compare_dataframes,
                                      combine_indicator_columns,
-                                     dataframe_to_tuple)
+                                     dataframe_to_tuple, infer_schema)
 
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
@@ -70,6 +70,10 @@ metadata = metadata[metadata_fields]
 # metadata.to_csv(op.join(data_dir, 'data_dictionary.csv'), index=False)
 print('[Done]')
 
+metadata.rename({'form_name': 'redcap_form_name'}, axis=1, inplace=True)
+metadata = metadata[metadata.redcap_form_name.isin(
+    ['subject', 'participant_and_consent_information', 'demograph'])]
+
 # %%
 # Finally, we loop over the surveys and collect them.
 import pandas as pd
@@ -95,24 +99,32 @@ dfs['demographics'] = dfs['demographics'][~pd.isna(dfs['demographics']['end_time
 # Then we insert the rows in this table
 rows_subject, cols_subject = dataframe_to_tuple(
     dfs['subject'],
-    df_columns=['record_id', 'first_name_birth', 'middle_name_birth',
+    df_columns=['first_name_birth', 'middle_name_birth',
                 'last_name_birth', 'date_of_birth', 'country_of_birth',
-                'gender_at_birth', 'birthplace'])
+                'gender_at_birth', 'birthplace'],
+    index_column='record_id')
 
 rows_consent, cols_consent = dataframe_to_tuple(
     dfs['consent'],
-    df_columns=['record_id', 'redcap_event_name', 'educate_clinicians',
+    df_columns=['redcap_event_name', 'educate_clinicians',
                 'educate_clinicians_initials'],
     fixed_columns=dict(study_id='study1', staff_id='Neuroboother',
-                        application_id='REDCAP', site_id='MGH')
+                        application_id='REDCAP', site_id='MGH'),
+    index_column='record_id'
 )
 
 rows_demographics, cols_demographics = dataframe_to_tuple(
     dfs['demographics'],
-    df_columns=['record_id', 'redcap_event_name', 'gender', 'ethnicity',
+    df_columns=['redcap_event_name', 'gender', 'ethnicity',
                 'handedness', 'race'],
     fixed_columns=dict(study_id='study1', application_id='REDCAP'),
-    indicator_columns=['race', 'ancestry_cateogry']  # health_history?
+    indicator_columns=['race', 'ancestry_cateogry'],  # health_history?
+    index_column='record_id'
+)
+
+rows_metadata, cols_metadata = dataframe_to_tuple(
+    metadata, df_columns=['redcap_form_name'],
+    index_column='field_name'
 )
 
 for row_subject in rows_subject[:5]:
@@ -125,6 +137,7 @@ with SSHTunnelForwarder(**ssh_args) as tunnel:
         table_subject = Table('subject', conn)
         table_consent = Table('consent', conn)
         table_demographics = Table('demographics', conn)
+        table_metadata = Table('human_obs_data', conn)
 
         df_subject_db = table_subject.query()
         df_consent_db = table_consent.query()
@@ -137,3 +150,5 @@ with SSHTunnelForwarder(**ssh_args) as tunnel:
                                     on_conflict='update')
         table_demographics.insert_rows(rows_demographics, cols_demographics,
                                         on_conflict='update')
+        table_metadata.insert_rows(rows_metadata, cols_metadata,
+                                   on_conflict='update')

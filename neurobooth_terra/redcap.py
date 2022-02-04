@@ -126,7 +126,7 @@ def combine_indicator_columns(df, src_cols, target_col):
 
 
 def dataframe_to_tuple(df, df_columns, fixed_columns=None,
-                       indicator_columns=None):
+                       indicator_columns=None, index_column='record_id'):
     """Dataframe to tuple.
 
     Parameters
@@ -165,25 +165,25 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         df = combine_indicator_columns(df, mapping, indicator_column)
 
     rows = list()
-    for record_id, df_row in df.iterrows():
+    for index, df_row in df.iterrows():
 
         row = list()
         for column_name in df_columns:
-            if column_name == 'record_id':
-                row.append(record_id)  # record_id indexes df
-            else:
-                row.append(df_row[column_name])
+            row.append(df_row[column_name])
 
         for column_name in fixed_columns:
             row.append(fixed_columns[column_name])
 
+        row.append(index)  # index column at the end
         rows.append(tuple(row))
 
     cols = df_columns + list(fixed_columns.keys())
 
     # rename certain columns in database
-    if 'record_id' in cols:
-        cols[cols.index('record_id')] = 'subject_id'
+    if index_column == 'record_id':
+        cols.append('subject_id')
+    elif index_column == 'field_name':
+        cols.append('redcap_field_name')
     if 'redcap_event_name' in cols:
         cols[cols.index('redcap_event_name')] = 'event_name'
     return rows, cols

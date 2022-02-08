@@ -65,14 +65,34 @@ print('Fetching metadata ...')
 metadata = project.export_metadata(format='df')
 metadata_fields = ['field_label', 'form_name', 'section_header',
                    'field_type', 'select_choices_or_calculations',
-                   'required_field']
+                   'required_field', 'matrix_group_name']
 metadata = metadata[metadata_fields]
 # metadata.to_csv(op.join(data_dir, 'data_dictionary.csv'), index=False)
 print('[Done]')
 
+import pandas as pd
+
 metadata.rename({'form_name': 'redcap_form_name'}, axis=1, inplace=True)
-metadata = metadata[metadata.redcap_form_name.isin(
-    ['subject', 'participant_and_consent_information', 'demograph'])]
+# metadata = metadata[metadata.redcap_form_name.isin(
+#    ['subject', 'participant_and_consent_information', 'demograph'])]
+
+is_descriptive = metadata['field_type'] == 'descriptive'
+metadata['redcap_form_description'] = metadata['field_label']
+metadata['redcap_form_description'][~is_descriptive] = None
+
+metadata['question'] = metadata['field_label']
+metadata['question'][is_descriptive] = None
+
+# copy first section header of matrix into rest and concatenate with
+# question
+metadata_groups = metadata.groupby(by='matrix_group_name')
+metadata['section_header'] = metadata_groups['section_header'].transform(
+    lambda s: s.fillna(method='ffill'))
+is_group = ~pd.isna(metadata['section_header'])
+metadata['question'][is_group] = (metadata['section_header'][is_group] +
+                                  metadata['question'][is_group])
+
+sdfdfdf
 
 # %%
 # Finally, we loop over the surveys and collect them.

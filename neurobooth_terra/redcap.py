@@ -183,7 +183,7 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
     if index_column == 'record_id':
         cols.append('subject_id')
     elif index_column == 'field_name':
-        cols.append('redcap_field_name')
+        cols.append('field_name')
     if 'redcap_event_name' in cols:
         cols[cols.index('redcap_event_name')] = 'event_name'
     return rows, cols

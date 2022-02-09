@@ -9,6 +9,7 @@ This example demonstrates how to create table from Redcap.
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
 import os
+from warnings import warn
 
 from redcap import Project, RedcapError
 from neurobooth_terra.redcap import (fetch_survey, iter_interval,
@@ -65,9 +66,9 @@ print('Fetching metadata ...')
 metadata = project.export_metadata(format='df')
 metadata_fields = ['field_label', 'form_name', 'section_header',
                    'field_type', 'select_choices_or_calculations',
-                   'required_field', 'matrix_group_name']
+                   'required_field', 'matrix_group_name', 'field_annotation']
 metadata = metadata[metadata_fields]
-# metadata.to_csv(op.join(data_dir, 'data_dictionary.csv'), index=False)
+metadata.to_csv('data_dictionary.csv', index=False)
 print('[Done]')
 
 import pandas as pd
@@ -75,6 +76,29 @@ import pandas as pd
 metadata.rename({'form_name': 'redcap_form_name'}, axis=1, inplace=True)
 # metadata = metadata[metadata.redcap_form_name.isin(
 #    ['subject', 'participant_and_consent_information', 'demograph'])]
+
+for column in ['section_header', 'field_label']:
+    metadata[column] = metadata[column].apply(
+        lambda x : x.strip('\n') if isinstance(x, str) else x
+    )
+
+def extract_info(s):
+    field_annot = s['field_annotation']
+    if pd.isna(field_annot):
+        return
+
+    fields = field_annot.split(' ')
+    for field in fields:
+        if not field.startswith('@'):
+            if '-' in field:
+                field_name, field_value = field.split('-')
+                s[field_name] = field_value
+            else:
+                warn(f'field_annotation reads: {field_annot}')
+    return s
+
+# feature of interest
+metadata = metadata.apply(extract_info, axis=1)
 
 is_descriptive = metadata['field_type'] == 'descriptive'
 metadata['redcap_form_description'] = metadata['field_label']
@@ -91,6 +115,8 @@ metadata['section_header'] = metadata_groups['section_header'].transform(
 is_group = ~pd.isna(metadata['section_header'])
 metadata['question'][is_group] = (metadata['section_header'][is_group] +
                                   metadata['question'][is_group])
+
+metadata.to_csv('data_dictionary_modified.csv', index=False)
 
 sdfdfdf
 

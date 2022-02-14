@@ -57,70 +57,6 @@ if API_KEY is None:
 project = Project(URL, API_KEY, lazy=True)
 
 # %%
-# Next, we fetch the metadata table. This table is the master table
-# that contains columns and their informations. It can be used to infer
-# information about the columns: example, what choices are available for a
-# particular question.
-
-print('Fetching metadata ...')
-metadata = project.export_metadata(format='df')
-metadata_fields = ['field_label', 'form_name', 'section_header',
-                   'field_type', 'select_choices_or_calculations',
-                   'required_field', 'matrix_group_name', 'field_annotation']
-metadata = metadata[metadata_fields]
-metadata.to_csv('data_dictionary.csv', index=False)
-print('[Done]')
-
-import pandas as pd
-
-metadata.rename({'form_name': 'redcap_form_name'}, axis=1, inplace=True)
-# metadata = metadata[metadata.redcap_form_name.isin(
-#    ['subject', 'participant_and_consent_information', 'demograph'])]
-
-for column in ['section_header', 'field_label']:
-    metadata[column] = metadata[column].apply(
-        lambda x : x.strip('\n') if isinstance(x, str) else x
-    )
-
-def extract_info(s):
-    field_annot = s['field_annotation']
-    if pd.isna(field_annot):
-        return
-
-    fields = field_annot.split(' ')
-    for field in fields:
-        if not field.startswith('@'):
-            if '-' in field:
-                field_name, field_value = field.split('-')
-                s[field_name] = field_value
-            else:
-                warn(f'field_annotation reads: {field_annot}')
-    return s
-
-# feature of interest
-metadata = metadata.apply(extract_info, axis=1)
-
-is_descriptive = metadata['field_type'] == 'descriptive'
-metadata['redcap_form_description'] = metadata['field_label']
-metadata['redcap_form_description'][~is_descriptive] = None
-
-metadata['question'] = metadata['field_label']
-metadata['question'][is_descriptive] = None
-
-# copy first section header of matrix into rest and concatenate with
-# question
-metadata_groups = metadata.groupby(by='matrix_group_name')
-metadata['section_header'] = metadata_groups['section_header'].transform(
-    lambda s: s.fillna(method='ffill'))
-is_group = ~pd.isna(metadata['section_header'])
-metadata['question'][is_group] = (metadata['section_header'][is_group] +
-                                  metadata['question'][is_group])
-
-metadata.to_csv('data_dictionary_modified.csv', index=False)
-
-sdfdfdf
-
-# %%
 # Finally, we loop over the surveys and collect them.
 import pandas as pd
 import hashlib
@@ -168,11 +104,6 @@ rows_demographics, cols_demographics = dataframe_to_tuple(
     index_column='record_id'
 )
 
-rows_metadata, cols_metadata = dataframe_to_tuple(
-    metadata, df_columns=['redcap_form_name'],
-    index_column='field_name'
-)
-
 for row_subject in rows_subject[:5]:
     print(row_subject)
 
@@ -183,7 +114,6 @@ with SSHTunnelForwarder(**ssh_args) as tunnel:
         table_subject = Table('subject', conn)
         table_consent = Table('consent', conn)
         table_demographics = Table('demographics', conn)
-        table_metadata = Table('human_obs_data', conn)
 
         df_subject_db = table_subject.query()
         df_consent_db = table_consent.query()
@@ -196,5 +126,3 @@ with SSHTunnelForwarder(**ssh_args) as tunnel:
                                     on_conflict='update')
         table_demographics.insert_rows(rows_demographics, cols_demographics,
                                         on_conflict='update')
-        table_metadata.insert_rows(rows_metadata, cols_metadata,
-                                   on_conflict='update')

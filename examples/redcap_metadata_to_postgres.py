@@ -73,7 +73,6 @@ print('[Done]')
 
 import pandas as pd
 
-metadata.rename({'form_name': 'redcap_form_name'}, axis=1, inplace=True)
 # metadata = metadata[metadata.redcap_form_name.isin(
 #    ['subject', 'participant_and_consent_information', 'demograph'])]
 
@@ -83,9 +82,9 @@ for column in ['section_header', 'field_label']:
     )
 
 # FOI should be list
-# rename codes FOI, DB, and T for human_obs_data
 
-def extract_info(s):
+def extract_field_annotation(s):
+    """Extract the field annotation and create new columns for them"""
     field_annot = s['field_annotation']
     if pd.isna(field_annot):
         return s
@@ -103,7 +102,10 @@ def extract_info(s):
     return s
 
 # feature of interest
-metadata = metadata.apply(extract_info, axis=1)
+metadata = metadata.apply(extract_field_annotation, axis=1)
+metadata.rename({'form_name': 'redcap_form_name',
+                 'FOI': 'feature_of_interest', 'DB': 'in_database',
+                 'T': 'database_field_name'}, axis=1, inplace=True)
 
 is_descriptive = metadata['field_type'] == 'descriptive'
 metadata['redcap_form_description'] = metadata['field_label']

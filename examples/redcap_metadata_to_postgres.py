@@ -67,12 +67,11 @@ print('Fetching metadata ...')
 metadata = project.export_metadata(format='df')
 metadata_fields = ['field_label', 'form_name', 'section_header',
                    'field_type', 'select_choices_or_calculations',
-                   'required_field', 'matrix_group_name', 'field_annotation']
+                   'required_field', 'matrix_group_name', 'field_annotation',
+                   'text_validation_type_or_show_slider_number']
 metadata = metadata[metadata_fields]
 metadata.to_csv('data_dictionary.csv')
 print('[Done]')
-
-import pandas as pd
 
 # metadata = metadata[metadata.redcap_form_name.isin(
 #    ['subject', 'participant_and_consent_information', 'demograph'])]
@@ -82,7 +81,6 @@ for column in ['section_header', 'field_label']:
         lambda x : x.strip('\n') if isinstance(x, str) else x
     )
 
-# FOI should be list
 
 def extract_field_annotation(s):
     """Extract the field annotation and create new columns for them
@@ -113,7 +111,37 @@ def extract_field_annotation(s):
     s['FOI'] = fois
     return s
 
+
+def map_dtypes(s):
+
+    dtype_mapping = {'calc': 'double_precision', 'checkbox': 'smallint[]',
+                     'dropdown': 'smallint', 'notes': 'text',
+                     'radio': 'smallint', 'yesno': 'boolean'}
+
+    dtype = s['field_type']
+    text_validation = s['text_validation_type_or_show_slider_number']
+
+    if pd.isna(dtype):
+        return s
+
+    if dtype in dtype_mapping:
+        s['database_dtype'] = dtype_mapping[dtype]
+    elif dtype == 'text':
+        if text_validation == 'date_mdy':
+            s['database_dtype'] = 'date'
+        elif text_validation == 'email':
+            s['database_dtype'] = 'varchar(255)'
+        elif text_validation == 'datetime_seconds_ymd':
+            s['database_dtype'] = 'timestamp'
+        elif text_validation == 'mrn_6d':
+            s['database_dtype'] = 'integer'
+        elif text_validation == 'phone':
+            s['database_dtype'] = 'bigint'
+    return s
+
+
 # feature of interest
+metadata = metadata.apply(map_dtypes, axis=1)
 metadata = metadata.apply(extract_field_annotation, axis=1)
 metadata.rename({'form_name': 'redcap_form_name',
                  'FOI': 'feature_of_interest', 'DB': 'in_database',

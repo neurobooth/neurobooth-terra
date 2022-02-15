@@ -17,6 +17,7 @@ from neurobooth_terra.redcap import (fetch_survey, iter_interval,
                                      compare_dataframes,
                                      combine_indicator_columns,
                                      dataframe_to_tuple, infer_schema)
+from neurobooth_terra import create_table
 
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
@@ -137,6 +138,8 @@ def map_dtypes(s):
             s['database_dtype'] = 'integer'
         elif text_validation == 'phone':
             s['database_dtype'] = 'bigint'
+        else:
+            s['database_dtype'] = 'text'
     return s
 
 
@@ -164,6 +167,13 @@ metadata['question'][is_group] = (metadata['section_header'][is_group] +
                                   metadata['question'][is_group])
 
 metadata.to_csv('data_dictionary_modified.csv')
+
+metadata_by_form = metadata[metadata['in_database'] == 'y']
+metadata_by_form = metadata_by_form.groupby('redcap_form_name')
+for form_name, metadata_form in metadata_by_form:
+    columns = metadata_form.index.values
+    dtypes = metadata_form.database_dtype
+    sdfdfdf
 
 rows_metadata, cols_metadata = dataframe_to_tuple(
     metadata, df_columns=['redcap_form_name'],

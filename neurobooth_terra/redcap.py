@@ -162,6 +162,48 @@ def extract_field_annotation(s):
     return s
 
 
+def map_dtypes(s):
+    """Map data types from Redcap to database and Python.
+
+    Returns
+    -------
+    s : pandas series object
+        The pandas series object containing new entries database_dtype
+        and python_dtype
+    """
+    dtype_mapping = {'calc': 'double precision', 'checkbox': 'smallint[]',
+                     'dropdown': 'smallint', 'notes': 'text',
+                     'radio': 'smallint', 'yesno': 'boolean'}
+    text_dtype_mapping = {'date_mdy': 'date', 'email': 'varchar(255)',
+                          'datetime_seconds_ymd': 'timestamp',
+                          'datetime_seconds_mdy': 'timestamp',
+                          'mrn_6d': 'integer', 'number': 'integer',
+                          'phone': 'bigint'}
+    python_dtype_mapping = {'smallint[]': 'list',
+                            'boolean': 'bool',
+                            'text': 'str', 'varchar(255)': 'str',
+                            'timestamp': 'str', 'date': 'str',
+                            'datetime': 'str',
+                            'double precision': 'float64',
+                            'smallint': 'Int64', 'bigint': 'Int64',
+                            'integer': 'Int64'}
+
+    redcap_dtype = s['field_type']
+    text_validation = s['text_validation_type_or_show_slider_number']
+
+    if pd.isna(redcap_dtype) or redcap_dtype in ['descriptive', 'file']:
+        return s
+
+    if redcap_dtype in dtype_mapping:
+        s['database_dtype'] = dtype_mapping[redcap_dtype]
+    elif redcap_dtype == 'text':
+        s['database_dtype'] = text_dtype_mapping.get(text_validation, 'text')
+
+    s['python_dtype'] = python_dtype_mapping[s['database_dtype']]
+
+    return s
+
+
 def dataframe_to_tuple(df, df_columns, fixed_columns=None,
                        indicator_columns=None, index_column='record_id'):
     """Dataframe to tuple.

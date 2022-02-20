@@ -5,7 +5,8 @@ import time
 from numpy.testing import assert_allclose
 import pandas as pd
 
-from neurobooth_terra.redcap import iter_interval, extract_field_annotation
+from neurobooth_terra.redcap import (iter_interval, extract_field_annotation,
+                                     map_dtypes)
 
 
 def _keyboard_interrupt(signal):
@@ -48,3 +49,15 @@ def test_extract_field_annotation():
     assert 'error' in metadata_df.columns
     assert 'gait' in metadata_df['FOI'].iloc[2]
     assert 'field_annotation reads:' in metadata_df['error'].iloc[3]
+
+
+def test_map_dtypes():
+    """Test mapping of dtypes."""
+    metadata = {'field_type': ['calc', 'text'],
+                'text_validation_type_or_show_slider_number':
+                ['', 'date_mdy']
+                }
+    metadata_df = pd.DataFrame(metadata)
+    metadata_df = metadata_df.apply(map_dtypes, axis=1)
+    assert all(metadata_df['python_dtype'] == ['float64', 'str'])
+    assert all(metadata_df['database_dtype'] == ['double precision', 'date'])

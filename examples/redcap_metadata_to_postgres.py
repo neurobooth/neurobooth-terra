@@ -10,7 +10,9 @@ This example demonstrates how to create table from Redcap.
 
 import os
 
+import numpy as np
 import pandas as pd  # version > 1.4.0
+
 from redcap import Project, RedcapError
 from neurobooth_terra.redcap import (fetch_survey, iter_interval,
                                      compare_dataframes,
@@ -84,40 +86,42 @@ for column in ['section_header', 'field_label']:
 
 
 def map_dtypes(s):
+    """Map data types from Redcap to database and Python.
 
+    Returns
+    -------
+    s : pandas series object
+        The pandas series object containing new entries database_dtype
+        and python_dtype
+    """
     dtype_mapping = {'calc': 'double precision', 'checkbox': 'smallint[]',
                      'dropdown': 'smallint', 'notes': 'text',
                      'radio': 'smallint', 'yesno': 'boolean'}
-
-    dtype = s['field_type']
-    text_validation = s['text_validation_type_or_show_slider_number']
-
-    if pd.isna(dtype) or dtype in ['descriptive', 'file']:
-        return s
-
-    if dtype in dtype_mapping:
-        s['database_dtype'] = dtype_mapping[dtype]
-    elif dtype == 'text':
-        if text_validation == 'date_mdy':
-            s['database_dtype'] = 'date'
-        elif text_validation == 'email':
-            s['database_dtype'] = 'varchar(255)'
-        elif text_validation in ('datetime_seconds_ymd', 'datetime_seconds_mdy'):
-            s['database_dtype'] = 'timestamp'
-        elif text_validation in ('mrn_6d', 'number'):
-            s['database_dtype'] = 'integer'
-        elif text_validation == 'phone':
-            s['database_dtype'] = 'bigint'
-        else:
-            s['database_dtype'] = 'text'
-
-    python_dtype_mapping = {'double precision': 'float64',
-                            'smallint[]': 'list',
-                            'text': 'str', 'varchar(255)': 'str',
+    text_dtype_mapping = {'date_mdy': 'date', 'email': 'varchar(255)',
+                          'datetime_seconds_ymd': 'timestamp',
+                          'datetime_seconds_mdy': 'timestamp',
+                          'mrn_6d': 'integer', 'number': 'integer',
+                          'phone': 'bigint'}
+    python_dtype_mapping = {'smallint[]': 'list',
                             'boolean': 'bool',
-                            'timestamp': 'str', 'date': 'str', 'datetime': 'str',
+                            'text': 'str', 'varchar(255)': 'str',
+                            'timestamp': 'str', 'date': 'str',
+                            'datetime': 'str',
+                            'double precision': 'float64',
                             'smallint': 'Int64', 'bigint': 'Int64',
                             'integer': 'Int64'}
+
+    redcap_dtype = s['field_type']
+    text_validation = s['text_validation_type_or_show_slider_number']
+
+    if pd.isna(redcap_dtype) or redcap_dtype in ['descriptive', 'file']:
+        return s
+
+    if redcap_dtype in dtype_mapping:
+        s['database_dtype'] = dtype_mapping[redcap_dtype]
+    elif redcap_dtype == 'text':
+        s['database_dtype'] = text_dtype_mapping.get(text_validation, 'text')
+
     s['python_dtype'] = python_dtype_mapping[s['database_dtype']]
 
     return s
@@ -132,8 +136,6 @@ def get_tables_structure(metadata, include_surveys=None):
         Dictionary with keys as table names and each table having the following
         entries: columns, dtypes, indicator_columns
     """
-    import numpy as np
-
     metadata_by_form = metadata[np.any(
         [metadata['in_database'] == 'y', metadata['database_dtype'].notnull()],
         axis=0)]

@@ -206,7 +206,6 @@ with SSHTunnelForwarder(**ssh_args) as tunnel:
                                     table_info['python_dtypes'])))
             rows, columns = dataframe_to_tuple(
                 df, df_columns=table_info['columns'],
-                indicator_columns=table_info['indicator_columns'],
-                index_column='record_id')
+                indicator_columns=table_info['indicator_columns'])
 
             table.insert_rows(rows, columns, on_conflict='update')

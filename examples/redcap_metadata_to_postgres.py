@@ -17,7 +17,7 @@ from neurobooth_terra.redcap import (fetch_survey, iter_interval,
                                      compare_dataframes,
                                      combine_indicator_columns,
                                      dataframe_to_tuple, infer_schema)
-from neurobooth_terra import create_table
+from neurobooth_terra import create_table, drop_table
 
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
@@ -48,7 +48,7 @@ db_args = dict(
 # You will need to request for the Redcap API token from Redcap interface.
 
 survey_ids = {'subject': 96397, 'consent': 96398, 'demographics': 98294,
-              'clinical': 84431}
+              'clinical': 99918, 'chief_short_form': 99933}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -99,13 +99,14 @@ def extract_field_annotation(s):
         if field.startswith('@'):
             continue
 
-        if '-' in field:
+        try:
             field_name, field_value = field.split('-')
             if field_name == 'FOI':
                 fois.append(field_value)
             else:
                 s[field_name] = field_value
-        else:
+            s['error'] = ''
+        except Exception as e:
             msg = f'field_annotation reads: {field_annot}'
             s['error'] = msg
             warn(msg)
@@ -115,14 +116,14 @@ def extract_field_annotation(s):
 
 def map_dtypes(s):
 
-    dtype_mapping = {'calc': 'double_precision', 'checkbox': 'smallint[]',
+    dtype_mapping = {'calc': 'double precision', 'checkbox': 'smallint[]',
                      'dropdown': 'smallint', 'notes': 'text',
                      'radio': 'smallint', 'yesno': 'boolean'}
 
     dtype = s['field_type']
     text_validation = s['text_validation_type_or_show_slider_number']
 
-    if pd.isna(dtype):
+    if pd.isna(dtype) or dtype in ['descriptive', 'file']:
         return s
 
     if dtype in dtype_mapping:
@@ -132,15 +133,76 @@ def map_dtypes(s):
             s['database_dtype'] = 'date'
         elif text_validation == 'email':
             s['database_dtype'] = 'varchar(255)'
-        elif text_validation == 'datetime_seconds_ymd':
+        elif text_validation in ('datetime_seconds_ymd', 'datetime_seconds_mdy'):
             s['database_dtype'] = 'timestamp'
-        elif text_validation == 'mrn_6d':
+        elif text_validation in ('mrn_6d', 'number'):
             s['database_dtype'] = 'integer'
         elif text_validation == 'phone':
             s['database_dtype'] = 'bigint'
         else:
             s['database_dtype'] = 'text'
+
+    python_dtype_mapping = {'double precision': 'float64',
+                            'smallint[]': 'list',
+                            'text': 'str', 'varchar(255)': 'str',
+                            'boolean': 'bool',
+                            'timestamp': 'str', 'date': 'str', 'datetime': 'str',
+                            'smallint': 'Int64', 'bigint': 'Int64',
+                            'integer': 'Int64'}
+    s['python_dtype'] = python_dtype_mapping[s['database_dtype']]
+
     return s
+
+
+def get_tables_structure(metadata, include_surveys=None):
+    """Get the column names and datatypes for the tables.
+
+    Returns
+    -------
+    tables : dict
+        Dictionary with keys as table names and each table having the following
+        entries: columns, dtypes, indicator_columns
+    """
+    import numpy as np
+
+    metadata_by_form = metadata[np.any(
+        [metadata['in_database'] == 'y', metadata['database_dtype'].notnull()],
+        axis=0)]
+    metadata_by_form = metadata_by_form.groupby('redcap_form_name')
+
+    tables = dict()
+    for form_name, metadata_form in metadata_by_form:
+        if form_name == 'subject':  # subject table is special
+            continue
+
+        tables[form_name] = {'columns': metadata_form.index.tolist(),
+                             'dtypes': metadata_form.database_dtype.tolist(),
+                             'python_columns': metadata_form.index.tolist(),
+                             'python_dtypes': metadata_form.python_dtype.tolist(),
+                             'indicator_columns': list()}
+
+        # Add indicator columns
+        idxs_remove = list()
+        for idx, dtype in enumerate(tables[form_name]['dtypes']):
+            if dtype == 'smallint[]':
+                tables[form_name]['indicator_columns'].append(
+                    tables[form_name]['columns'][idx])
+                idxs_remove.append(idx)
+
+        tables[form_name]['python_columns'] = [x for (idx, x) in
+            enumerate(tables[form_name]['python_columns']) if idx not in
+            idxs_remove]
+        tables[form_name]['python_dtypes'] = [x for (idx, x) in
+            enumerate(tables[form_name]['python_dtypes']) if idx not in
+            idxs_remove]
+
+        tables[form_name]['columns'].append('subject_id')
+        tables[form_name]['dtypes'].append('varchar')
+
+    if include_surveys is not None:
+        tables = {k: v for (k, v) in tables.items() if k in include_surveys}
+
+    return tables
 
 
 # feature of interest
@@ -168,12 +230,7 @@ metadata['question'][is_group] = (metadata['section_header'][is_group] +
 
 metadata.to_csv('data_dictionary_modified.csv')
 
-metadata_by_form = metadata[metadata['in_database'] == 'y']
-metadata_by_form = metadata_by_form.groupby('redcap_form_name')
-for form_name, metadata_form in metadata_by_form:
-    columns = metadata_form.index.values
-    dtypes = metadata_form.database_dtype
-    sdfdfdf
+table_infos = get_tables_structure(metadata, include_surveys=survey_ids.keys())
 
 rows_metadata, cols_metadata = dataframe_to_tuple(
     metadata, df_columns=['redcap_form_name'],
@@ -183,6 +240,24 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
 with SSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
+
         table_metadata = Table('human_obs_data', conn)
         table_metadata.insert_rows(rows_metadata, cols_metadata,
                                    on_conflict='update')
+
+        for table_id, table_info in table_infos.items():
+            print(f'Overwriting table {table_id}')
+            drop_table(table_id, conn)
+            table = create_table(table_id, conn, table_info['columns'],
+                                 table_info['dtypes'], primary_key='subject_id')
+            df = fetch_survey(project, survey_name=table_id,
+                              survey_id=survey_ids[table_id],
+                              index='record_id')
+            df = df.astype(dict(zip(table_info['python_columns'],
+                                    table_info['python_dtypes'])))
+            rows, columns = dataframe_to_tuple(
+                df, df_columns=table_info['columns'],
+                indicator_columns=table_info['indicator_columns'],
+                index_column='record_id')
+
+            table.insert_rows(rows, columns, on_conflict='update')

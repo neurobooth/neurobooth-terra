@@ -155,6 +155,9 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
     if indicator_columns is None:
         indicator_columns = list()
 
+    if index_column == 'record_id' and 'subject_id' in df_columns:
+        df_columns.remove('subject_id')
+
     for indicator_column in indicator_columns:
         mapping = dict()  # {race___1: 1, race___2: 2}
         for col in df.columns:
@@ -170,6 +173,9 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         row = list()
         for column_name in df_columns:
             row.append(df_row[column_name])
+            if not isinstance(row[-1], list) and \
+                    (pd.isna(row[-1]) or row[-1] == 'None'):
+                row[-1] = None
 
         for column_name in fixed_columns:
             row.append(fixed_columns[column_name])

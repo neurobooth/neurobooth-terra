@@ -9,14 +9,14 @@ This example demonstrates how to create table from Redcap.
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
 import os
-from warnings import warn
 
 import pandas as pd  # version > 1.4.0
 from redcap import Project, RedcapError
 from neurobooth_terra.redcap import (fetch_survey, iter_interval,
                                      compare_dataframes,
                                      combine_indicator_columns,
-                                     dataframe_to_tuple, infer_schema)
+                                     dataframe_to_tuple, infer_schema,
+                                     extract_field_annotation)
 from neurobooth_terra import create_table, drop_table
 
 import psycopg2
@@ -81,37 +81,6 @@ for column in ['section_header', 'field_label']:
     metadata[column] = metadata[column].apply(
         lambda x : x.strip('\n') if isinstance(x, str) else x
     )
-
-
-def extract_field_annotation(s):
-    """Extract the field annotation and create new columns for them
-
-    Annotations are structured in the format:
-    FOI-visual DB-y FOI-motor
-    """
-    field_annot = s['field_annotation']
-    if pd.isna(field_annot):
-        return s
-
-    fields = field_annot.split(' ')
-    fois = list()
-    for field in fields:
-        if field.startswith('@'):
-            continue
-
-        try:
-            field_name, field_value = field.split('-')
-            if field_name == 'FOI':
-                fois.append(field_value)
-            else:
-                s[field_name] = field_value
-            s['error'] = ''
-        except Exception as e:
-            msg = f'field_annotation reads: {field_annot}'
-            s['error'] = msg
-            warn(msg)
-    s['FOI'] = fois
-    return s
 
 
 def map_dtypes(s):

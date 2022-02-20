@@ -3,8 +3,9 @@ import queue
 import time
 
 from numpy.testing import assert_allclose
+import pandas as pd
 
-from neurobooth_terra.redcap import iter_interval
+from neurobooth_terra.redcap import iter_interval, extract_field_annotation
 
 
 def _keyboard_interrupt(signal):
@@ -12,6 +13,7 @@ def _keyboard_interrupt(signal):
         print('here')
         time.sleep(0.5)
         raise KeyboardInterrupt
+
 
 def test_iter_interval():
     """Test iter_interval."""
@@ -35,3 +37,14 @@ def test_iter_interval():
         time.sleep(process_time)
     """
 
+
+def test_extract_field_annotation():
+    """Test extraction of field annotation."""
+    metadata = {'field_annotation': ['@blah', '@HIDDEN DB-y', 'DB-y FOI-gait',
+                                     'FOI-gait-motor']}
+    metadata_df = pd.DataFrame(metadata)
+    metadata_df = metadata_df.apply(extract_field_annotation, axis=1)
+
+    assert 'error' in metadata_df.columns
+    assert 'gait' in metadata_df['FOI'].iloc[2]
+    assert 'field_annotation reads:' in metadata_df['error'].iloc[3]

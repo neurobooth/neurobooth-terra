@@ -250,11 +250,13 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         for column_name in df_columns:
             row.append(df_row[column_name])
             if not isinstance(row[-1], list) and \
-                    (pd.isna(row[-1]) or row[-1] == 'None'):
+                    (pd.isna(row[-1]) or row[-1] in ('None', 'nan')):
                 row[-1] = None
 
         for column_name in fixed_columns:
             row.append(fixed_columns[column_name])
+
+        rows.append(tuple(row))
 
     cols = df_columns + list(fixed_columns.keys())
 

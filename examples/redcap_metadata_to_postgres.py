@@ -46,8 +46,28 @@ db_args = dict(
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 # You will need to request for the Redcap API token from Redcap interface.
 
-survey_ids = {'subject': 96397, 'consent': 96398, 'demographics': 98294,
-              'clinical': 99918, 'chief_short_form': 99933}
+survey_ids = {# 'subject': 96397,
+              'consent': 96398,
+              # 'contact': 99916, 'demograph': 99917,
+              'clinical': 99918,
+              'visit_dates': 99919,
+              'neurobooth_falls': 99920,
+              'neuro_qol_ue_short_form': 99921,
+              'neuro_qol_le_short_form': 99922,
+              # 'neuro_qol_cognitive_function_short_form': 99923,
+              'neuro_qol_stigma_short_form': 99924,
+              'neuro_qol_ability_to_participate_in_social_roles_a': 99925,
+              'neuro_qol_satisfaction_with_social_roles_and_activ': 99926,
+              'neuro_qol_emotional_and_behavioral_dyscontrol_shor': 99928,
+              'neuro_qol_positive_affect_and_wellbeing_short_form': 99929,
+              'neuro_qol_sleep_disturbance_short_form': 99931,
+              'cpib': 99932,
+              'chief_short_form': 99933,
+              'neurobooth_vision_prom_ataxia': 99934,
+              'promis_10': 99935,
+              'system_usability_scale': 99936,
+              'study_feedback': 99937,
+              'neuro_qol_depression_short_form': 99938}
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -136,7 +156,8 @@ metadata = metadata.apply(map_dtypes, axis=1)
 metadata = metadata.apply(extract_field_annotation, axis=1)
 metadata.rename({'form_name': 'redcap_form_name',
                  'FOI': 'feature_of_interest', 'DB': 'in_database',
-                 'T': 'database_field_name'}, axis=1, inplace=True)
+                 'T': 'database_field_name',
+                 'redcap_event_name': 'event_name'}, axis=1, inplace=True)
 
 is_descriptive = metadata['field_type'] == 'descriptive'
 metadata['redcap_form_description'] = metadata['field_label']
@@ -158,9 +179,9 @@ metadata.to_csv('data_dictionary_modified.csv')
 
 table_infos = get_tables_structure(metadata, include_surveys=survey_ids.keys())
 
+metadata = metadata.reset_index()
 rows_metadata, cols_metadata = dataframe_to_tuple(
-    metadata, df_columns=['redcap_form_name'],
-    index_column='field_name'
+    metadata, df_columns=['field_name', 'redcap_form_name']
 )
 
 with SSHTunnelForwarder(**ssh_args) as tunnel:

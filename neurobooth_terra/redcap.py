@@ -3,6 +3,7 @@
 # Authors: Mainak Jas <mjas@mgh.harvard.edu>
 
 from datetime import datetime, date
+from warnings import warn
 import time
 import json
 import tempfile
@@ -123,6 +124,42 @@ def combine_indicator_columns(df, src_cols, target_col):
     df[target_col] = arr
     df.drop(src_cols.keys(), axis=1, inplace=True)
     return df
+
+
+def extract_field_annotation(s):
+    """Extract the field annotation and create new columns for them
+
+    Annotations are structured in the format:
+    FOI-visual DB-y FOI-motor
+
+    Returns
+    -------
+    s : pandas series object
+        The pandas series with error and columns for field annotation added.
+    """
+    field_annot = s['field_annotation']
+    if pd.isna(field_annot):
+        return s
+
+    fields = field_annot.split(' ')
+    fois = list()
+    for field in fields:
+        if field.startswith('@'):
+            continue
+
+        try:
+            field_name, field_value = field.split('-')
+            if field_name == 'FOI':
+                fois.append(field_value)
+            else:
+                s[field_name] = field_value
+            s['error'] = ''
+        except Exception as e:
+            msg = f'field_annotation reads: {field_annot}'
+            s['error'] = msg
+            warn(msg)
+    s['FOI'] = fois
+    return s
 
 
 def dataframe_to_tuple(df, df_columns, fixed_columns=None,

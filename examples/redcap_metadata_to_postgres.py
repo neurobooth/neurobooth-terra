@@ -218,10 +218,12 @@ with SSHTunnelForwarder(**ssh_args) as tunnel:
             print(f'Overwriting table {table_id}')
             drop_table(table_id, conn)
             table = create_table(table_id, conn, table_info['columns'],
-                                 table_info['dtypes'], primary_key='subject_id')
+                                 table_info['dtypes'],
+                                 primary_key='subject_id')
             df = fetch_survey(project, survey_name=table_id,
-                              survey_id=survey_ids[table_id],
-                              index='record_id')
+                              survey_id=survey_ids[table_id])
+            df = df.rename(columns={'record_id': 'subject_id'})
+
             df = df.astype(dict(zip(table_info['python_columns'],
                                     table_info['python_dtypes'])))
             rows, columns = dataframe_to_tuple(

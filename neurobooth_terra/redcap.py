@@ -1,4 +1,4 @@
-"""Infer JSON schema from a CSV file."""
+"""Functions to parse redcap surveys."""
 
 # Authors: Mainak Jas <mjas@mgh.harvard.edu>
 
@@ -205,7 +205,7 @@ def map_dtypes(s):
 
 
 def dataframe_to_tuple(df, df_columns, fixed_columns=None,
-                       indicator_columns=None, index_column='record_id'):
+                       indicator_columns=None):
     """Dataframe to tuple.
 
     Parameters

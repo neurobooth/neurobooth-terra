@@ -48,12 +48,14 @@ db_args = dict(
 
 survey_ids = {# 'subject': 96397,
               'consent': 96398,
-              # 'contact': 99916, 'demograph': 99917,
+              # 'contact': 99916, -- phone number is int, but (999) 999-9999
+              # 'demograph': 99917, -- other_first_language = 'y' but not in report
               'clinical': 99918,
               'visit_dates': 99919,
               'neurobooth_falls': 99920,
               'neuro_qol_ue_short_form': 99921,
               'neuro_qol_le_short_form': 99922,
+              # start_time_neuro_qol_cognitive = 'y' but not in report.
               # 'neuro_qol_cognitive_function_short_form': 99923,
               'neuro_qol_stigma_short_form': 99924,
               'neuro_qol_ability_to_participate_in_social_roles_a': 99925,

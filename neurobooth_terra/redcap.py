@@ -204,6 +204,49 @@ def map_dtypes(s):
     return s
 
 
+def get_tables_structure(metadata, include_surveys=None):
+    """Get the column names and datatypes for the tables.
+
+    Returns
+    -------
+    table_infos : dict
+        Dictionary with keys as table names and each table having the following
+        entries: columns, dtypes, indicator_columns, and python_columns,
+        python_dtypes (for casting columns to the right Python data type).
+    """
+    metadata_by_form = metadata[np.any(
+        [metadata['in_database'] == 'y', metadata['database_dtype'].notnull()],
+        axis=0)]
+    metadata_by_form = metadata_by_form.groupby('redcap_form_name')
+
+    table_infos = dict()
+    for form_name, metadata_form in metadata_by_form:
+        if form_name == 'subject':  # subject table is special
+            continue
+
+        table_infos[form_name] = {
+            'columns': list(), 'dtypes': list(), 'python_columns': list(),
+            'python_dtypes': list(), 'indicator_columns': list()
+        }
+        for index, row in metadata_form.iterrows():
+            table_infos[form_name]['columns'].append(index)
+            table_infos[form_name]['dtypes'].append(row['database_dtype'])
+
+            if row['database_dtype'] == 'smallint[]':
+                table_infos[form_name]['indicator_columns'].append(index)
+            else:
+                table_infos[form_name]['python_columns'].append(index)
+                table_infos[form_name]['python_dtypes'].append(row['python_dtype'])
+
+        table_infos[form_name]['columns'].append('subject_id')
+        table_infos[form_name]['dtypes'].append('varchar')
+
+    if include_surveys is not None:
+        table_infos = {k: v for (k, v) in table_infos.items() if k in include_surveys}
+
+    return table_infos
+
+
 def dataframe_to_tuple(df, df_columns, fixed_columns=None,
                        indicator_columns=None):
     """Dataframe to tuple.

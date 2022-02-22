@@ -121,26 +121,18 @@ def get_tables_structure(metadata, include_surveys=None):
         if form_name == 'subject':  # subject table is special
             continue
 
-        tables[form_name] = {'columns': metadata_form.index.tolist(),
-                             'dtypes': metadata_form.database_dtype.tolist(),
-                             'python_columns': metadata_form.index.tolist(),
-                             'python_dtypes': metadata_form.python_dtype.tolist(),
+        tables[form_name] = {'columns': list(), 'dtypes': list(),
+                             'python_columns': list(), 'python_dtypes': list(),
                              'indicator_columns': list()}
+        for index, row in metadata_form.iterrows():
+            tables[form_name]['columns'].append(index)
+            tables[form_name]['dtypes'].append(row['database_dtype'])
 
-        # Add indicator columns
-        idxs_remove = list()
-        for idx, dtype in enumerate(tables[form_name]['dtypes']):
-            if dtype == 'smallint[]':
-                tables[form_name]['indicator_columns'].append(
-                    tables[form_name]['columns'][idx])
-                idxs_remove.append(idx)
-
-        tables[form_name]['python_columns'] = [x for (idx, x) in
-            enumerate(tables[form_name]['python_columns']) if idx not in
-            idxs_remove]
-        tables[form_name]['python_dtypes'] = [x for (idx, x) in
-            enumerate(tables[form_name]['python_dtypes']) if idx not in
-            idxs_remove]
+            if row['database_dtype'] == 'smallint[]':
+                tables[form_name]['indicator_columns'].append(index)
+            else:
+                tables[form_name]['python_columns'].append(index)
+                tables[form_name]['python_dtypes'].append(row['python_dtype'])
 
         tables[form_name]['columns'].append('subject_id')
         tables[form_name]['dtypes'].append('varchar')

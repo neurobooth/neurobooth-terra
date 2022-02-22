@@ -15,7 +15,8 @@ import pandas as pd  # version > 1.4.0
 
 from redcap import Project, RedcapError
 from neurobooth_terra.redcap import (fetch_survey, dataframe_to_tuple,
-                                     extract_field_annotation, map_dtypes)
+                                     extract_field_annotation, map_dtypes,
+                                     get_tables_structure)
 from neurobooth_terra import create_table, drop_table
 
 import psycopg2
@@ -102,48 +103,6 @@ for column in ['section_header', 'field_label']:
     metadata[column] = metadata[column].apply(
         lambda x : x.strip('\n') if isinstance(x, str) else x
     )
-
-
-def get_tables_structure(metadata, include_surveys=None):
-    """Get the column names and datatypes for the tables.
-
-    Returns
-    -------
-    tables : dict
-        Dictionary with keys as table names and each table having the following
-        entries: columns, dtypes, indicator_columns
-    """
-    metadata_by_form = metadata[np.any(
-        [metadata['in_database'] == 'y', metadata['database_dtype'].notnull()],
-        axis=0)]
-    metadata_by_form = metadata_by_form.groupby('redcap_form_name')
-
-    tables = dict()
-    for form_name, metadata_form in metadata_by_form:
-        if form_name == 'subject':  # subject table is special
-            continue
-
-        tables[form_name] = {'columns': list(), 'dtypes': list(),
-                             'python_columns': list(), 'python_dtypes': list(),
-                             'indicator_columns': list()}
-        for index, row in metadata_form.iterrows():
-            tables[form_name]['columns'].append(index)
-            tables[form_name]['dtypes'].append(row['database_dtype'])
-
-            if row['database_dtype'] == 'smallint[]':
-                tables[form_name]['indicator_columns'].append(index)
-            else:
-                tables[form_name]['python_columns'].append(index)
-                tables[form_name]['python_dtypes'].append(row['python_dtype'])
-
-        tables[form_name]['columns'].append('subject_id')
-        tables[form_name]['dtypes'].append('varchar')
-
-    if include_surveys is not None:
-        tables = {k: v for (k, v) in tables.items() if k in include_surveys}
-
-    return tables
-
 
 # feature of interest
 metadata = metadata.apply(map_dtypes, axis=1)

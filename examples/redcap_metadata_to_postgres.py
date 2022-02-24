@@ -50,14 +50,13 @@ db_args = dict(
 survey_ids = {# 'subject': 96397,
               'consent': 96398,
               # 'contact': 99916, -- phone number is int, but (999) 999-9999
-              # 'demograph': 99917, -- other_first_language = 'y' but not in report
+              # 'demograph': 99917,  # -- first_language has mixed datatypes
               'clinical': 99918,
               'visit_dates': 99919,
               'neurobooth_falls': 99920,
               'neuro_qol_ue_short_form': 99921,
               'neuro_qol_le_short_form': 99922,
-              # start_time_neuro_qol_cognitive = 'y' but not in report.
-              # 'neuro_qol_cognitive_function_short_form': 99923,
+              'neuro_qol_cognitive_function_short_form': 99923,
               'neuro_qol_stigma_short_form': 99924,
               'neuro_qol_ability_to_participate_in_social_roles_a': 99925,
               'neuro_qol_satisfaction_with_social_roles_and_activ': 99926,
@@ -71,6 +70,14 @@ survey_ids = {# 'subject': 96397,
               'system_usability_scale': 99936,
               'study_feedback': 99937,
               'neuro_qol_depression_short_form': 99938}
+
+# subject table updating (old subject ID using first name, last name, dob)
+# cron job
+# table column mapping
+# metadata table (redcap_field_)
+# how to rename subject IDs (cascading), within database + outside database
+# XXX: check that column names match between data dictionary and report
+# casting error? give column name
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -109,7 +116,7 @@ metadata = metadata.apply(map_dtypes, axis=1)
 metadata = metadata.apply(extract_field_annotation, axis=1)
 metadata.rename({'form_name': 'redcap_form_name',
                  'FOI': 'feature_of_interest', 'DB': 'in_database',
-                 'T': 'database_field_name',
+                 'T': 'database_table_name',
                  'redcap_event_name': 'event_name'}, axis=1, inplace=True)
 
 is_descriptive = metadata['field_type'] == 'descriptive'
@@ -118,6 +125,9 @@ metadata['redcap_form_description'][~is_descriptive] = None
 
 metadata['question'] = metadata['field_label']
 metadata['question'][is_descriptive] = None
+
+metadata['database_table_name'] = metadata['database_table_name'].fillna(
+    value=metadata['redcap_form_name'])
 
 # copy first section header of matrix into rest and concatenate with
 # question
@@ -134,7 +144,9 @@ table_infos = get_tables_structure(metadata, include_surveys=survey_ids.keys())
 
 metadata = metadata.reset_index()
 rows_metadata, cols_metadata = dataframe_to_tuple(
-    metadata, df_columns=['field_name', 'redcap_form_name']
+    metadata, df_columns=['field_name', 'redcap_form_name',
+                          'database_table_name', 'redcap_form_description',
+                          'feature_of_interest', 'question']
 )
 
 with SSHTunnelForwarder(**ssh_args) as tunnel:

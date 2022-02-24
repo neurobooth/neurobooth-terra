@@ -178,7 +178,7 @@ def map_dtypes(s):
                           'datetime_seconds_ymd': 'timestamp',
                           'datetime_seconds_mdy': 'timestamp',
                           'mrn_6d': 'integer', 'number': 'integer',
-                          'phone': 'bigint'}
+                          'phone': 'varchar(15)'}
     python_dtype_mapping = {'smallint[]': 'list',
                             'boolean': 'bool',
                             'text': 'str', 'varchar(255)': 'str',
@@ -186,7 +186,7 @@ def map_dtypes(s):
                             'datetime': 'str',
                             'double precision': 'float64',
                             'smallint': 'Int64', 'bigint': 'Int64',
-                            'integer': 'Int64'}
+                            'integer': 'Int64', 'varchar(15)': 'str'}
 
     redcap_dtype = s['field_type']
     text_validation = s['text_validation_type_or_show_slider_number']
@@ -224,6 +224,10 @@ def get_tables_structure(metadata, include_surveys=None):
         if form_name == 'subject':  # subject table is special
             continue
 
+        # python_dtypes excludes checkbox columns because they are extracted
+        # in our code and don't need to be cast. Casting is important
+        # when pandas could make incorrect inference about dtype, e.g.,
+        # if boolean were mistaken to be integer or float.
         table_infos[form_name] = {
             'columns': list(), 'dtypes': list(), 'python_columns': list(),
             'python_dtypes': list(), 'indicator_columns': list()
@@ -292,6 +296,7 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         row = list()
         for column_name in df_columns:
             row.append(df_row[column_name])
+            # XXX: hack, None/nan means missing values in comments.
             if not isinstance(row[-1], list) and \
                     (pd.isna(row[-1]) or row[-1] in ('None', 'nan')):
                 row[-1] = None

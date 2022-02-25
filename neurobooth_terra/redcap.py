@@ -224,22 +224,17 @@ def get_tables_structure(metadata, include_surveys=None):
         if form_name == 'subject':  # subject table is special
             continue
 
-        # python_dtypes excludes checkbox columns because they are extracted
-        # in our code and don't need to be cast. Casting is important
-        # when pandas could make incorrect inference about dtype, e.g.,
-        # if boolean were mistaken to be integer or float.
         table_infos[form_name] = {
-            'columns': list(), 'dtypes': list(), 'python_columns': list(),
-            'python_dtypes': list(), 'indicator_columns': list()
+            'columns': list(), 'dtypes': list(), 'python_dtypes': list(),
+            'indicator_columns': list()
         }
         for index, row in metadata_form.iterrows():
-            table_infos[form_name]['columns'].append(index)
-            table_infos[form_name]['dtypes'].append(row['database_dtype'])
 
-            if row['database_dtype'] == 'smallint[]':
+            if row['database_dtype'] == 'smallint[]':  # checkbox column
                 table_infos[form_name]['indicator_columns'].append(index)
             else:
-                table_infos[form_name]['python_columns'].append(index)
+                table_infos[form_name]['columns'].append(index)
+                table_infos[form_name]['dtypes'].append(row['database_dtype'])
                 table_infos[form_name]['python_dtypes'].append(row['python_dtype'])
 
         table_infos[form_name]['columns'].append('subject_id')

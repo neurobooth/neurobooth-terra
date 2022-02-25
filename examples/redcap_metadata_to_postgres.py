@@ -47,7 +47,7 @@ db_args = dict(
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 # You will need to request for the Redcap API token from Redcap interface.
 
-survey_ids = {# 'subject': 96397,
+survey_ids = {'subject': 96397,
               'consent': 96398,
               # 'contact': 99916, -- phone number is int, but (999) 999-9999
               # 'demograph': 99917,  # -- first_language has mixed datatypes
@@ -74,10 +74,8 @@ survey_ids = {# 'subject': 96397,
 # subject table updating (old subject ID using first name, last name, dob)
 # cron job
 # table column mapping
-# metadata table (redcap_field_)
+# metadata table (response_array remains)
 # how to rename subject IDs (cascading), within database + outside database
-# XXX: check that column names match between data dictionary and report
-# casting error? give column name
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
@@ -149,6 +147,16 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
                           'feature_of_interest', 'question']
 )
 
+df = fetch_survey(project, survey_name='subject',
+                  survey_id=survey_ids['subject'])
+df = df.rename(columns={'record_id': 'subject_id'})
+df = df[~pd.isna(df[f'end_time_guid'])]  # XXX: guid is not table name
+rows_subject, cols_subject = dataframe_to_tuple(
+    df,
+    df_columns=['subject_id', 'first_name_birth', 'middle_name_birth',
+                'last_name_birth', 'date_of_birth', 'country_of_birth',
+                'gender_at_birth', 'birthplace'])
+
 with SSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
@@ -156,6 +164,10 @@ with SSHTunnelForwarder(**ssh_args) as tunnel:
         table_metadata = Table('human_obs_data', conn)
         table_metadata.insert_rows(rows_metadata, cols_metadata,
                                    on_conflict='update')
+
+        table_subject = Table('subject', conn)
+        table_subject.insert_rows(rows_subject, cols_subject,
+                                  on_conflict='update')
 
         for table_id, table_info in table_infos.items():
             print(f'Overwriting table {table_id}')
@@ -166,8 +178,17 @@ with SSHTunnelForwarder(**ssh_args) as tunnel:
             df = fetch_survey(project, survey_name=table_id,
                               survey_id=survey_ids[table_id])
             df = df.rename(columns={'record_id': 'subject_id'})
+            # XXX: not consistent.
+            # endtime_col = [col for col in df.columns if
+            #                col.startswith('end_time')][0]
+            # df = df[~pd.isna(df[endtime_col])]
 
-            df = df.astype(dict(zip(table_info['python_columns'],
+            extra_cols = set(table_info['columns']) - set(df.columns)
+            if len(extra_cols) > 0:
+                raise ValueError(f'Data dictionary contains ({extra_cols})'
+                                 f'that are not found in report')
+
+            df = df.astype(dict(zip(table_info['columns'],
                                     table_info['python_dtypes'])))
             rows, columns = dataframe_to_tuple(
                 df, df_columns=table_info['columns'],

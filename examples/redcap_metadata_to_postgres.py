@@ -42,10 +42,20 @@ class SuperSSHTunnelForwarder(SSHTunnelForwarder):
 
     def __enter__(self):
         if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
-            self.local_bind_port = '5432'
-            self.local_bind_host = 'localhost'
             return None
         return SSHTunnelForwarder.__enter__(self)
+
+    @property
+    def local_bind_port(self):
+        if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
+            return '5432'
+        return super(SuperSSHTunnelForwarder, self).local_bind_port
+
+    @property
+    def local_bind_host(self):
+        if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
+            return 'localhost'
+        return super(SuperSSHTunnelForwarder, self).local_bind_host
 
     def __exit__(self, exc_type, exc_value, traceback):
         if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':

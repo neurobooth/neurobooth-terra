@@ -42,7 +42,7 @@ class SuperSSHTunnelForwarder(SSHTunnelForwarder):
 
     def __enter__(self):
         if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
-            return None
+            return self
         return SSHTunnelForwarder.__enter__(self)
 
     @property

@@ -9,6 +9,7 @@ This example demonstrates how to create table from Redcap.
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
 import os
+import socket
 
 import numpy as np
 import pandas as pd  # version > 1.4.0
@@ -35,6 +36,23 @@ ssh_args = dict(
         remote_bind_address=('192.168.100.1', 5432),
         local_bind_address=('localhost', 6543)
 )
+
+
+class SuperSSHTunnelForwarder(SSHTunnelForwarder):
+
+    def __enter__(self):
+        if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
+            self.local_bind_port = '5432'
+            self.local_bind_host = 'localhost'
+            return None
+        return SSHTunnelForwarder.__enter__(self)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
+            return False
+        return SSHTunnelForwarder.__exit__(self, exc_type, exc_value,
+                                           traceback)
+
 
 db_args = dict(
     database='neurobooth', user='neuroboother', password='neuroboothrocks',
@@ -157,7 +175,7 @@ rows_subject, cols_subject = dataframe_to_tuple(
                 'last_name_birth', 'date_of_birth', 'country_of_birth',
                 'gender_at_birth', 'birthplace'])
 
-with SSHTunnelForwarder(**ssh_args) as tunnel:
+with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
 

@@ -211,10 +211,12 @@ with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
             #                col.startswith('end_time')][0]
             # df = df[~pd.isna(df[endtime_col])]
 
-            extra_cols = set(table_info['columns']) - set(df.columns)
+            report_cols = set([col.split('___')[0] for col in df.columns])
+            extra_cols = report_cols - (set(table_info['columns']) |
+                                        set(table_info['indicator_columns']))
             if len(extra_cols) > 0:
-                raise ValueError(f'Data dictionary contains ({extra_cols})'
-                                 f'that are not found in report')
+                raise ValueError(f'Report contains ({extra_cols})'
+                                 f'that are not found in data dictionary')
 
             df = df.astype(dict(zip(table_info['columns'],
                                     table_info['python_dtypes'])))

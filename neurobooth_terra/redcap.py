@@ -219,6 +219,20 @@ def get_tables_structure(metadata, include_surveys=None):
         axis=0)]
     metadata_by_form = metadata_by_form.groupby('redcap_form_name')
 
+    special_columns = {
+        'columns': ['subject_id',
+                    # integer for first instance is null and for
+                    # subsequent instance is integer starting at 1 and should
+                    # correspond to integer
+                    # in redcap_event_name (if completed once per visit)
+                    'redcap_repeat_instance',
+                    'redcap_event_name',
+                    # XXX: don't add in database?
+                    'redcap_repeat_instrument'],
+        'dtypes': ['varchar(255)', 'integer', 'varchar(255)', 'varchar(255)'],
+        'python_dtypes': ['str', 'Int64', 'str', 'str']
+    }
+
     table_infos = dict()
     for form_name, metadata_form in metadata_by_form:
         if form_name == 'subject':  # subject table is special
@@ -229,6 +243,8 @@ def get_tables_structure(metadata, include_surveys=None):
             'indicator_columns': list()
         }
         for index, row in metadata_form.iterrows():
+            if index == 'end_time_clinical':
+                continue
 
             if row['database_dtype'] == 'smallint[]':  # checkbox column
                 table_infos[form_name]['indicator_columns'].append(index)
@@ -237,8 +253,12 @@ def get_tables_structure(metadata, include_surveys=None):
                 table_infos[form_name]['dtypes'].append(row['database_dtype'])
                 table_infos[form_name]['python_dtypes'].append(row['python_dtype'])
 
-        table_infos[form_name]['columns'].append('subject_id')
-        table_infos[form_name]['dtypes'].append('varchar')
+        for meta_name in special_columns:
+            table_infos[form_name][meta_name].extend(special_columns[meta_name])
+
+        table_infos[form_name]['columns'].append(f'{form_name}_complete')
+        table_infos[form_name]['dtypes'].append('integer')
+        table_infos[form_name]['python_dtypes'].append('Int64')
 
     if include_surveys is not None:
         table_infos = {k: v for (k, v) in table_infos.items() if k in include_surveys}

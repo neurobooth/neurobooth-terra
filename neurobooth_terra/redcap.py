@@ -243,8 +243,6 @@ def get_tables_structure(metadata, include_surveys=None):
             'indicator_columns': list()
         }
         for index, row in metadata_form.iterrows():
-            if index == 'end_time_clinical':
-                continue
 
             if row['database_dtype'] == 'smallint[]':  # checkbox column
                 table_infos[form_name]['indicator_columns'].append(index)

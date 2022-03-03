@@ -173,7 +173,8 @@ def map_dtypes(s):
     """
     dtype_mapping = {'calc': 'double precision', 'checkbox': 'smallint[]',
                      'dropdown': 'smallint', 'notes': 'text',
-                     'radio': 'smallint', 'yesno': 'boolean'}
+                     'radio': 'smallint', 'yesno': 'boolean',
+                     'file': 'varchar(255)'}
     text_dtype_mapping = {'date_mdy': 'date', 'email': 'varchar(255)',
                           'datetime_seconds_ymd': 'timestamp',
                           'datetime_seconds_mdy': 'timestamp',
@@ -186,12 +187,13 @@ def map_dtypes(s):
                             'datetime': 'str',
                             'double precision': 'float64',
                             'smallint': 'Int64', 'bigint': 'Int64',
-                            'integer': 'Int64', 'varchar(15)': 'str'}
+                            'integer': 'Int64', 'varchar(15)': 'str',
+                            'file': 'str'}
 
     redcap_dtype = s['field_type']
     text_validation = s['text_validation_type_or_show_slider_number']
 
-    if pd.isna(redcap_dtype) or redcap_dtype in ['descriptive', 'file']:
+    if pd.isna(redcap_dtype) or redcap_dtype in ['descriptive']:
         return s
 
     if redcap_dtype in dtype_mapping:
@@ -262,6 +264,22 @@ def get_tables_structure(metadata, include_surveys=None):
         table_infos = {k: v for (k, v) in table_infos.items() if k in include_surveys}
 
     return table_infos
+
+
+def subselect_table_structure(table_info, df_cols):
+    """Subselect columns that are in the report."""
+
+    table_info_new = {'columns': list(), 'dtypes': list(),
+                      'python_dtypes': list()}
+    for col, dtype, python_dtype in zip(table_info['columns'],
+                                        table_info['dtypes'],
+                                        table_info['python_dtypes']):
+        if col in df_cols:
+            table_info_new['columns'].append(col)
+            table_info_new['dtypes'].append(dtype)
+            table_info_new['python_dtypes'].append(python_dtype)
+    table_info_new['indicator_columns'] = table_info['indicator_columns']
+    return table_info_new
 
 
 def dataframe_to_tuple(df, df_columns, fixed_columns=None,

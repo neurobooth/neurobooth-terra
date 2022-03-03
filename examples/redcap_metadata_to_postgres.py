@@ -17,7 +17,7 @@ import pandas as pd  # version > 1.4.0
 from redcap import Project, RedcapError
 from neurobooth_terra.redcap import (fetch_survey, dataframe_to_tuple,
                                      extract_field_annotation, map_dtypes,
-                                     get_tables_structure)
+                                     get_tables_structure, subselect_table_structure)
 from neurobooth_terra import create_table, drop_table
 
 import psycopg2
@@ -77,8 +77,8 @@ db_args = dict(
 
 survey_ids = {'subject': 96397,
               'consent': 96398,
-              # 'contact': 99916, -- phone number is int, but (999) 999-9999
-              # 'demograph': 99917,  # -- first_language has mixed datatypes
+              'contact': 99916,
+              'demograph': 99917,  # -- first_language has mixed datatypes
               'clinical': 99918,
               'visit_dates': 99919,
               'neurobooth_falls': 99920,
@@ -206,10 +206,12 @@ with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
             df = fetch_survey(project, survey_name=table_id,
                               survey_id=survey_ids[table_id])
             df = df.rename(columns={'record_id': 'subject_id'})
+
             # XXX: not consistent.
-            # endtime_col = [col for col in df.columns if
-            #                col.startswith('end_time')][0]
-            # df = df[~pd.isna(df[endtime_col])]
+            endtime_col = [col for col in df.columns if
+                           col.startswith('end_time')]
+            # if len(endtime_col) > 0:
+            #     df = df[~pd.isna(df[endtime_col[0]])]
 
             report_cols = set([col.split('___')[0] for col in df.columns])
             extra_cols = report_cols - (set(table_info['columns']) |
@@ -218,6 +220,7 @@ with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
                 raise ValueError(f'Report contains ({extra_cols})'
                                  f'that are not found in data dictionary')
 
+            table_info = subselect_table_structure(table_info, df.columns)
             df = df.astype(dict(zip(table_info['columns'],
                                     table_info['python_dtypes'])))
             rows, columns = dataframe_to_tuple(

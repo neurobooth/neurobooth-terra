@@ -10,6 +10,7 @@ This example demonstrates how to create table from Redcap.
 
 import os
 import socket
+from warnings import warn
 
 import numpy as np
 import pandas as pd  # version > 1.4.0
@@ -80,7 +81,7 @@ survey_ids = {'subject': 96397,
               'contact': 99916,
               'demograph': 99917,  # -- first_language has mixed datatypes
               'clinical': 99918,
-              'visit_dates': 99919,
+              # 'visit_dates': 99919,  # cannot deal with arms
               'neurobooth_falls': 99920,
               'neuro_qol_ue_short_form': 99921,
               'neuro_qol_le_short_form': 99922,
@@ -100,7 +101,6 @@ survey_ids = {'subject': 96397,
               'neuro_qol_depression_short_form': 99938}
 
 # subject table updating (old subject ID using first name, last name, dob)
-# cron job
 # table column mapping
 # metadata table (response_array remains)
 # how to rename subject IDs (cascading), within database + outside database
@@ -208,10 +208,12 @@ with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
             df = df.rename(columns={'record_id': 'subject_id'})
 
             # XXX: not consistent.
-            endtime_col = [col for col in df.columns if
-                           col.startswith('end_time')]
-            # if len(endtime_col) > 0:
-            #     df = df[~pd.isna(df[endtime_col[0]])]
+            complete_col = [col for col in df.columns if
+                            col.endswith('complete')]
+            if len(complete_col) == 0:
+                warn(f'Skipping {table_id} because of missing complete col')
+                continue
+            df = df[df[complete_col[0]] == 2]
 
             report_cols = set([col.split('___')[0] for col in df.columns])
             extra_cols = report_cols - (set(table_info['columns']) |
@@ -227,4 +229,4 @@ with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
                 df, df_columns=table_info['columns'],
                 indicator_columns=table_info['indicator_columns'])
 
-            table.insert_rows(rows, columns, on_conflict='update')
+            table.insert_rows(rows, columns)

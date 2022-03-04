@@ -97,13 +97,13 @@ def query(conn, sql_query, column_names):
 
 
 def drop_table(table_id, conn):
+    # XXX: test needed that checks that table is indeed dropped
+    # and with context manager
     cursor = conn.cursor()
     cmd = f'DROP TABLE IF EXISTS "{table_id}" CASCADE;'
-    try:
-        execute(conn, cursor, cmd)
-    except Exception as e:
-        cursor.close()
-        raise Exception(e)
+    execute(conn, cursor, cmd)
+    cursor.close()
+
 
 def create_table(table_id, conn, column_names, dtypes,
                  primary_key=None, foreign_key=None):

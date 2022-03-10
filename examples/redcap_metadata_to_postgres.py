@@ -76,7 +76,7 @@ db_args = dict(
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 # You will need to request for the Redcap API token from Redcap interface.
 
-survey_ids = {'subject': 96397,
+survey_ids = {'subject': 99915,
               'consent': 96398,
               'contact': 99916,
               'demograph': 99917,  # -- first_language has mixed datatypes
@@ -178,7 +178,7 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
 df = fetch_survey(project, survey_name='subject',
                   survey_id=survey_ids['subject'])
 df = df.rename(columns={'record_id': 'subject_id'})
-df = df[~pd.isna(df[f'end_time_guid'])]  # XXX: guid is not table name
+df = df[~pd.isna(df[f'end_time_subject'])]  # XXX: guid is not table name
 rows_subject, cols_subject = dataframe_to_tuple(
     df,
     df_columns=['subject_id', 'first_name_birth', 'middle_name_birth',

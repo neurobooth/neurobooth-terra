@@ -77,7 +77,6 @@ survey_ids = {'subject': 99915,
 
 # subject table updating (old subject ID using first name, last name, dob)
 # table column mapping
-# metadata table (response_array remains)
 # how to rename subject IDs (cascading), within database + outside database
 
 URL = 'https://redcap.partners.org/redcap/api/'

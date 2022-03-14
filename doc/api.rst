@@ -29,8 +29,11 @@ Redcap (:py:mod:`neurobooth_terra.redcap`)
    :toctree: generated/
 
    fetch_survey
-   iter_interval
    dataframe_to_tuple
+   map_dtypes
+   extract_field_annotation
+   get_tables_structure
+   subselect_table_structure
 
 
 Mock

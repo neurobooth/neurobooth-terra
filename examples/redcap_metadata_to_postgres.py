@@ -9,20 +9,20 @@ This example demonstrates how to create table from Redcap.
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
 import os
-import socket
 from warnings import warn
 
 import numpy as np
 import pandas as pd  # version > 1.4.0
 
 from redcap import Project, RedcapError
+
 from neurobooth_terra.redcap import (fetch_survey, dataframe_to_tuple,
                                      extract_field_annotation, map_dtypes,
                                      get_tables_structure, subselect_table_structure)
 from neurobooth_terra import create_table, drop_table
+from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 
 import psycopg2
-from sshtunnel import SSHTunnelForwarder
 
 from neurobooth_terra import Table, create_table, drop_table
 
@@ -37,33 +37,6 @@ ssh_args = dict(
         remote_bind_address=('192.168.100.1', 5432),
         local_bind_address=('localhost', 6543)
 )
-
-
-class SuperSSHTunnelForwarder(SSHTunnelForwarder):
-
-    def __enter__(self):
-        if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
-            return self
-        return SSHTunnelForwarder.__enter__(self)
-
-    @property
-    def local_bind_port(self):
-        if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
-            return '5432'
-        return super(SuperSSHTunnelForwarder, self).local_bind_port
-
-    @property
-    def local_bind_host(self):
-        if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
-            return 'localhost'
-        return super(SuperSSHTunnelForwarder, self).local_bind_host
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        if socket.gethostname() == 'neurodoor.nmr.mgh.harvard.edu':
-            return False
-        return SSHTunnelForwarder.__exit__(self, exc_type, exc_value,
-                                           traceback)
-
 
 db_args = dict(
     database='neurobooth', user='neuroboother', password='neuroboothrocks',
@@ -178,14 +151,14 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
 df = fetch_survey(project, survey_name='subject',
                   survey_id=survey_ids['subject'])
 df = df.rename(columns={'record_id': 'subject_id'})
-df = df[~pd.isna(df[f'end_time_subject'])]  # XXX: guid is not table name
+df = df[~pd.isna(df[f'end_time_subject'])]
 rows_subject, cols_subject = dataframe_to_tuple(
     df,
     df_columns=['subject_id', 'first_name_birth', 'middle_name_birth',
                 'last_name_birth', 'date_of_birth', 'country_of_birth',
                 'gender_at_birth', 'birthplace'])
 
-with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
+with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
 

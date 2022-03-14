@@ -310,11 +310,16 @@ class Table:
         """
         if not isinstance(vals, list):
             raise ValueError(f'vals must be a list of tuple. Got {type(vals)}')
+        vals_clean = list()
         for val in vals:
             if not isinstance(val, tuple):
                 raise ValueError(f'entries in vals must be tuples. Got {type(val)}')
             if len(val) != len(cols):
                 raise ValueError(f'tuple length must match number of columns ({len(cols)})')
+            val = tuple([extras.Json(this_val) if isinstance(this_val, dict)
+                         else this_val for this_val in val])
+            vals_clean.append(val)
+        vals = vals_clean
         if on_conflict not in ('nothing', 'update', 'error'):
             raise ValueError(f'on_conflict must be one of (nothing, update, error)',
                              f'Got {on_conflict}')

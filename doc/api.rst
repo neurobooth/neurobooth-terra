@@ -32,6 +32,7 @@ Redcap (:py:mod:`neurobooth_terra.redcap`)
    dataframe_to_tuple
    map_dtypes
    extract_field_annotation
+   get_response_array
    get_tables_structure
    subselect_table_structure
 

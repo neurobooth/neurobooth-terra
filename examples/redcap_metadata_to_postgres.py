@@ -18,7 +18,9 @@ from redcap import Project, RedcapError
 
 from neurobooth_terra.redcap import (fetch_survey, dataframe_to_tuple,
                                      extract_field_annotation, map_dtypes,
-                                     get_tables_structure, subselect_table_structure)
+                                     get_tables_structure,
+                                     subselect_table_structure,
+                                     get_response_array)
 from neurobooth_terra import create_table, drop_table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 
@@ -113,6 +115,7 @@ for column in ['section_header', 'field_label']:
 # feature of interest
 metadata = metadata.apply(map_dtypes, axis=1)
 metadata = metadata.apply(extract_field_annotation, axis=1)
+metadata = metadata.apply(get_response_array, axis=1)
 metadata.rename({'form_name': 'redcap_form_name',
                  'FOI': 'feature_of_interest', 'DB': 'in_database',
                  'T': 'database_table_name',
@@ -145,7 +148,7 @@ metadata = metadata.reset_index()
 rows_metadata, cols_metadata = dataframe_to_tuple(
     metadata, df_columns=['field_name', 'redcap_form_name',
                           'database_table_name', 'redcap_form_description',
-                          'feature_of_interest', 'question']
+                          'feature_of_interest', 'question', 'response_array']
 )
 
 df = fetch_survey(project, survey_name='subject',

@@ -134,17 +134,19 @@ def test_upsert():
     table_id = 'test'
     drop_table(table_id, conn)
 
-    column_names = ['subject_id', 'first_name_birth', 'last_name_birth', 'Age']
-    dtypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'INTEGER']
+    column_names = ['subject_id', 'first_name_birth', 'last_name_birth', 'Age',
+                    'attributes']
+    dtypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'INTEGER',
+              'JSONB']
     table_subject = create_table(table_id, conn=conn,
                                  column_names=column_names,
                                  dtypes=dtypes)
-    table_subject.insert_rows([('x5dc', 'mainak', 'jas', 21),
-                               ('y5d3', 'anoopum', 'gupta', 25),
-                               ('abcd', 'mayank', 'jas', 25)],
+    table_subject.insert_rows([('x5dc', 'mainak', 'jas', 21, {'a': 1}),
+                               ('y5d3', 'anoopum', 'gupta', 25, {'b': 2}),
+                               ('abcd', 'mayank', 'jas', 25, {'a': 1})],
                                cols=column_names)
-    table_subject.insert_rows([('x5dc', 'mainak_new', 'jas_new', 21),
-                               ('zzzz', 'deepak', 'singh', 32)],
+    table_subject.insert_rows([('x5dc', 'mainak_new', 'jas_new', 21, {'a': 1}),
+                               ('zzzz', 'deepak', 'singh', 32, {'d': 1})],
                                cols=column_names, on_conflict='nothing')
     df = table_subject.query()
     assert 'x5dc' in df.index
@@ -165,7 +167,7 @@ def test_upsert():
                "SELECT first_name_birth FROM test where subject_id = 'x5dc' ",
                column_names='first_name_birth')
 
-    table_subject.insert_rows([('x5dc', 'mainak', 'jazz', 32)],
+    table_subject.insert_rows([('x5dc', 'mainak', 'jazz', 32, {'a': 1})],
                                cols=column_names, on_conflict='update')
     df = table_subject.query(where="subject_id = 'x5dc'")
     assert df.loc['x5dc']['last_name_birth'] == 'jazz'

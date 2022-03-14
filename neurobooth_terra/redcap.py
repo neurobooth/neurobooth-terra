@@ -162,6 +162,21 @@ def extract_field_annotation(s):
     return s
 
 
+def get_response_array(s):
+    """Get response array."""
+    choices = s['select_choices_or_calculations']
+    if s['field_type'] not in ['radio', 'checkbox']:
+        return s
+
+    response_array = dict()
+    choices = choices.split('|')
+    for c in choices:
+        k, v = c.strip().split(', ', maxsplit=1)
+        response_array[k] = v
+    s['response_array'] = response_array
+    return s
+
+
 def map_dtypes(s):
     """Map data types from Redcap to database and Python.
 

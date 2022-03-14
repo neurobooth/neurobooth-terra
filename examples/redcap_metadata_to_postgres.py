@@ -81,7 +81,7 @@ survey_ids = {'subject': 99915,
               'contact': 99916,
               'demograph': 99917,  # -- first_language has mixed datatypes
               'clinical': 99918,
-              # 'visit_dates': 99919,  # cannot deal with arms
+              'visit_dates': 99919,  # cannot deal with arms
               'neurobooth_falls': 99920,
               'neuro_qol_ue_short_form': 99921,
               'neuro_qol_le_short_form': 99922,
@@ -202,7 +202,7 @@ with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
             drop_table(table_id, conn)
             table = create_table(table_id, conn, table_info['columns'],
                                  table_info['dtypes'],
-                                 primary_key='subject_id')
+                                 primary_key=['subject_id', 'redcap_event_name'])
             df = fetch_survey(project, survey_name=table_id,
                               survey_id=survey_ids[table_id])
             df = df.rename(columns={'record_id': 'subject_id'})
@@ -219,7 +219,7 @@ with SuperSSHTunnelForwarder(**ssh_args) as tunnel:
             extra_cols = report_cols - (set(table_info['columns']) |
                                         set(table_info['indicator_columns']))
             if len(extra_cols) > 0:
-                raise ValueError(f'Report contains ({extra_cols})'
+                raise ValueError(f'Report {table_id} contains ({extra_cols})'
                                  f'that are not found in data dictionary')
 
             table_info = subselect_table_structure(table_info, df.columns)

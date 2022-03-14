@@ -1,0 +1,8 @@
+.gitignore
+**/__pycache__/**
+*.egg*
+
+doc/_build/
+doc/generated/
+doc/auto_examples/
+

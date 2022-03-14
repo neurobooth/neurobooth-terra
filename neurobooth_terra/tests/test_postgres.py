@@ -87,6 +87,23 @@ def test_psql_connection():
     conn.close()
 
 
+def test_compound_primary_key():
+    """Test compound primary key."""
+    conn = psycopg2.connect(connect_str)
+
+    table_id = 'test'
+    drop_table(table_id, conn)
+
+    column_names = ['subject_id', 'first_name_birth', 'last_name_birth', 'Age']
+    dtypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'INTEGER']
+    primary_key = ['first_name_birth', 'last_name_birth']
+    table_subject = create_table(table_id, conn=conn,
+                                 column_names=column_names,
+                                 dtypes=dtypes,
+                                 primary_key=primary_key)
+    assert set(table_subject.primary_key) == set(primary_key)
+
+
 def test_delete():
     """Test deleting rows"""
 

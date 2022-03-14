@@ -119,9 +119,10 @@ def create_table(table_id, conn, column_names, dtypes,
         The columns to create
     dtypes : list of str
         The datatypes
-    primary_key : str | None
+    primary_key : str | None | list
         The primary key. If None, the first column name is used
-        as primary key.
+        as primary key. If list, then primary key is a combination of the
+        columns in the list.
     foreign_key : dict
         Foreign key referring to another table. The key is the
         name of the foreign key and value is the table it refers to.
@@ -134,9 +135,11 @@ def create_table(table_id, conn, column_names, dtypes,
 
     if primary_key is None:
         primary_key = column_names[0]
+    if isinstance(primary_key, str):
+        primary_key = [primary_key]
     for column_name, dtype in zip(column_names, dtypes):
         create_cmd += f'"{column_name}" {dtype},'
-    create_cmd += f'PRIMARY KEY({primary_key}),'
+    create_cmd += f'PRIMARY KEY({", ".join(primary_key)}),'
 
     if foreign_key is None:
         foreign_key = dict()
@@ -201,9 +204,9 @@ class Table:
 
         if primary_key is None:
             primary_key = _get_primary_keys(conn, cursor, table_id)
-            self.primary_key = primary_key
         if isinstance(primary_key, str):
-            self.primary_key = [primary_key]
+            primary_key = [primary_key]
+        self.primary_key = primary_key
 
     def __repr__(self):
         repr_str = f'Table "{self.table_id}" '

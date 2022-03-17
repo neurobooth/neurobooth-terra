@@ -63,12 +63,7 @@ survey_ids = {'consent': 96398,
               'dysarthria_impact_scale': 102384}
 
 # TODOs
-# subject table updating (old subject ID using first name, last name, dob)
 # table column mapping
-# how to rename subject IDs (cascading), within database + outside database
-# what happens on conflict, how to update -> then cascade (not filenames for now)
-# add old_record_id -> old_subject_id
-# column in database, add compound primary key to subject table
 
 # %%
 # Next, we fetch the metadata table. This table is the master table

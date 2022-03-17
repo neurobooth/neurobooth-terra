@@ -54,9 +54,9 @@ db_args = dict(
 survey_ids = {'subject': 99915,
               'consent': 96398,
               'contact': 99916,
-              'demograph': 99917,  # -- first_language has mixed datatypes
+              'demograph': 99917,  # will be switching to demographics
               'clinical': 99918,
-              'visit_dates': 99919,  # cannot deal with arms
+              'visit_dates': 99919,
               'neurobooth_falls': 99920,
               'neuro_qol_ue_short_form': 99921,
               'neuro_qol_le_short_form': 99922,
@@ -64,8 +64,10 @@ survey_ids = {'subject': 99915,
               'neuro_qol_stigma_short_form': 99924,
               'neuro_qol_ability_to_participate_in_social_roles_a': 99925,
               'neuro_qol_satisfaction_with_social_roles_and_activ': 99926,
+              'neuro_qol_anxiety_short_form': 99927,
               'neuro_qol_emotional_and_behavioral_dyscontrol_shor': 99928,
               'neuro_qol_positive_affect_and_wellbeing_short_form': 99929,
+              'neuro_qol_fatigue_short_form': 99930,
               'neuro_qol_sleep_disturbance_short_form': 99931,
               'cpib': 99932,
               'chief_short_form': 99933,
@@ -73,11 +75,17 @@ survey_ids = {'subject': 99915,
               'promis_10': 99935,
               'system_usability_scale': 99936,
               'study_feedback': 99937,
-              'neuro_qol_depression_short_form': 99938}
+              'neuro_qol_depression_short_form': 99938,
+              'prom_ataxia': 102336,
+              'dysarthria_impact_scale': 102384}
 
 # subject table updating (old subject ID using first name, last name, dob)
 # table column mapping
+# separate script for subject and PROMs + data dictionary
 # how to rename subject IDs (cascading), within database + outside database
+# what happens on conflict, how to update -> then cascade (not filenames for now)
+# add old_record_id -> old_subject_id
+# column in database, add compound primary key to subject table
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')

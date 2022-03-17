@@ -14,7 +14,7 @@ from warnings import warn
 import numpy as np
 import pandas as pd  # version > 1.4.0
 
-from redcap import Project, RedcapError
+from redcap import RedcapError
 
 from neurobooth_terra.redcap import (fetch_survey, dataframe_to_tuple,
                                      extract_field_annotation, map_dtypes,
@@ -27,23 +27,7 @@ from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 import psycopg2
 
 from neurobooth_terra import Table, create_table, drop_table
-
-# %%
-# The ssh arguments and connection arguments
-
-ssh_args = dict(
-        ssh_address_or_host='neurodoor.nmr.mgh.harvard.edu',
-        ssh_username='mj513',
-        ssh_config_file='~/.ssh/config',
-        ssh_pkey='~/.ssh/id_rsa',
-        remote_bind_address=('192.168.100.1', 5432),
-        local_bind_address=('localhost', 6543)
-)
-
-db_args = dict(
-    database='neurobooth', user='neuroboother', password='neuroboothrocks',
-    # host='localhost'
-)
+from config import ssh_args, db_args, project
 
 # %%
 # Let us first define the surveys and their survey IDs that we want to fetch.
@@ -51,8 +35,7 @@ db_args = dict(
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 # You will need to request for the Redcap API token from Redcap interface.
 
-survey_ids = {'subject': 99915,
-              'consent': 96398,
+survey_ids = {'consent': 96398,
               'contact': 99916,
               'demograph': 99917,  # will be switching to demographics
               'clinical': 99918,
@@ -79,21 +62,13 @@ survey_ids = {'subject': 99915,
               'prom_ataxia': 102336,
               'dysarthria_impact_scale': 102384}
 
+# TODOs
 # subject table updating (old subject ID using first name, last name, dob)
 # table column mapping
-# separate script for subject and PROMs + data dictionary
 # how to rename subject IDs (cascading), within database + outside database
 # what happens on conflict, how to update -> then cascade (not filenames for now)
 # add old_record_id -> old_subject_id
 # column in database, add compound primary key to subject table
-
-URL = 'https://redcap.partners.org/redcap/api/'
-API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
-
-if API_KEY is None:
-    raise ValueError('Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first')
-
-project = Project(URL, API_KEY, lazy=True)
 
 # %%
 # Next, we fetch the metadata table. This table is the master table
@@ -158,16 +133,6 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
                           'feature_of_interest', 'question', 'response_array']
 )
 
-df = fetch_survey(project, survey_name='subject',
-                  survey_id=survey_ids['subject'])
-df = df.rename(columns={'record_id': 'subject_id'})
-df = df[~pd.isna(df[f'end_time_subject'])]
-rows_subject, cols_subject = dataframe_to_tuple(
-    df,
-    df_columns=['subject_id', 'first_name_birth', 'middle_name_birth',
-                'last_name_birth', 'date_of_birth', 'country_of_birth',
-                'gender_at_birth', 'birthplace'])
-
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
@@ -175,10 +140,6 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
         table_metadata = Table('human_obs_data', conn)
         table_metadata.insert_rows(rows_metadata, cols_metadata,
                                    on_conflict='update')
-
-        table_subject = Table('subject', conn)
-        table_subject.insert_rows(rows_subject, cols_subject,
-                                  on_conflict='update')
 
         for table_id, table_info in table_infos.items():
             print(f'Overwriting table {table_id}')

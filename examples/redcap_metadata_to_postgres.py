@@ -37,7 +37,7 @@ from config import ssh_args, db_args, project
 
 survey_ids = {'consent': 96398,
               'contact': 99916,
-              'demograph': 99917,  # will be switching to demographics
+              'demographics': 99917,
               'clinical': 99918,
               'visit_dates': 99919,
               'neurobooth_falls': 99920,

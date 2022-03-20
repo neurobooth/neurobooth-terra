@@ -10,6 +10,9 @@ from config import ssh_args, db_args, project
 survey_id = 99915
 
 # TODOs
+# delete register and demograph
+# cascading should not be deleting.
+# what if test subject matches but no old_record_id or old_record_id not matching?
 # subject table updating (old subject ID using first name, last name, dob)
 # how to rename subject IDs (cascading), within database + outside database
 # what happens on conflict, how to update -> then cascade (not filenames for now)
@@ -37,4 +40,10 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
 
         table_subject = Table('subject', conn)
         table_subject.insert_rows(rows_subject, cols_subject,
-                                  on_conflict='update')
+                                  on_conflict='update',
+                                  conflict_cols=['subject_id'])
+        table_subject.insert_rows(rows_subject, cols_subject,
+                                  on_conflict='update',
+                                  conflict_cols=['first_name_birth',
+                                                 'last_name_birth',
+                                                 'date_of_birth'])

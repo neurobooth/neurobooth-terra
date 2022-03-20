@@ -287,10 +287,9 @@ class Table:
         idx = self.column_names.index(col)
         del self.column_names[idx], self.data_types[idx]
 
-    def insert_rows(self, vals, cols, on_conflict='error'):
+    def insert_rows(self, vals, cols, on_conflict='error',
+                    conflict_cols='auto'):
         """Manual insertion into tables
-
-        If conflicts, does nothing.
 
         Parameters
         ----------
@@ -301,12 +300,24 @@ class Table:
             The columns to insert into.
         on_conflict : 'nothing' | 'update' | 'error'
             What to do when a conflict is encountered
+        conflict_cols : 'auto' | list
+            If 'auto', it uses primary key when on_conflict is 'update'.
+            If list, uses the list of columns to create a unique index to infer
+            conflicts.
 
         Returns
         -------
         pk_val : str | None
             The primary keys of the row inserted into.
             If multiple rows are inserted, returns None.
+
+        Notes
+        -----
+        When conflict_cols is a list, a unique index must be set for the target
+        columns. The following SQL command is handy:
+
+            create unique index subject_identifier on
+            subject (first_name_birth, last_name_birth, date_of_birth);
         """
         if not isinstance(vals, list):
             raise ValueError(f'vals must be a list of tuple. Got {type(vals)}')
@@ -324,6 +335,12 @@ class Table:
             raise ValueError(f'on_conflict must be one of (nothing, update, error)',
                              f'Got {on_conflict}')
 
+        if conflict_cols == 'auto':
+            conflict_cols = self.primary_key
+        if isinstance(conflict_cols, str):
+            conflict_cols = [conflict_cols]
+        conflict_cols = ', '.join(conflict_cols)
+
         str_format = ','.join(len(cols) * ['%s'])
         col_names = cols.copy()
         cols = ','.join([f'"{col}"' for col in cols])
@@ -331,8 +348,8 @@ class Table:
         if on_conflict == 'nothing':
             insert_cmd += f'ON CONFLICT DO NOTHING '
         elif on_conflict == 'update':
-            pk = ', '.join(self.primary_key)
-            insert_cmd += f'ON CONFLICT ({pk}) DO UPDATE SET '
+            insert_cmd += f'ON CONFLICT ({conflict_cols}) WHERE {self.primary_key[0]} is NOT NULL'
+            insert_cmd += ' DO UPDATE SET '
             update_cmd = list()
             for col_name in col_names:
                 update_cmd.append(f'"{col_name}" = excluded."{col_name}"')

@@ -43,4 +43,5 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
                                   on_conflict='update',
                                   conflict_cols=['first_name_birth',
                                                  'last_name_birth',
-                                                 'date_of_birth'])
+                                                 'date_of_birth'],
+                                  update_cols='subject_id')

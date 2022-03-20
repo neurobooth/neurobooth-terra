@@ -288,7 +288,7 @@ class Table:
         del self.column_names[idx], self.data_types[idx]
 
     def insert_rows(self, vals, cols, on_conflict='error',
-                    conflict_cols='auto'):
+                    conflict_cols='auto', update_cols='all'):
         """Manual insertion into tables
 
         Parameters
@@ -300,10 +300,13 @@ class Table:
             The columns to insert into.
         on_conflict : 'nothing' | 'update' | 'error'
             What to do when a conflict is encountered
-        conflict_cols : 'auto' | list
+        conflict_cols : 'auto' | str | list
             If 'auto', it uses primary key when on_conflict is 'update'.
             If list, uses the list of columns to create a unique index to infer
             conflicts.
+        update_cols : 'all' | str | list
+            If 'all', updates all the columns with the new values.
+            If list, updates only those columns.
 
         Returns
         -------
@@ -341,6 +344,11 @@ class Table:
             conflict_cols = [conflict_cols]
         conflict_cols = ', '.join(conflict_cols)
 
+        if update_cols == 'all':
+            update_cols = cols.copy()
+        if isinstance(update_cols, str):
+            update_cols = [update_cols]
+
         str_format = ','.join(len(cols) * ['%s'])
         col_names = cols.copy()
         cols = ','.join([f'"{col}"' for col in cols])
@@ -351,7 +359,7 @@ class Table:
             insert_cmd += f'ON CONFLICT ({conflict_cols}) WHERE {self.primary_key[0]} is NOT NULL'
             insert_cmd += ' DO UPDATE SET '
             update_cmd = list()
-            for col_name in col_names:
+            for col_name in update_cols:
                 update_cmd.append(f'"{col_name}" = excluded."{col_name}"')
             insert_cmd += ', '.join(update_cmd) + ' '
         insert_cmd += f'RETURNING {self.primary_key[0]}'

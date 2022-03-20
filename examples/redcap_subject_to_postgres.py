@@ -1,3 +1,7 @@
+"""Ingest subject table to database."""
+
+# Authors: Mainak Jas <mjas@harvard.mgh.edu>
+
 import psycopg2
 import pandas as pd
 
@@ -10,17 +14,10 @@ from config import ssh_args, db_args, project
 survey_id = 99915
 
 # TODOs
-# delete register and demograph
 # cascading should not be deleting.
 # what if test subject matches but no old_record_id or old_record_id not matching?
-# subject table updating (old subject ID using first name, last name, dob)
-# how to rename subject IDs (cascading), within database + outside database
 # what happens on conflict, how to update -> then cascade (not filenames for now)
 # add old_record_id -> old_subject_id
-
-# Cannot be done b/c foreign key must refer to a unique ID, hence it should
-# refer to compound primary key ... not possible
-# column in database, add compound primary key to subject table
 
 df = fetch_survey(project, survey_name='subject',
                   survey_id=survey_id)

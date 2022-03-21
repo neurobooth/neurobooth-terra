@@ -16,7 +16,7 @@ survey_id = 99915
 # TODOs
 # cascading should not be deleting.
 # what if test subject matches but no old_record_id or old_record_id not matching?
-# what happens on conflict, how to update -> then cascade (not filenames for now)
+# cascading of filenames
 
 df = fetch_survey(project, survey_name='subject',
                   survey_id=survey_id)

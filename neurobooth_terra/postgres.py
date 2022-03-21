@@ -128,7 +128,7 @@ def create_table(table_id, conn, column_names, dtypes,
         name of the foreign key and value is the table it refers to.
     """
     # XXX: add check for columns if table already exists
-    create_cmd = f'CREATE TABLE IF NOT EXISTS "{table_id}" ('
+    create_cmd = f'CREATE TABLE "{table_id}" ('
 
     if len(column_names) != len(dtypes):
         raise ValueError('Column names and data types should have equal lengths')

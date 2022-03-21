@@ -17,7 +17,6 @@ survey_id = 99915
 # cascading should not be deleting.
 # what if test subject matches but no old_record_id or old_record_id not matching?
 # what happens on conflict, how to update -> then cascade (not filenames for now)
-# add old_record_id -> old_subject_id
 
 df = fetch_survey(project, survey_name='subject',
                   survey_id=survey_id)
@@ -44,4 +43,4 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
                                   conflict_cols=['first_name_birth',
                                                  'last_name_birth',
                                                  'date_of_birth'],
-                                  update_cols='subject_id')
+                                  update_cols=['subject_id', 'old_subject_id'])

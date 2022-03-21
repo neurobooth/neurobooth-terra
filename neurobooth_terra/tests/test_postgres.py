@@ -6,7 +6,7 @@ import pytest
 from numpy.testing import assert_raises
 
 from neurobooth_terra import Table, create_table, drop_table, query
-
+from neurobooth_terra.postgres import execute
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                 "password='neuroboothrocks'")
@@ -144,10 +144,10 @@ def test_upsert():
     table_subject.insert_rows([('x5dc', 'mainak', 'jas', 21, {'a': 1}),
                                ('y5d3', 'anoopum', 'gupta', 25, {'b': 2}),
                                ('abcd', 'mayank', 'jas', 25, {'a': 1})],
-                               cols=column_names)
+                              cols=column_names)
     table_subject.insert_rows([('x5dc', 'mainak_new', 'jas_new', 21, {'a': 1}),
                                ('zzzz', 'deepak', 'singh', 32, {'d': 1})],
-                               cols=column_names, on_conflict='nothing')
+                              cols=column_names, on_conflict='nothing')
     df = table_subject.query()
     assert 'x5dc' in df.index
     assert 'zzzz' in df.index
@@ -168,6 +168,20 @@ def test_upsert():
                column_names='first_name_birth')
 
     table_subject.insert_rows([('x5dc', 'mainak', 'jazz', 32, {'a': 1})],
-                               cols=column_names, on_conflict='update')
+                              cols=column_names, on_conflict='update')
     df = table_subject.query(where="subject_id = 'x5dc'")
     assert df.loc['x5dc']['last_name_birth'] == 'jazz'
+
+    # create index for conflicts
+    cmd = 'DROP INDEX IF EXISTS subject_identifier'
+    execute(table_subject.conn, table_subject.cursor, cmd)
+    cmd = (f'CREATE UNIQUE INDEX subject_identifier ON '
+           f'{table_id} (first_name_birth, last_name_birth);')
+    execute(table_subject.conn, table_subject.cursor, cmd)
+
+    table_subject.insert_rows([('x5de', 'mainak', 'jazz', 32, {'a': 1})],
+                              cols=column_names, on_conflict='update',
+                              conflict_cols=['first_name_birth',
+                                             'last_name_birth'],
+                              update_cols='subject_id')
+    df = table_subject.query(where="subject_id = 'x5de'")

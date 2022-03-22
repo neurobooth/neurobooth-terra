@@ -97,8 +97,15 @@ def query(conn, sql_query, column_names):
 
 
 def drop_table(table_id, conn):
-    # XXX: test needed that checks that table is indeed dropped
-    # and with context manager
+    """Drop table.
+
+    Parameters
+    ----------
+    table_id : str
+        The table ID
+    conn : instance of psycopg2.Postgres
+        The connection object
+    """
     cursor = conn.cursor()
     cmd = f'DROP TABLE IF EXISTS "{table_id}" CASCADE;'
     execute(conn, cursor, cmd)
@@ -109,8 +116,8 @@ def create_table(table_id, conn, column_names, dtypes,
                  primary_key=None, foreign_key=None):
     """Create a table.
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     table_id : str
         The table ID
     conn : instance of psycopg2.Postgres

@@ -5,7 +5,7 @@ import psycopg2
 import pytest
 from numpy.testing import assert_raises
 
-from neurobooth_terra import Table, create_table, drop_table, query
+from neurobooth_terra import Table, create_table, drop_table, query, list_tables
 from neurobooth_terra.postgres import execute
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
@@ -18,6 +18,7 @@ def test_psql_connection():
 
     table_id = 'test'
     drop_table(table_id, conn)
+    assert 'test' not in list_tables(conn)
 
     column_names = ['subject_id', 'first_name_birth', 'last_name_birth', 'Age']
     dtypes = ['VARCHAR (255)', 'VARCHAR (255)', 'VARCHAR (255)', 'INTEGER']

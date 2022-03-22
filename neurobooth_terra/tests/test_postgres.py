@@ -24,6 +24,11 @@ def test_psql_connection():
     table_subject = create_table(table_id, conn=conn,
                                  column_names=column_names,
                                  dtypes=dtypes)
+    with pytest.raises(Exception, match='already exists'):
+        table_subject = create_table(table_id, conn=conn,
+                                    column_names=column_names,
+                                    dtypes=dtypes)
+    conn.rollback()  # XXX: needed for the error testing above
     table_subject.insert_rows([('x5dc', 'mainak', 'jas', 21),
                                ('y5d3', 'anoopum', 'gupta', 25)],
                                cols=column_names)

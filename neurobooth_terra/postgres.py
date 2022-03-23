@@ -295,7 +295,7 @@ class Table:
         del self.column_names[idx], self.data_types[idx]
 
     def insert_rows(self, vals, cols, on_conflict='error',
-                    conflict_cols='auto', update_cols='all'):
+                    conflict_cols='auto', update_cols='all', where=None):
         """Manual insertion into tables
 
         Parameters
@@ -314,6 +314,9 @@ class Table:
         update_cols : 'all' | str | list
             If 'all', updates all the columns with the new values.
             If list, updates only those columns.
+        where : str | None
+            Condition to filter rows by. If None,
+            keep all rows where primary key is not NULL.
 
         Returns
         -------
@@ -356,6 +359,9 @@ class Table:
         if isinstance(update_cols, str):
             update_cols = [update_cols]
 
+        if where is None:
+            where = f'{self.table_id}.{self.primary_key[0]} is NOT NULL'
+
         str_format = ','.join(len(cols) * ['%s'])
         col_names = cols.copy()
         cols = ','.join([f'"{col}"' for col in cols])
@@ -363,12 +369,13 @@ class Table:
         if on_conflict == 'nothing':
             insert_cmd += f'ON CONFLICT DO NOTHING '
         elif on_conflict == 'update':
-            insert_cmd += f'ON CONFLICT ({conflict_cols}) WHERE {self.primary_key[0]} is NOT NULL'
+            insert_cmd += f'ON CONFLICT ({conflict_cols})'
             insert_cmd += ' DO UPDATE SET '
             update_cmd = list()
             for col_name in update_cols:
                 update_cmd.append(f'"{col_name}" = excluded."{col_name}"')
             insert_cmd += ', '.join(update_cmd) + ' '
+            insert_cmd += f'WHERE {where} '
         insert_cmd += f'RETURNING {self.primary_key[0]}'
 
         _execute_batch(self.conn, self.cursor, insert_cmd, vals)

@@ -190,4 +190,15 @@ def test_upsert():
                               conflict_cols=['first_name_birth',
                                              'last_name_birth'],
                               update_cols='subject_id')
-    df = table_subject.query(where="subject_id = 'x5de'")
+    df = table_subject.query()
+    assert 'x5de' in df.index
+    table_subject.insert_rows([('blah', 'mainak', 'jazz', 32, {'a': 1}),
+                               ('yyyy', 'mainak', 'jazz', 31, {'a': 1})],
+                              cols=column_names, on_conflict='update',
+                              conflict_cols=['first_name_birth',
+                                             'last_name_birth'],
+                              update_cols='subject_id',
+                              where='test."Age" = excluded."Age"')
+    df = table_subject.query()
+    assert 'yyyy' not in df.index
+    assert 'blah' in df.index

@@ -357,6 +357,63 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
     return rows, cols
 
 
+def rename_subjects(table_subject, redcap_df):
+    """Rename subject in table_subject using data in redcap_df.
+
+    Parameters
+    ----------
+    table_subject : instance of Table
+        The subject table.
+    redcap_df : instance of dataframe
+        The dataframe of subject from redcap.
+
+    Notes
+    -----
+    Let's say the table in database has the following
+
+    subject_id    first_name      last_name     date_of_birth    old_subject_id
+
+    1001          anoopum          gupta        28/11/1985       NULL
+    1002          adonay           nunes        13/09/1987       NULL
+
+    Now, redcap has been modified in the following way
+
+    901           anoopum          gupta        28/11/1985       1001
+    1002          adonay           nunes        13/09/1987       NULL
+    1003          sheraz           khan         15/05/1980       NULL
+
+    Our protocol is the following:
+
+    1. Fetch database table into Python dataframe
+    2. Inner join Redcap dataframe to database dataframe based on match in
+       first_name, last_name and date_of_birth
+    3. Select rows from the inner join where
+       Redcap.old_subject_id != database.old_subject_id AND
+       Redcap.subject_id = database.old_subject_id
+    4. Insert these rows into database, updating the subject_id
+       and old_subject_id
+    """
+    database_df = table_subject.query().reset_index()
+    match_columns = ['first_name_birth', 'last_name_birth',
+                     'date_of_birth_subject']
+    joined_df = pd.merge(redcap_df, database_df, how='inner',
+                         left_on=match_columns, right_on=match_columns,
+                         suffixes=('', '_y'))
+    joined_df = joined_df[joined_df['old_subject_id'] == joined_df['subject_id_y']]
+    joined_df = joined_df[joined_df['old_subject_id'] != joined_df['old_subject_id_y']]
+
+    if len(joined_df) > 0:
+        rows_subject, cols_subject = dataframe_to_tuple(
+            joined_df,
+            df_columns=['subject_id', 'old_subject_id', 'redcap_event_name',
+                        'first_name_birth', 'last_name_birth',
+                        'date_of_birth_subject'])
+        table_subject.insert_rows(rows_subject, cols_subject,
+                                  on_conflict='update',
+                                  conflict_cols=match_columns,
+                                  update_cols=['subject_id', 'old_subject_id'])
+
+
 def compare_dataframes(src_df, target_df):
     """Compare dataframes.
 

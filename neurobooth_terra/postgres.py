@@ -113,7 +113,7 @@ def drop_table(table_id, conn):
 
 
 def create_table(table_id, conn, column_names, dtypes,
-                 primary_key=None, foreign_key=None):
+                 primary_key=None, foreign_key=None, index=None):
     """Create a table.
 
     Parameters
@@ -133,6 +133,9 @@ def create_table(table_id, conn, column_names, dtypes,
     foreign_key : dict
         Foreign key referring to another table. The key is the
         name of the foreign key and value is the table it refers to.
+    index : dict of list | None
+        The key is the name of the index and values are the column names
+        on which to create the unique index.
     """
     # XXX: add check for columns if table already exists
     create_cmd = f'CREATE TABLE "{table_id}" ('
@@ -161,6 +164,16 @@ def create_table(table_id, conn, column_names, dtypes,
     except Exception as e:
         cursor.close()
         raise Exception(e)
+
+    if index is not None:
+        index_name = list(index.keys())[0]
+        index_cols = ', '.join(list(index.values())[0])
+        drop_cmd = f'DROP INDEX IF EXISTS {index_name}'
+        execute(conn, cursor, drop_cmd)
+        index_cmd = (f'CREATE UNIQUE INDEX {index_name} ON '
+                     f'{table_id} ({index_cols});')
+        execute(conn, cursor, index_cmd)
+
     return Table(table_id, conn=conn, cursor=cursor, primary_key=primary_key)
 
 

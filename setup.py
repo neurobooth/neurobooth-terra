@@ -55,7 +55,8 @@ if __name__ == "__main__":
           ],
           platforms='any',
           install_requires=[
-              'pandas',
+              'PyCap',
+              'sshtunnel',
               'psycopg2'
           ],
           packages=find_packages()

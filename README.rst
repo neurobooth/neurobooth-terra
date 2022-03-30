@@ -6,7 +6,9 @@ Dependencies
 
 * PostgreSQL (`https://www.postgresql.org/ <https://www.postgresql.org/>`_)
 * psycopg2
-* pandas
+* PyCap
+* pandas (> 1.4.0)
+* sshtunnel
 
 Installation
 ------------

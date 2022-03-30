@@ -1,8 +1,4 @@
 pandas
-google-cloud-bigquery
-google-cloud-storage
-tqdm
-firecloud
 PyCap
-mysql-connector-python
 psycopg2
+sshtunnel

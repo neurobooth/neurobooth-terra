@@ -12,7 +12,7 @@ import os
 from warnings import warn
 
 import numpy as np
-import pandas as pd  # version > 1.4.0
+import pandas as pd
 
 from redcap import RedcapError
 

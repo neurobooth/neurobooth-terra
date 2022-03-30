@@ -5,7 +5,8 @@
 import psycopg2
 import pandas as pd
 
-from neurobooth_terra.redcap import fetch_survey, dataframe_to_tuple, rename_subjects
+from neurobooth_terra.redcap import (fetch_survey, dataframe_to_tuple,
+                                     rename_subjects)
 from neurobooth_terra.postgres import Table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 
@@ -15,7 +16,6 @@ survey_id = 99915
 
 # TODOs
 # cascading should not be deleting.
-# what if test subject matches but no old_record_id or old_record_id not matching?
 # cascading of filenames
 
 redcap_df = fetch_survey(project, survey_name='subject',

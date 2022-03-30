@@ -166,7 +166,13 @@ def extract_field_annotation(s):
 
 
 def get_response_array(s):
-    """Get response array."""
+    """Add response array dictionary mapping answer choices to answer text.
+
+    Returns
+    -------
+    s : pandas series object
+        The pandas series object containing new entries for the response array
+    """
     choices = s['select_choices_or_calculations']
     if s['field_type'] not in ['radio', 'checkbox']:
         return s
@@ -181,7 +187,7 @@ def get_response_array(s):
 
 
 def map_dtypes(s):
-    """Map data types from Redcap to database and Python.
+    """Create new columns mapping Redcap data types to Postgres and Python.
 
     Returns
     -------
@@ -302,7 +308,7 @@ def subselect_table_structure(table_info, df_cols):
 
 def dataframe_to_tuple(df, df_columns, fixed_columns=None,
                        indicator_columns=None):
-    """Dataframe to tuple.
+    """Extract pandas dataframe into tuples for ingestion in Postgres.
 
     Parameters
     ----------
@@ -360,8 +366,8 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
     return rows, cols
 
 
-def rename_subjects(table_subject, redcap_df):
-    """Rename subject in table_subject using data in redcap_df.
+def rename_subject_ids(table_subject, redcap_df):
+    """Rename subject_id in table_subject using data in redcap_df.
 
     Parameters
     ----------

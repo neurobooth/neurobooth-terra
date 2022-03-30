@@ -7,7 +7,7 @@ import psycopg2
 import pandas as pd
 
 from neurobooth_terra.redcap import (fetch_survey, dataframe_to_tuple,
-                                     rename_subjects)
+                                     rename_subject_ids)
 from neurobooth_terra.postgres import Table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 
@@ -40,7 +40,7 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
                           host=tunnel.local_bind_host, **db_args) as conn:
 
         table_subject = Table('subject', conn)
-        rename_subjects(table_subject, redcap_df)
+        rename_subject_ids(table_subject, redcap_df)
 
         # intended to handle a change in individual's data
         # 1. If a subject_id exists, update the other columns

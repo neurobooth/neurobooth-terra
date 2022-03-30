@@ -9,7 +9,7 @@ import psycopg2
 from neurobooth_terra import create_table
 from neurobooth_terra.postgres import drop_table
 from neurobooth_terra.redcap import (iter_interval, extract_field_annotation,
-                                     map_dtypes, rename_subjects)
+                                     map_dtypes, rename_subject_ids)
 
 connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
                "password='neuroboothrocks'")
@@ -69,7 +69,7 @@ def test_map_dtypes():
     assert all(metadata_df['database_dtype'] == ['double precision', 'date'])
 
 
-def test_rename_subject():
+def test_rename_subject_ids():
     """Test renaming of subject."""
     table_id = 'subject'
     column_names = ['subject_id', 'redcap_event_name',
@@ -102,7 +102,7 @@ def test_rename_subject():
          }),
                                      ignore_index=True)
 
-        rename_subjects(table_subject, redcap_df)
+        rename_subject_ids(table_subject, redcap_df)
 
         # test renaming
         table_df_updated = table_subject.query().reset_index()

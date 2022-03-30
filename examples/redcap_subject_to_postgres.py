@@ -23,10 +23,7 @@ redcap_df = fetch_survey(project, survey_name='subject',
 redcap_df = redcap_df.rename(columns={'record_id': 'subject_id',
                                       'old_record_id': 'old_subject_id',
                                       # XXX: what is the new convention?
-                                      'country_of_birth': 'country_of_birth_subject',
-                                      'date_of_birth': 'date_of_birth_subject',
-                                      'birthplace': 'birthplace_subject',
-                                      'gender_at_birth': 'gender_at_birth_subject'})
+                                      'date_of_birth': 'date_of_birth_subject'})
 
 redcap_df = redcap_df[~pd.isna(redcap_df[f'end_time_subject'])]
 rows_subject, cols_subject = dataframe_to_tuple(
@@ -34,8 +31,8 @@ rows_subject, cols_subject = dataframe_to_tuple(
     df_columns=['subject_id', 'redcap_event_name',
                 'first_name_birth', 'middle_name_birth',
                 'last_name_birth', 'date_of_birth_subject',
-                'country_of_birth_subject', 'gender_at_birth_subject',
-                'birthplace_subject'])
+                'country_of_birth', 'gender_at_birth',
+                'birthplace'])
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,

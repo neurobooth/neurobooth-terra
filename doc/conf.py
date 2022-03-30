@@ -129,36 +129,6 @@ html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'neurobooth-terradoc'
 
-
-# -- Options for LaTeX output ------------------------------------------------
-
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #
-    # 'papersize': 'letterpaper',
-
-    # The font size ('10pt', '11pt' or '12pt').
-    #
-    # 'pointsize': '10pt',
-
-    # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
-
-    # Latex figure (float) alignment
-    #
-    # 'figure_align': 'htbp',
-}
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'neurobooth-terra.tex', 'neurobooth-terra Documentation',
-     'Mainak Jas', 'manual'),
-]
-
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -179,15 +149,6 @@ texinfo_documents = [
      author, 'neurobooth-terra', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'mne': ('https://mne.tools/dev', None),
-    'numpy': ('https://numpy.org/devdocs', None),
-    'scipy': ('https://scipy.github.io/devdocs', None),
-    'matplotlib': ('https://matplotlib.org', None)
-}
-intersphinx_timeout = 5
 
 # Resolve binder filepath_prefix. From the docs:
 # "A prefix to append to the filepath in the Binder links. You should use this
@@ -210,7 +171,5 @@ sphinx_gallery_conf = {
     'reference_url': {
         'neurobooth_terra': None
     },
-    'within_subsection_order': ExampleTitleSortKey,
-    'subsection_order': ExplicitOrder(['../examples/workflows/',
-                                       '../examples/howto/'])
+    'within_subsection_order': ExampleTitleSortKey
 }

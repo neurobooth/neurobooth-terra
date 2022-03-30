@@ -1,4 +1,5 @@
-"""Ingest subject table to database."""
+"""Ingest subject table to database.
+"""
 
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 

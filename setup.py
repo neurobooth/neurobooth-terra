@@ -55,7 +55,10 @@ if __name__ == "__main__":
           ],
           platforms='any',
           install_requires=[
+              'numpy',  # required for pandas (and unit testing)
               'pandas',
+              'PyCap',
+              'sshtunnel',
               'psycopg2'
           ],
           packages=find_packages()

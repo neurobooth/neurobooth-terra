@@ -1,0 +1,6 @@
+﻿neurobooth\_terra.redcap.map\_dtypes
+====================================
+
+.. currentmodule:: neurobooth_terra.redcap
+
+.. autofunction:: map_dtypes

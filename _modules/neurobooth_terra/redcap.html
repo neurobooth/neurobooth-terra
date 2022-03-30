@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>neurobooth_terra.redcap &#8212; neurobooth-terra  documentation</title>
-    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
 <meta charset='utf-8'>
@@ -101,11 +101,12 @@
     <div class="body col-md-12 content" role="main">
       
   <h1>Source code for neurobooth_terra.redcap</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Infer JSON schema from a CSV file.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Functions to parse redcap surveys.&quot;&quot;&quot;</span>
 
 <span class="c1"># Authors: Mainak Jas &lt;mjas@mgh.harvard.edu&gt;</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
@@ -114,10 +115,10 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="k">import</span> <span class="n">infer_dtype</span>
+<span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="kn">import</span> <span class="n">infer_dtype</span>
 
 
-<div class="viewcode-block" id="iter_interval"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.iter_interval.html#neurobooth_terra.redcap.iter_interval">[docs]</a><span class="k">def</span> <span class="nf">iter_interval</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">exit_after</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">iter_interval</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">exit_after</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run redcap service in a loop.</span>
 
 <span class="sd">    Exit loop with Ctrl + C</span>
@@ -137,19 +138,19 @@
             <span class="n">curr_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">curr_time</span> <span class="o">-</span> <span class="n">start_time</span>
             <span class="n">time_left</span> <span class="o">=</span> <span class="n">wait</span> <span class="o">-</span> <span class="n">time_elapsed</span>
-            <span class="k">if</span> <span class="n">time_left</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">curr_time</span> <span class="o">-</span> <span class="n">start_time_t0</span> <span class="o">&gt;</span> <span class="n">exit_after</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">elif</span> <span class="n">time_left</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="k">yield</span>
                 <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">curr_time</span> <span class="o">-</span> <span class="n">start_time_t0</span> <span class="o">&gt;</span> <span class="n">exit_after</span><span class="p">:</span>
-                <span class="k">break</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Time left: </span><span class="si">{time_left:2.2f}</span><span class="s1"> s&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Time left: </span><span class="si">{</span><span class="n">time_left</span><span class="si">:</span><span class="s1">2.2f</span><span class="si">}</span><span class="s1"> s&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-            <span class="k">break</span></div>
+            <span class="k">break</span>
 
 
-<div class="viewcode-block" id="fetch_survey"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey">[docs]</a><span class="k">def</span> <span class="nf">fetch_survey</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">survey_name</span><span class="p">,</span> <span class="n">survey_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="fetch_survey"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey">[docs]</a><span class="k">def</span> <span class="nf">fetch_survey</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">survey_name</span><span class="p">,</span> <span class="n">survey_id</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get schema of table from redcap</span>
 
 <span class="sd">    Parameters</span>
@@ -163,24 +164,27 @@
 <span class="sd">        Redap.</span>
 <span class="sd">    index : str</span>
 <span class="sd">        The column to set as index.</span>
+<span class="sd">    cast_dtype : bool</span>
+<span class="sd">        If True, cast to datatype. This is done by writing the dataframe to</span>
+<span class="sd">        a temporary csv file and reading it back.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    df : instance of DataFrame</span>
 <span class="sd">        The pandas dataframe.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Fetching report </span><span class="si">{survey_name}</span><span class="s1"> from Redcap&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fetching report </span><span class="si">{</span><span class="n">survey_name</span><span class="si">}</span><span class="s1"> from Redcap&#39;</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">export_reports</span><span class="p">(</span><span class="n">report_id</span><span class="o">=</span><span class="n">survey_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">])</span>
 
     <span class="c1"># format = &#39;df&#39; didn&#39;t work</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
-        <span class="n">csv_fname</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="n">survey_name</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_fname</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="c1"># XXX: read back again so pandas casts data to right type</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_fname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cast_dtype</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
+            <span class="n">csv_fname</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="n">survey_name</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_fname</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_fname</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[Done]&#39;</span><span class="p">)</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
@@ -189,6 +193,7 @@
         <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># allow mixing int and str record_id</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
+
 
 <span class="k">def</span> <span class="nf">_is_series_equal</span><span class="p">(</span><span class="n">src_series</span><span class="p">,</span> <span class="n">target_series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check equality of two series by casting dtype when necessary.&quot;&quot;&quot;</span>
@@ -217,14 +222,308 @@
 <span class="sd">    target_col : str</span>
 <span class="sd">        The name of the target column to create</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">arr</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
     <span class="k">for</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">src_cols</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">arr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">])</span>
-        <span class="n">arr</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">this_element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">this_element</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">:</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
     <span class="n">df</span><span class="p">[</span><span class="n">target_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">src_cols</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">src_cols</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">df</span>
+
+
+<div class="viewcode-block" id="extract_field_annotation"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.extract_field_annotation.html#neurobooth_terra.redcap.extract_field_annotation">[docs]</a><span class="k">def</span> <span class="nf">extract_field_annotation</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract the field annotation and create new columns for them</span>
+
+<span class="sd">    Annotations are structured in the format:</span>
+<span class="sd">    FOI-visual DB-y FOI-motor</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    s : pandas series object</span>
+<span class="sd">        The pandas series with error and columns for field annotation added.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">field_annot</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;field_annotation&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">field_annot</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="n">fields</span> <span class="o">=</span> <span class="n">field_annot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">fois</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">field_name</span><span class="p">,</span> <span class="n">field_value</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s1">&#39;FOI&#39;</span><span class="p">:</span>
+                <span class="n">fois</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_value</span>
+            <span class="n">s</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;field_annotation reads: </span><span class="si">{</span><span class="n">field_annot</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">s</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">[</span><span class="s1">&#39;FOI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fois</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="get_response_array"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.get_response_array.html#neurobooth_terra.redcap.get_response_array">[docs]</a><span class="k">def</span> <span class="nf">get_response_array</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get response array.&quot;&quot;&quot;</span>
+    <span class="n">choices</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;select_choices_or_calculations&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;field_type&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;radio&#39;</span><span class="p">,</span> <span class="s1">&#39;checkbox&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="n">response_array</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">choices</span> <span class="o">=</span> <span class="n">choices</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">choices</span><span class="p">:</span>
+        <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">response_array</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">s</span><span class="p">[</span><span class="s1">&#39;response_array&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response_array</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="map_dtypes"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.map_dtypes.html#neurobooth_terra.redcap.map_dtypes">[docs]</a><span class="k">def</span> <span class="nf">map_dtypes</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Map data types from Redcap to database and Python.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    s : pandas series object</span>
+<span class="sd">        The pandas series object containing new entries database_dtype</span>
+<span class="sd">        and python_dtype</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dtype_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;calc&#39;</span><span class="p">:</span> <span class="s1">&#39;double precision&#39;</span><span class="p">,</span> <span class="s1">&#39;checkbox&#39;</span><span class="p">:</span> <span class="s1">&#39;smallint[]&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;dropdown&#39;</span><span class="p">:</span> <span class="s1">&#39;smallint&#39;</span><span class="p">,</span> <span class="s1">&#39;notes&#39;</span><span class="p">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;radio&#39;</span><span class="p">:</span> <span class="s1">&#39;smallint&#39;</span><span class="p">,</span> <span class="s1">&#39;yesno&#39;</span><span class="p">:</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;varchar(255)&#39;</span><span class="p">}</span>
+    <span class="n">text_dtype_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;date_mdy&#39;</span><span class="p">:</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;varchar(255)&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;datetime_seconds_ymd&#39;</span><span class="p">:</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;datetime_seconds_mdy&#39;</span><span class="p">:</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;mrn_6d&#39;</span><span class="p">:</span> <span class="s1">&#39;integer&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">:</span> <span class="s1">&#39;integer&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;phone&#39;</span><span class="p">:</span> <span class="s1">&#39;varchar(15)&#39;</span><span class="p">}</span>
+    <span class="n">python_dtype_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;smallint[]&#39;</span><span class="p">:</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;boolean&#39;</span><span class="p">:</span> <span class="s1">&#39;bool&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="s1">&#39;varchar(255)&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;datetime&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;double precision&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;smallint&#39;</span><span class="p">:</span> <span class="s1">&#39;Int64&#39;</span><span class="p">,</span> <span class="s1">&#39;bigint&#39;</span><span class="p">:</span> <span class="s1">&#39;Int64&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;integer&#39;</span><span class="p">:</span> <span class="s1">&#39;Int64&#39;</span><span class="p">,</span> <span class="s1">&#39;varchar(15)&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">}</span>
+
+    <span class="n">redcap_dtype</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;field_type&#39;</span><span class="p">]</span>
+    <span class="n">text_validation</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;text_validation_type_or_show_slider_number&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">redcap_dtype</span><span class="p">)</span> <span class="ow">or</span> <span class="n">redcap_dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;descriptive&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">if</span> <span class="n">redcap_dtype</span> <span class="ow">in</span> <span class="n">dtype_mapping</span><span class="p">:</span>
+        <span class="n">s</span><span class="p">[</span><span class="s1">&#39;database_dtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtype_mapping</span><span class="p">[</span><span class="n">redcap_dtype</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">redcap_dtype</span> <span class="o">==</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span>
+        <span class="n">s</span><span class="p">[</span><span class="s1">&#39;database_dtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_dtype_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">text_validation</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">)</span>
+
+    <span class="n">s</span><span class="p">[</span><span class="s1">&#39;python_dtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">python_dtype_mapping</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;database_dtype&#39;</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="get_tables_structure"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.get_tables_structure.html#neurobooth_terra.redcap.get_tables_structure">[docs]</a><span class="k">def</span> <span class="nf">get_tables_structure</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">include_surveys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the column names and datatypes for the tables.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    table_infos : dict</span>
+<span class="sd">        Dictionary with keys as table names and each table having the following</span>
+<span class="sd">        entries: columns, dtypes, indicator_columns, and python_columns,</span>
+<span class="sd">        python_dtypes (for casting columns to the right Python data type).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata_by_form</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;in_database&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;database_dtype&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
+    <span class="n">metadata_by_form</span> <span class="o">=</span> <span class="n">metadata_by_form</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;redcap_form_name&#39;</span><span class="p">)</span>
+
+    <span class="n">special_columns</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span>
+                    <span class="c1"># integer for first instance is null and for</span>
+                    <span class="c1"># subsequent instance is integer starting at 1 and should</span>
+                    <span class="c1"># correspond to integer</span>
+                    <span class="c1"># in redcap_event_name (if completed once per visit)</span>
+                    <span class="s1">&#39;redcap_repeat_instance&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;redcap_event_name&#39;</span><span class="p">,</span>
+                    <span class="c1"># XXX: don&#39;t add in database?</span>
+                    <span class="s1">&#39;redcap_repeat_instrument&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;dtypes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;varchar(255)&#39;</span><span class="p">,</span> <span class="s1">&#39;integer&#39;</span><span class="p">,</span> <span class="s1">&#39;varchar(255)&#39;</span><span class="p">,</span> <span class="s1">&#39;varchar(255)&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;python_dtypes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="s1">&#39;Int64&#39;</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="n">table_infos</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">form_name</span><span class="p">,</span> <span class="n">metadata_form</span> <span class="ow">in</span> <span class="n">metadata_by_form</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">form_name</span> <span class="o">==</span> <span class="s1">&#39;subject&#39;</span><span class="p">:</span>  <span class="c1"># subject table is special</span>
+            <span class="k">continue</span>
+
+        <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span> <span class="s1">&#39;dtypes&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span> <span class="s1">&#39;python_dtypes&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s1">&#39;indicator_columns&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">metadata_form</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;database_dtype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;smallint[]&#39;</span><span class="p">:</span>  <span class="c1"># checkbox column</span>
+                <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">][</span><span class="s1">&#39;indicator_columns&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">][</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">][</span><span class="s1">&#39;dtypes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;database_dtype&#39;</span><span class="p">])</span>
+                <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">][</span><span class="s1">&#39;python_dtypes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;python_dtype&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">meta_name</span> <span class="ow">in</span> <span class="n">special_columns</span><span class="p">:</span>
+            <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">][</span><span class="n">meta_name</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">special_columns</span><span class="p">[</span><span class="n">meta_name</span><span class="p">])</span>
+
+        <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">][</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">form_name</span><span class="si">}</span><span class="s1">_complete&#39;</span><span class="p">)</span>
+        <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">][</span><span class="s1">&#39;dtypes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;integer&#39;</span><span class="p">)</span>
+        <span class="n">table_infos</span><span class="p">[</span><span class="n">form_name</span><span class="p">][</span><span class="s1">&#39;python_dtypes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Int64&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">include_surveys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">table_infos</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">table_infos</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">include_surveys</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">table_infos</span></div>
+
+
+<div class="viewcode-block" id="subselect_table_structure"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.subselect_table_structure.html#neurobooth_terra.redcap.subselect_table_structure">[docs]</a><span class="k">def</span> <span class="nf">subselect_table_structure</span><span class="p">(</span><span class="n">table_info</span><span class="p">,</span> <span class="n">df_cols</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Subselect columns that are in the report.&quot;&quot;&quot;</span>
+
+    <span class="n">table_info_new</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span> <span class="s1">&#39;dtypes&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+                      <span class="s1">&#39;python_dtypes&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">()}</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">python_dtype</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">table_info</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">],</span>
+                                        <span class="n">table_info</span><span class="p">[</span><span class="s1">&#39;dtypes&#39;</span><span class="p">],</span>
+                                        <span class="n">table_info</span><span class="p">[</span><span class="s1">&#39;python_dtypes&#39;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_cols</span><span class="p">:</span>
+            <span class="n">table_info_new</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">table_info_new</span><span class="p">[</span><span class="s1">&#39;dtypes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">table_info_new</span><span class="p">[</span><span class="s1">&#39;python_dtypes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">python_dtype</span><span class="p">)</span>
+    <span class="n">table_info_new</span><span class="p">[</span><span class="s1">&#39;indicator_columns&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table_info</span><span class="p">[</span><span class="s1">&#39;indicator_columns&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">table_info_new</span></div>
+
+
+<div class="viewcode-block" id="dataframe_to_tuple"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.dataframe_to_tuple.html#neurobooth_terra.redcap.dataframe_to_tuple">[docs]</a><span class="k">def</span> <span class="nf">dataframe_to_tuple</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">df_columns</span><span class="p">,</span> <span class="n">fixed_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">indicator_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dataframe to tuple.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : instance of pd.Dataframe</span>
+<span class="sd">        The dataframe whose index is record_id</span>
+<span class="sd">    df_columns : list of str</span>
+<span class="sd">        The column names of the dataframe to process. The column_name</span>
+<span class="sd">        &#39;record_id&#39; is special and inserts the record_id index.</span>
+<span class="sd">    fixed_columns : dict | None</span>
+<span class="sd">        The columns that have fixed values. E.g., dict(study_id=study1) makes</span>
+<span class="sd">        all the rows of column study_id to have value study1</span>
+<span class="sd">    indicator_columns : list of str | None</span>
+<span class="sd">        The indicator columns.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rows : list (n_rows,) of tuples</span>
+<span class="sd">        A list with each row having the columns of dataframe.</span>
+<span class="sd">    cols : list of str</span>
+<span class="sd">        Ordered list of columns in which the tuple entries are added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fixed_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fixed_columns</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">indicator_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">indicator_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">indicator_column</span> <span class="ow">in</span> <span class="n">indicator_columns</span><span class="p">:</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># {race___1: 1, race___2: 2}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">indicator_column</span><span class="p">):</span>
+                <span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;___&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No column found starting with </span><span class="si">{</span><span class="n">indicator_column</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">combine_indicator_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">indicator_column</span><span class="p">)</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">df_row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+        <span class="n">row</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">column_name</span> <span class="ow">in</span> <span class="n">df_columns</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_row</span><span class="p">[</span><span class="n">column_name</span><span class="p">])</span>
+            <span class="c1"># XXX: hack, None/nan means missing values in comments.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="ow">or</span> <span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s1">&#39;nan&#39;</span><span class="p">)):</span>
+                <span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">column_name</span> <span class="ow">in</span> <span class="n">fixed_columns</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fixed_columns</span><span class="p">[</span><span class="n">column_name</span><span class="p">])</span>
+
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">df_columns</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">fixed_columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span></div>
+
+
+<span class="k">def</span> <span class="nf">rename_subjects</span><span class="p">(</span><span class="n">table_subject</span><span class="p">,</span> <span class="n">redcap_df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rename subject in table_subject using data in redcap_df.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table_subject : instance of Table</span>
+<span class="sd">        The subject table.</span>
+<span class="sd">    redcap_df : instance of dataframe</span>
+<span class="sd">        The dataframe of subject from redcap.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Let&#39;s say the table in database has the following</span>
+
+<span class="sd">    subject_id    first_name      last_name     date_of_birth    old_subject_id</span>
+
+<span class="sd">    1001          anoopum          gupta        28/11/1985       NULL</span>
+<span class="sd">    1002          adonay           nunes        13/09/1987       NULL</span>
+
+<span class="sd">    Now, redcap has been modified in the following way</span>
+
+<span class="sd">    901           anoopum          gupta        28/11/1985       1001</span>
+<span class="sd">    1002          adonay           nunes        13/09/1987       NULL</span>
+<span class="sd">    1003          sheraz           khan         15/05/1980       NULL</span>
+
+<span class="sd">    Our protocol is the following:</span>
+
+<span class="sd">    1. Fetch database table into Python dataframe</span>
+<span class="sd">    2. Inner join Redcap dataframe to database dataframe based on match in</span>
+<span class="sd">       first_name, last_name and date_of_birth</span>
+<span class="sd">    3. Select rows from the inner join where</span>
+<span class="sd">       Redcap.old_subject_id != database.old_subject_id AND</span>
+<span class="sd">       Redcap.subject_id = database.old_subject_id</span>
+<span class="sd">    4. Insert these rows into database, updating the subject_id</span>
+<span class="sd">       and old_subject_id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">match_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;first_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name_birth&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;date_of_birth_subject&#39;</span><span class="p">]</span>
+    <span class="n">database_df</span> <span class="o">=</span> <span class="n">table_subject</span><span class="o">.</span><span class="n">query</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="c1"># caste columns to match into same datatype to enable comparison</span>
+    <span class="n">database_df</span> <span class="o">=</span> <span class="n">database_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
+        <span class="n">col</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">match_columns</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;old_subject_id&#39;</span><span class="p">]})</span>
+    <span class="n">redcap_df</span> <span class="o">=</span> <span class="n">redcap_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
+        <span class="n">col</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">match_columns</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;old_subject_id&#39;</span><span class="p">]})</span>
+
+    <span class="n">joined_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">redcap_df</span><span class="p">,</span> <span class="n">database_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span>
+                         <span class="n">left_on</span><span class="o">=</span><span class="n">match_columns</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="n">match_columns</span><span class="p">,</span>
+                         <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;_y&#39;</span><span class="p">))</span>
+    <span class="n">joined_df</span> <span class="o">=</span> <span class="n">joined_df</span><span class="p">[</span><span class="n">joined_df</span><span class="p">[</span><span class="s1">&#39;old_subject_id&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">joined_df</span><span class="p">[</span><span class="s1">&#39;old_subject_id_y&#39;</span><span class="p">]]</span>
+    <span class="n">joined_df</span> <span class="o">=</span> <span class="n">joined_df</span><span class="p">[</span><span class="n">joined_df</span><span class="p">[</span><span class="s1">&#39;old_subject_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">joined_df</span><span class="p">[</span><span class="s1">&#39;subject_id_y&#39;</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">joined_df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">rows_subject</span><span class="p">,</span> <span class="n">cols_subject</span> <span class="o">=</span> <span class="n">dataframe_to_tuple</span><span class="p">(</span>
+            <span class="n">joined_df</span><span class="p">,</span>
+            <span class="n">df_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;old_subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;redcap_event_name&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;first_name_birth&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name_birth&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;date_of_birth_subject&#39;</span><span class="p">])</span>
+        <span class="n">table_subject</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span><span class="n">rows_subject</span><span class="p">,</span> <span class="n">cols_subject</span><span class="p">,</span>
+                                  <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">,</span>
+                                  <span class="n">conflict_cols</span><span class="o">=</span><span class="n">match_columns</span><span class="p">,</span>
+                                  <span class="n">update_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;old_subject_id&#39;</span><span class="p">])</span>
 
 
 <span class="k">def</span> <span class="nf">compare_dataframes</span><span class="p">(</span><span class="n">src_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>
@@ -241,7 +540,7 @@
     <span class="n">src_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">src_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
     <span class="n">target_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">target_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
     <span class="n">common_columns</span> <span class="o">=</span> <span class="n">src_columns</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">target_columns</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;extra columns: {src_columns - common_columns}&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;extra columns: </span><span class="si">{</span><span class="n">src_columns</span> <span class="o">-</span> <span class="n">common_columns</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="c1"># differences in rows ignoring extra columns</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Changed rows&#39;</span><span class="p">)</span>
@@ -301,7 +600,7 @@
                     <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
                     <span class="n">choice</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Skipping </span><span class="si">{column}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Skipping </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">infer_dtype</span><span class="p">(</span><span class="n">survey_df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="n">dtype</span><span class="p">]</span>
@@ -334,7 +633,7 @@
     </p>
     <p>
         &copy; Copyright 2021, Neurobooth Developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

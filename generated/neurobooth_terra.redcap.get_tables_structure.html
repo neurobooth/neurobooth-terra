@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>neurobooth_terra.create_table &#8212; neurobooth-terra  documentation</title>
+    <title>neurobooth_terra.redcap.get_tables_structure &#8212; neurobooth-terra  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
@@ -72,7 +72,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">neurobooth_terra.create_table</a></li>
+<li><a class="reference internal" href="#">neurobooth_terra.redcap.get_tables_structure</a></li>
 </ul>
 </ul>
 </li>
@@ -84,7 +84,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/neurobooth_terra.create_table.rst.txt"
+  <a href="../_sources/generated/neurobooth_terra.redcap.get_tables_structure.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -108,32 +108,18 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <section id="neurobooth-terra-create-table">
-<h1>neurobooth_terra.create_table<a class="headerlink" href="#neurobooth-terra-create-table" title="Permalink to this headline">¶</a></h1>
+  <section id="neurobooth-terra-redcap-get-tables-structure">
+<h1>neurobooth_terra.redcap.get_tables_structure<a class="headerlink" href="#neurobooth-terra-redcap-get-tables-structure" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="neurobooth_terra.create_table">
-<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.</span></span><span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">foreign_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/postgres.html#create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.create_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a table.</p>
+<dt class="sig sig-object py" id="neurobooth_terra.redcap.get_tables_structure">
+<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.redcap.</span></span><span class="sig-name descname"><span class="pre">get_tables_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_surveys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/redcap.html#get_tables_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.redcap.get_tables_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the column names and datatypes for the tables.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>table_id</strong><span class="classifier">str</span></dt><dd><p>The table ID</p>
-</dd>
-<dt><strong>conn</strong><span class="classifier">instance of psycopg2.Postgres</span></dt><dd><p>The connection object</p>
-</dd>
-<dt><strong>column_names</strong><span class="classifier">list of str</span></dt><dd><p>The columns to create</p>
-</dd>
-<dt><strong>dtypes</strong><span class="classifier">list of str</span></dt><dd><p>The datatypes</p>
-</dd>
-<dt><strong>primary_key</strong><span class="classifier">str | None | list</span></dt><dd><p>The primary key. If None, the first column name is used
-as primary key. If list, then primary key is a combination of the
-columns in the list.</p>
-</dd>
-<dt><strong>foreign_key</strong><span class="classifier">dict</span></dt><dd><p>Foreign key referring to another table. The key is the
-name of the foreign key and value is the table it refers to.</p>
-</dd>
-<dt><strong>index</strong><span class="classifier">dict of list | None</span></dt><dd><p>The key is the name of the index and values are the column names
-on which to create the unique index.</p>
+<dt><strong>table_infos</strong><span class="classifier">dict</span></dt><dd><p>Dictionary with keys as table names and each table having the following
+entries: columns, dtypes, indicator_columns, and python_columns,
+python_dtypes (for casting columns to the right Python data type).</p>
 </dd>
 </dl>
 </dd>

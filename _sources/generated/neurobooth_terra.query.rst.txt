@@ -1,4 +1,4 @@
-neurobooth\_terra.query
+﻿neurobooth\_terra.query
 =======================
 
 .. currentmodule:: neurobooth_terra

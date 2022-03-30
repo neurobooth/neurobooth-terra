@@ -7,10 +7,10 @@
     <title>neurobooth_terra.postgres &#8212; neurobooth-terra  documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
@@ -120,9 +120,11 @@
     <span class="k">if</span> <span class="n">fetch</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
 
+
 <span class="k">def</span> <span class="nf">_execute_batch</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">tuples</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
     <span class="n">extras</span><span class="o">.</span><span class="n">execute_batch</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">tuples</span><span class="p">,</span> <span class="n">page_size</span><span class="p">)</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
 
 <span class="k">def</span> <span class="nf">_get_primary_keys</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">):</span>
     <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
@@ -136,6 +138,7 @@
     <span class="n">column_names</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">primary_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">primary_keys</span>
+
 
 <span class="c1">#### Neurobooth related comands #####</span>
 
@@ -169,6 +172,7 @@
     <span class="n">insert_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;INSERT INTO </span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">cols</span><span class="si">}</span><span class="s1">) VALUES(</span><span class="si">{</span><span class="n">vals</span><span class="si">}</span><span class="s1">)&#39;</span>
     <span class="n">_execute_batch</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">insert_cmd</span><span class="p">,</span> <span class="n">tuples</span><span class="p">)</span>
 
+
 <div class="viewcode-block" id="query"><a class="viewcode-back" href="../../generated/neurobooth_terra.query.html#neurobooth_terra.query">[docs]</a><span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">column_names</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Transform a SELECT query into a pandas dataframe</span>
 
@@ -194,21 +198,29 @@
     <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">df</span></div>
 
+
 <div class="viewcode-block" id="drop_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table">[docs]</a><span class="k">def</span> <span class="nf">drop_table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Drop table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table_id : str</span>
+<span class="sd">        The table ID</span>
+<span class="sd">    conn : instance of psycopg2.Postgres</span>
+<span class="sd">        The connection object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DROP TABLE IF EXISTS &quot;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; CASCADE;&#39;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+    <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../generated/neurobooth_terra.create_table.html#neurobooth_terra.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span>
-                 <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreign_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a table.</span>
 
-<span class="sd">    Paramters</span>
-<span class="sd">    ---------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    table_id : str</span>
 <span class="sd">        The table ID</span>
 <span class="sd">    conn : instance of psycopg2.Postgres</span>
@@ -217,24 +229,30 @@
 <span class="sd">        The columns to create</span>
 <span class="sd">    dtypes : list of str</span>
 <span class="sd">        The datatypes</span>
-<span class="sd">    primary_key : str | None</span>
+<span class="sd">    primary_key : str | None | list</span>
 <span class="sd">        The primary key. If None, the first column name is used</span>
-<span class="sd">        as primary key.</span>
+<span class="sd">        as primary key. If list, then primary key is a combination of the</span>
+<span class="sd">        columns in the list.</span>
 <span class="sd">    foreign_key : dict</span>
 <span class="sd">        Foreign key referring to another table. The key is the</span>
 <span class="sd">        name of the foreign key and value is the table it refers to.</span>
+<span class="sd">    index : dict of list | None</span>
+<span class="sd">        The key is the name of the index and values are the column names</span>
+<span class="sd">        on which to create the unique index.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># XXX: add check for columns if table already exists</span>
-    <span class="n">create_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;CREATE TABLE IF NOT EXISTS &quot;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; (&#39;</span>
+    <span class="n">create_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;CREATE TABLE &quot;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; (&#39;</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtypes</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Column names and data types should have equal lengths&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">primary_key</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">primary_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">primary_key</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">):</span>
         <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s1">&quot; </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s1">,&#39;</span>
-    <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;PRIMARY KEY(</span><span class="si">{</span><span class="n">primary_key</span><span class="si">}</span><span class="s1">),&#39;</span>
+    <span class="n">create_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;PRIMARY KEY(</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">primary_key</span><span class="p">)</span><span class="si">}</span><span class="s1">),&#39;</span>
 
     <span class="k">if</span> <span class="n">foreign_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">foreign_key</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -249,6 +267,16 @@
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">index_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">index_cols</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">drop_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DROP INDEX IF EXISTS </span><span class="si">{</span><span class="n">index_name</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">drop_cmd</span><span class="p">)</span>
+        <span class="n">index_cmd</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CREATE UNIQUE INDEX </span><span class="si">{</span><span class="n">index_name</span><span class="si">}</span><span class="s1"> ON &#39;</span>
+                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">index_cols</span><span class="si">}</span><span class="s1">);&#39;</span><span class="p">)</span>
+        <span class="n">execute</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">index_cmd</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="n">cursor</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">)</span></div>
 
 
@@ -299,9 +327,9 @@
 
         <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">primary_key</span> <span class="o">=</span> <span class="n">_get_primary_keys</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">table_id</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_key</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">primary_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">primary_key</span><span class="p">]</span></div>
+            <span class="n">primary_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">primary_key</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_key</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">repr_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Table &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
@@ -382,10 +410,9 @@
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Table.insert_rows"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Table.insert_rows"><a class="viewcode-back" href="../../generated/neurobooth_terra.Table.html#neurobooth_terra.Table.insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span>
+                    <span class="n">conflict_cols</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">update_cols</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Manual insertion into tables</span>
-
-<span class="sd">        If conflicts, does nothing.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -396,23 +423,60 @@
 <span class="sd">            The columns to insert into.</span>
 <span class="sd">        on_conflict : &#39;nothing&#39; | &#39;update&#39; | &#39;error&#39;</span>
 <span class="sd">            What to do when a conflict is encountered</span>
+<span class="sd">        conflict_cols : &#39;auto&#39; | str | list</span>
+<span class="sd">            If &#39;auto&#39;, it uses primary key when on_conflict is &#39;update&#39;.</span>
+<span class="sd">            If list, uses the list of columns to create a unique index to infer</span>
+<span class="sd">            conflicts.</span>
+<span class="sd">        update_cols : &#39;all&#39; | str | list</span>
+<span class="sd">            If &#39;all&#39;, updates all the columns with the new values.</span>
+<span class="sd">            If list, updates only those columns.</span>
+<span class="sd">        where : str | None</span>
+<span class="sd">            Condition to filter rows by. If None,</span>
+<span class="sd">            keep all rows where primary key is not NULL.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        pk_val : str | None</span>
 <span class="sd">            The primary keys of the row inserted into.</span>
 <span class="sd">            If multiple rows are inserted, returns None.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        When conflict_cols is a list, a unique index must be set for the target</span>
+<span class="sd">        columns. The following SQL command is handy:</span>
+
+<span class="sd">            create unique index subject_identifier on</span>
+<span class="sd">            subject (first_name_birth, last_name_birth, date_of_birth);</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;vals must be a list of tuple. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">vals_clean</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;entries in vals must be tuples. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tuple length must match number of columns (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">extras</span><span class="o">.</span><span class="n">Json</span><span class="p">(</span><span class="n">this_val</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_val</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                         <span class="k">else</span> <span class="n">this_val</span> <span class="k">for</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
+            <span class="n">vals_clean</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">vals_clean</span>
         <span class="k">if</span> <span class="n">on_conflict</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;nothing&#39;</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;on_conflict must be one of (nothing, update, error)&#39;</span><span class="p">,</span>
                              <span class="sa">f</span><span class="s1">&#39;Got </span><span class="si">{</span><span class="n">on_conflict</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">conflict_cols</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+            <span class="n">conflict_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conflict_cols</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">conflict_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">conflict_cols</span><span class="p">]</span>
+        <span class="n">conflict_cols</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conflict_cols</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">update_cols</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">update_cols</span> <span class="o">=</span> <span class="n">cols</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">update_cols</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">update_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">update_cols</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">where</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> is NOT NULL&#39;</span>
 
         <span class="n">str_format</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">])</span>
         <span class="n">col_names</span> <span class="o">=</span> <span class="n">cols</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -421,12 +485,13 @@
         <span class="k">if</span> <span class="n">on_conflict</span> <span class="o">==</span> <span class="s1">&#39;nothing&#39;</span><span class="p">:</span>
             <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;ON CONFLICT DO NOTHING &#39;</span>
         <span class="k">elif</span> <span class="n">on_conflict</span> <span class="o">==</span> <span class="s1">&#39;update&#39;</span><span class="p">:</span>
-            <span class="n">pk</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span><span class="p">)</span>
-            <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;ON CONFLICT (</span><span class="si">{</span><span class="n">pk</span><span class="si">}</span><span class="s1">) DO UPDATE SET &#39;</span>
+            <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;ON CONFLICT (</span><span class="si">{</span><span class="n">conflict_cols</span><span class="si">}</span><span class="s1">)&#39;</span>
+            <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="s1">&#39; DO UPDATE SET &#39;</span>
             <span class="n">update_cmd</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">col_names</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">update_cols</span><span class="p">:</span>
                 <span class="n">update_cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s1">&quot; = excluded.&quot;</span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
             <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">update_cmd</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
+            <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;WHERE </span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s1"> &#39;</span>
         <span class="n">insert_cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;RETURNING </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="n">_execute_batch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">insert_cmd</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
@@ -525,7 +590,7 @@
 <span class="sd">    table_ids : list of str</span>
 <span class="sd">        The table IDs</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-        
+
     <span class="n">query_tables_cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    SELECT *</span>
 <span class="s2">    FROM pg_catalog.pg_tables</span>

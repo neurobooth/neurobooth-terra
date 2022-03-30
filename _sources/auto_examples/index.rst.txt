@@ -27,69 +27,6 @@
    :hidden:
 
    /auto_examples/plot_postgres
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to create postgres table with neurobooth-terra.">
-
-.. only:: html
-
- .. figure:: /auto_examples/images/thumb/sphx_glr_plot_er_diagram_thumb.png
-     :alt: Create Entity-Relation diagram from Postgres table
-
-     :ref:`sphx_glr_auto_examples_plot_er_diagram.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/plot_er_diagram
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to create postgres table with neurobooth-terra.">
-
-.. only:: html
-
- .. figure:: /auto_examples/images/thumb/sphx_glr_plot_postgres_create_thumb.png
-     :alt: Export from dbdesigner
-
-     :ref:`sphx_glr_auto_examples_plot_postgres_create.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/plot_postgres_create
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to create table from Redcap.">
-
-.. only:: html
-
- .. figure:: /auto_examples/images/thumb/sphx_glr_redcap_to_postgres_thumb.png
-     :alt: Ingest table from Redcap into Postgres
-
-     :ref:`sphx_glr_auto_examples_redcap_to_postgres.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/redcap_to_postgres
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>

@@ -8,10 +8,10 @@
     <title>API Documentation &#8212; neurobooth-terra  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
-    <link rel="stylesheet" type="text/css" href="_static/gallery.css" />
-    <link rel="stylesheet" type="text/css" href="_static/gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="_static/gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -130,13 +130,13 @@
 <td><p>Create a table.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.drop_table.html#neurobooth_terra.drop_table" title="neurobooth_terra.drop_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_table</span></code></a>(table_id, conn)</p></td>
-<td><p></p></td>
+<td><p>Drop table.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.list_tables.html#neurobooth_terra.list_tables" title="neurobooth_terra.list_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_tables</span></code></a>(conn)</p></td>
 <td><p>List the table_ids in the database.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.query.html#neurobooth_terra.query" title="neurobooth_terra.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(conn, sql_query, column_names)</p></td>
-<td><p>Tranform a SELECT query into a pandas dataframe</p></td>
+<td><p>Transform a SELECT query into a pandas dataframe</p></td>
 </tr>
 </tbody>
 </table>
@@ -152,8 +152,23 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.fetch_survey.html#neurobooth_terra.redcap.fetch_survey" title="neurobooth_terra.redcap.fetch_survey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch_survey</span></code></a>(project, survey_name, survey_id)</p></td>
 <td><p>Get schema of table from redcap</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.iter_interval.html#neurobooth_terra.redcap.iter_interval" title="neurobooth_terra.redcap.iter_interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_interval</span></code></a>([wait, exit_after])</p></td>
-<td><p>Run redcap service in a loop.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.dataframe_to_tuple.html#neurobooth_terra.redcap.dataframe_to_tuple" title="neurobooth_terra.redcap.dataframe_to_tuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataframe_to_tuple</span></code></a>(df, df_columns[, …])</p></td>
+<td><p>Dataframe to tuple.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.map_dtypes.html#neurobooth_terra.redcap.map_dtypes" title="neurobooth_terra.redcap.map_dtypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_dtypes</span></code></a>(s)</p></td>
+<td><p>Map data types from Redcap to database and Python.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.extract_field_annotation.html#neurobooth_terra.redcap.extract_field_annotation" title="neurobooth_terra.redcap.extract_field_annotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_field_annotation</span></code></a>(s)</p></td>
+<td><p>Extract the field annotation and create new columns for them</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.get_response_array.html#neurobooth_terra.redcap.get_response_array" title="neurobooth_terra.redcap.get_response_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_response_array</span></code></a>(s)</p></td>
+<td><p>Get response array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.get_tables_structure.html#neurobooth_terra.redcap.get_tables_structure" title="neurobooth_terra.redcap.get_tables_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tables_structure</span></code></a>(metadata[, include_surveys])</p></td>
+<td><p>Get the column names and datatypes for the tables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.subselect_table_structure.html#neurobooth_terra.redcap.subselect_table_structure" title="neurobooth_terra.redcap.subselect_table_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subselect_table_structure</span></code></a>(table_info, df_cols)</p></td>
+<td><p>Subselect columns that are in the report.</p></td>
 </tr>
 </tbody>
 </table>

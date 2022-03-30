@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>neurobooth_terra.create_table &#8212; neurobooth-terra  documentation</title>
+    <title>neurobooth_terra.redcap.dataframe_to_tuple &#8212; neurobooth-terra  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
@@ -72,7 +72,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">neurobooth_terra.create_table</a></li>
+<li><a class="reference internal" href="#">neurobooth_terra.redcap.dataframe_to_tuple</a></li>
 </ul>
 </ul>
 </li>
@@ -84,7 +84,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/neurobooth_terra.create_table.rst.txt"
+  <a href="../_sources/generated/neurobooth_terra.redcap.dataframe_to_tuple.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -108,32 +108,32 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <section id="neurobooth-terra-create-table">
-<h1>neurobooth_terra.create_table<a class="headerlink" href="#neurobooth-terra-create-table" title="Permalink to this headline">¶</a></h1>
+  <section id="neurobooth-terra-redcap-dataframe-to-tuple">
+<h1>neurobooth_terra.redcap.dataframe_to_tuple<a class="headerlink" href="#neurobooth-terra-redcap-dataframe-to-tuple" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="neurobooth_terra.create_table">
-<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.</span></span><span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">foreign_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/postgres.html#create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.create_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a table.</p>
+<dt class="sig sig-object py" id="neurobooth_terra.redcap.dataframe_to_tuple">
+<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.redcap.</span></span><span class="sig-name descname"><span class="pre">dataframe_to_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indicator_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/redcap.html#dataframe_to_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.redcap.dataframe_to_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dataframe to tuple.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>table_id</strong><span class="classifier">str</span></dt><dd><p>The table ID</p>
+<dt><strong>df</strong><span class="classifier">instance of pd.Dataframe</span></dt><dd><p>The dataframe whose index is record_id</p>
 </dd>
-<dt><strong>conn</strong><span class="classifier">instance of psycopg2.Postgres</span></dt><dd><p>The connection object</p>
+<dt><strong>df_columns</strong><span class="classifier">list of str</span></dt><dd><p>The column names of the dataframe to process. The column_name
+‘record_id’ is special and inserts the record_id index.</p>
 </dd>
-<dt><strong>column_names</strong><span class="classifier">list of str</span></dt><dd><p>The columns to create</p>
+<dt><strong>fixed_columns</strong><span class="classifier">dict | None</span></dt><dd><p>The columns that have fixed values. E.g., dict(study_id=study1) makes
+all the rows of column study_id to have value study1</p>
 </dd>
-<dt><strong>dtypes</strong><span class="classifier">list of str</span></dt><dd><p>The datatypes</p>
+<dt><strong>indicator_columns</strong><span class="classifier">list of str | None</span></dt><dd><p>The indicator columns.</p>
 </dd>
-<dt><strong>primary_key</strong><span class="classifier">str | None | list</span></dt><dd><p>The primary key. If None, the first column name is used
-as primary key. If list, then primary key is a combination of the
-columns in the list.</p>
+</dl>
 </dd>
-<dt><strong>foreign_key</strong><span class="classifier">dict</span></dt><dd><p>Foreign key referring to another table. The key is the
-name of the foreign key and value is the table it refers to.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>rows</strong><span class="classifier">list (n_rows,) of tuples</span></dt><dd><p>A list with each row having the columns of dataframe.</p>
 </dd>
-<dt><strong>index</strong><span class="classifier">dict of list | None</span></dt><dd><p>The key is the name of the index and values are the column names
-on which to create the unique index.</p>
+<dt><strong>cols</strong><span class="classifier">list of str</span></dt><dd><p>Ordered list of columns in which the tuple entries are added</p>
 </dd>
 </dl>
 </dd>

@@ -1,0 +1,6 @@
+﻿neurobooth\_terra.redcap.extract\_field\_annotation
+===================================================
+
+.. currentmodule:: neurobooth_terra.redcap
+
+.. autofunction:: extract_field_annotation

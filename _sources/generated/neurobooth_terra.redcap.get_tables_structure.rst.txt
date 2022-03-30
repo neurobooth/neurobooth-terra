@@ -1,0 +1,6 @@
+﻿neurobooth\_terra.redcap.get\_tables\_structure
+===============================================
+
+.. currentmodule:: neurobooth_terra.redcap
+
+.. autofunction:: get_tables_structure

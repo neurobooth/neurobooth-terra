@@ -1,0 +1,6 @@
+﻿neurobooth\_terra.redcap.dataframe\_to\_tuple
+=============================================
+
+.. currentmodule:: neurobooth_terra.redcap
+
+.. autofunction:: dataframe_to_tuple

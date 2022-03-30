@@ -8,10 +8,10 @@
     <title>neurobooth_terra.redcap.fetch_survey &#8212; neurobooth-terra  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -112,7 +112,7 @@
 <h1>neurobooth_terra.redcap.fetch_survey<a class="headerlink" href="#neurobooth-terra-redcap-fetch-survey" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="neurobooth_terra.redcap.fetch_survey">
-<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.redcap.</span></span><span class="sig-name descname"><span class="pre">fetch_survey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">survey_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">survey_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/redcap.html#fetch_survey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.redcap.fetch_survey" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.redcap.</span></span><span class="sig-name descname"><span class="pre">fetch_survey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">survey_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">survey_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cast_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/redcap.html#fetch_survey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.redcap.fetch_survey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get schema of table from redcap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -125,6 +125,9 @@
 Redap.</p>
 </dd>
 <dt><strong>index</strong><span class="classifier">str</span></dt><dd><p>The column to set as index.</p>
+</dd>
+<dt><strong>cast_dtype</strong><span class="classifier">bool</span></dt><dd><p>If True, cast to datatype. This is done by writing the dataframe to
+a temporary csv file and reading it back.</p>
 </dd>
 </dl>
 </dd>

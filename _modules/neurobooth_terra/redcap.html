@@ -269,7 +269,13 @@
 
 
 <div class="viewcode-block" id="get_response_array"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.get_response_array.html#neurobooth_terra.redcap.get_response_array">[docs]</a><span class="k">def</span> <span class="nf">get_response_array</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get response array.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Add response array dictionary mapping answer choices to answer text.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    s : pandas series object</span>
+<span class="sd">        The pandas series object containing new entries for the response array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">choices</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;select_choices_or_calculations&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;field_type&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;radio&#39;</span><span class="p">,</span> <span class="s1">&#39;checkbox&#39;</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">s</span>
@@ -284,7 +290,7 @@
 
 
 <div class="viewcode-block" id="map_dtypes"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.map_dtypes.html#neurobooth_terra.redcap.map_dtypes">[docs]</a><span class="k">def</span> <span class="nf">map_dtypes</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Map data types from Redcap to database and Python.</span>
+    <span class="sd">&quot;&quot;&quot;Create new columns mapping Redcap data types to Postgres and Python.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -405,7 +411,7 @@
 
 <div class="viewcode-block" id="dataframe_to_tuple"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.dataframe_to_tuple.html#neurobooth_terra.redcap.dataframe_to_tuple">[docs]</a><span class="k">def</span> <span class="nf">dataframe_to_tuple</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">df_columns</span><span class="p">,</span> <span class="n">fixed_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">indicator_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Dataframe to tuple.</span>
+    <span class="sd">&quot;&quot;&quot;Extract pandas dataframe into tuples for ingestion in Postgres.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -463,8 +469,8 @@
     <span class="k">return</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span></div>
 
 
-<span class="k">def</span> <span class="nf">rename_subjects</span><span class="p">(</span><span class="n">table_subject</span><span class="p">,</span> <span class="n">redcap_df</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Rename subject in table_subject using data in redcap_df.</span>
+<div class="viewcode-block" id="rename_subject_ids"><a class="viewcode-back" href="../../generated/neurobooth_terra.redcap.rename_subject_ids.html#neurobooth_terra.redcap.rename_subject_ids">[docs]</a><span class="k">def</span> <span class="nf">rename_subject_ids</span><span class="p">(</span><span class="n">table_subject</span><span class="p">,</span> <span class="n">redcap_df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rename subject_id in table_subject using data in redcap_df.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -523,7 +529,7 @@
         <span class="n">table_subject</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span><span class="n">rows_subject</span><span class="p">,</span> <span class="n">cols_subject</span><span class="p">,</span>
                                   <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">,</span>
                                   <span class="n">conflict_cols</span><span class="o">=</span><span class="n">match_columns</span><span class="p">,</span>
-                                  <span class="n">update_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;old_subject_id&#39;</span><span class="p">])</span>
+                                  <span class="n">update_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">,</span> <span class="s1">&#39;old_subject_id&#39;</span><span class="p">])</span></div>
 
 
 <span class="k">def</span> <span class="nf">compare_dataframes</span><span class="p">(</span><span class="n">src_df</span><span class="p">,</span> <span class="n">target_df</span><span class="p">):</span>

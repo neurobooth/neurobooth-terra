@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>neurobooth_terra.redcap.get_response_array &#8212; neurobooth-terra  documentation</title>
+    <title>neurobooth_terra.redcap.rename_subject_ids &#8212; neurobooth-terra  documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
@@ -72,7 +72,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">neurobooth_terra.redcap.get_response_array</a></li>
+<li><a class="reference internal" href="#">neurobooth_terra.redcap.rename_subject_ids</a></li>
 </ul>
 </ul>
 </li>
@@ -84,7 +84,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/neurobooth_terra.redcap.get_response_array.rst.txt"
+  <a href="../_sources/generated/neurobooth_terra.redcap.rename_subject_ids.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -108,20 +108,42 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <section id="neurobooth-terra-redcap-get-response-array">
-<h1>neurobooth_terra.redcap.get_response_array<a class="headerlink" href="#neurobooth-terra-redcap-get-response-array" title="Permalink to this headline">¶</a></h1>
+  <section id="neurobooth-terra-redcap-rename-subject-ids">
+<h1>neurobooth_terra.redcap.rename_subject_ids<a class="headerlink" href="#neurobooth-terra-redcap-rename-subject-ids" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="neurobooth_terra.redcap.get_response_array">
-<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.redcap.</span></span><span class="sig-name descname"><span class="pre">get_response_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/redcap.html#get_response_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.redcap.get_response_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add response array dictionary mapping answer choices to answer text.</p>
+<dt class="sig sig-object py" id="neurobooth_terra.redcap.rename_subject_ids">
+<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.redcap.</span></span><span class="sig-name descname"><span class="pre">rename_subject_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redcap_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/redcap.html#rename_subject_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.redcap.rename_subject_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename subject_id in table_subject using data in redcap_df.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>s</strong><span class="classifier">pandas series object</span></dt><dd><p>The pandas series object containing new entries for the response array</p>
+<dt><strong>table_subject</strong><span class="classifier">instance of Table</span></dt><dd><p>The subject table.</p>
+</dd>
+<dt><strong>redcap_df</strong><span class="classifier">instance of dataframe</span></dt><dd><p>The dataframe of subject from redcap.</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Let’s say the table in database has the following</p>
+<p>subject_id    first_name      last_name     date_of_birth    old_subject_id</p>
+<p>1001          anoopum          gupta        28/11/1985       NULL
+1002          adonay           nunes        13/09/1987       NULL</p>
+<p>Now, redcap has been modified in the following way</p>
+<p>901           anoopum          gupta        28/11/1985       1001
+1002          adonay           nunes        13/09/1987       NULL
+1003          sheraz           khan         15/05/1980       NULL</p>
+<p>Our protocol is the following:</p>
+<ol class="arabic simple">
+<li><p>Fetch database table into Python dataframe</p></li>
+<li><p>Inner join Redcap dataframe to database dataframe based on match in
+first_name, last_name and date_of_birth</p></li>
+<li><p>Select rows from the inner join where
+Redcap.old_subject_id != database.old_subject_id AND
+Redcap.subject_id = database.old_subject_id</p></li>
+<li><p>Insert these rows into database, updating the subject_id
+and old_subject_id</p></li>
+</ol>
 </dd></dl>
 
 </section>

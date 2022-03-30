@@ -22,6 +22,7 @@ Tables (:py:mod:`neurobooth_terra`):
 
 Redcap (:py:mod:`neurobooth_terra.redcap`)
 ------------------------------------------
+These are general redcap functions.
 
 .. currentmodule:: neurobooth_terra.redcap
 
@@ -30,12 +31,21 @@ Redcap (:py:mod:`neurobooth_terra.redcap`)
 
    fetch_survey
    dataframe_to_tuple
-   map_dtypes
+   rename_subject_ids
+
+Data dictionary
+===============
+These are functions related to processing data dictionary
+
+.. currentmodule:: neurobooth_terra.redcap
+
+.. autosummary::
+   :toctree: generated/
+
    extract_field_annotation
+   map_dtypes
    get_response_array
    get_tables_structure
    subselect_table_structure
 
 
-Mock
-----

@@ -74,8 +74,10 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">API Documentation</a><ul>
 <li><a class="reference internal" href="#tables-neurobooth-terra">Tables (<code class="xref py py-mod docutils literal notranslate"><span class="pre">neurobooth_terra</span></code>):</a></li>
-<li><a class="reference internal" href="#redcap-neurobooth-terra-redcap">Redcap (<code class="xref py py-mod docutils literal notranslate"><span class="pre">neurobooth_terra.redcap</span></code>)</a></li>
-<li><a class="reference internal" href="#mock">Mock</a></li>
+<li><a class="reference internal" href="#redcap-neurobooth-terra-redcap">Redcap (<code class="xref py py-mod docutils literal notranslate"><span class="pre">neurobooth_terra.redcap</span></code>)</a><ul>
+<li><a class="reference internal" href="#data-dictionary">Data dictionary</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -143,6 +145,7 @@
 </section>
 <section id="redcap-neurobooth-terra-redcap">
 <h2>Redcap (<code class="xref py py-mod docutils literal notranslate"><span class="pre">neurobooth_terra.redcap</span></code>)<a class="headerlink" href="#redcap-neurobooth-terra-redcap" title="Permalink to this headline">¶</a></h2>
+<p>These are general redcap functions.</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -153,13 +156,27 @@
 <td><p>Get schema of table from redcap</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.dataframe_to_tuple.html#neurobooth_terra.redcap.dataframe_to_tuple" title="neurobooth_terra.redcap.dataframe_to_tuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataframe_to_tuple</span></code></a>(df, df_columns[, …])</p></td>
-<td><p>Dataframe to tuple.</p></td>
+<td><p>Extract pandas dataframe into tuples for ingestion in Postgres.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.map_dtypes.html#neurobooth_terra.redcap.map_dtypes" title="neurobooth_terra.redcap.map_dtypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_dtypes</span></code></a>(s)</p></td>
-<td><p>Map data types from Redcap to database and Python.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.rename_subject_ids.html#neurobooth_terra.redcap.rename_subject_ids" title="neurobooth_terra.redcap.rename_subject_ids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename_subject_ids</span></code></a>(table_subject, redcap_df)</p></td>
+<td><p>Rename subject_id in table_subject using data in redcap_df.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.extract_field_annotation.html#neurobooth_terra.redcap.extract_field_annotation" title="neurobooth_terra.redcap.extract_field_annotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_field_annotation</span></code></a>(s)</p></td>
+</tbody>
+</table>
+<section id="data-dictionary">
+<h3>Data dictionary<a class="headerlink" href="#data-dictionary" title="Permalink to this headline">¶</a></h3>
+<p>These are functions related to processing data dictionary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.extract_field_annotation.html#neurobooth_terra.redcap.extract_field_annotation" title="neurobooth_terra.redcap.extract_field_annotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_field_annotation</span></code></a>(s)</p></td>
 <td><p>Extract the field annotation and create new columns for them</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.map_dtypes.html#neurobooth_terra.redcap.map_dtypes" title="neurobooth_terra.redcap.map_dtypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_dtypes</span></code></a>(s)</p></td>
+<td><p>Map data types from Redcap to database and Python.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.get_response_array.html#neurobooth_terra.redcap.get_response_array" title="neurobooth_terra.redcap.get_response_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_response_array</span></code></a>(s)</p></td>
 <td><p>Get response array.</p></td>
@@ -173,8 +190,6 @@
 </tbody>
 </table>
 </section>
-<section id="mock">
-<h2>Mock<a class="headerlink" href="#mock" title="Permalink to this headline">¶</a></h2>
 </section>
 </section>
 

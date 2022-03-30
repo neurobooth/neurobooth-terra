@@ -1,0 +1,6 @@
+﻿neurobooth\_terra.redcap.rename\_subject\_ids
+=============================================
+
+.. currentmodule:: neurobooth_terra.redcap
+
+.. autofunction:: rename_subject_ids

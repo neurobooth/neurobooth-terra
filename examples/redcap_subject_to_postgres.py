@@ -19,7 +19,7 @@ survey_id = 99915
 # cascading of filenames
 
 redcap_df = fetch_survey(project, survey_name='subject',
-                         survey_id=survey_id)
+                         survey_id=survey_id, cast_dtype=False)
 redcap_df = redcap_df.rename(columns={'record_id': 'subject_id',
                                       'old_record_id': 'old_subject_id',
                                       # XXX: what is the new convention?

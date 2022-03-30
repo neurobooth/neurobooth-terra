@@ -47,7 +47,7 @@ def iter_interval(wait=60, exit_after=np.inf):
             break
 
 
-def fetch_survey(project, survey_name, survey_id, index=None):
+def fetch_survey(project, survey_name, survey_id, index=None, cast_dtype=True):
     """Get schema of table from redcap
 
     Parameters
@@ -61,6 +61,9 @@ def fetch_survey(project, survey_name, survey_id, index=None):
         Redap.
     index : str
         The column to set as index.
+    cast_dtype : bool
+        If True, cast to datatype. This is done by writing the dataframe to
+        a temporary csv file and reading it back.
 
     Returns
     -------
@@ -74,11 +77,11 @@ def fetch_survey(project, survey_name, survey_id, index=None):
 
     # format = 'df' didn't work
     df = pd.DataFrame(data)
-    with tempfile.TemporaryDirectory() as temp_dir:
-        csv_fname = op.join(temp_dir, survey_name + '.csv')
-        df.to_csv(csv_fname, index=False)
-        # XXX: read back again so pandas casts data to right type
-        df = pd.read_csv(csv_fname)
+    if cast_dtype:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            csv_fname = op.join(temp_dir, survey_name + '.csv')
+            df.to_csv(csv_fname, index=False)
+            df = pd.read_csv(csv_fname)
     print('[Done]')
 
     df = df.where(pd.notnull(df), None)
@@ -393,15 +396,21 @@ def rename_subjects(table_subject, redcap_df):
     4. Insert these rows into database, updating the subject_id
        and old_subject_id
     """
-    database_df = table_subject.query().reset_index()
     match_columns = ['first_name_birth', 'last_name_birth',
                      'date_of_birth_subject']
+    database_df = table_subject.query().reset_index()
+
+    # caste columns to match into same datatype to enable comparison
+    database_df = database_df.astype({
+        col: 'str' for col in match_columns + ['subject_id', 'old_subject_id']})
+    redcap_df = redcap_df.astype({
+        col: 'str' for col in match_columns + ['subject_id', 'old_subject_id']})
+
     joined_df = pd.merge(redcap_df, database_df, how='inner',
                          left_on=match_columns, right_on=match_columns,
                          suffixes=('', '_y'))
-    joined_df = joined_df[joined_df['old_subject_id'] == joined_df['subject_id_y']]
     joined_df = joined_df[joined_df['old_subject_id'] != joined_df['old_subject_id_y']]
-
+    joined_df = joined_df[joined_df['old_subject_id'] == joined_df['subject_id_y']]
     if len(joined_df) > 0:
         rows_subject, cols_subject = dataframe_to_tuple(
             joined_df,

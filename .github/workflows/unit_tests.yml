@@ -18,7 +18,9 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: neurobooth
+          POSTGRES_USER: neuroboother
+          POSTGRES_PASSWORD: neuroboothrocks
         options: >-
           --health-cmd pg_isready
           --health-interval 10s

@@ -1,6 +1,10 @@
 neurobooth-terra
 ================
 
+.. image:: https://github.com/neurobooth/neurobooth-terra/actions/workflows/unit_tests.yml/badge.svg
+   :target: https://github.com/neurobooth/neurobooth-terra/actions
+   :alt: Github Actions
+
 Dependencies
 ------------
 
@@ -14,11 +18,15 @@ Installation
 ------------
 
 We recommend the `Anaconda Python distribution <https://www.anaconda.com/products/individual>`_.
-To install ``neurobooth-terra``, simply do::
+To install ``neurobooth-terra``, first install pandas through conda using::
+
+   $ conda install pandas
+
+Then, simply do::
 
    $ pip install -e git+https://github.com/neurobooth/neurobooth-terra.git#egg=neurobooth_terra
 
-and it will install ``neurobooth-terra`` along with the dependencies which are not already installed.
+and it will install ``neurobooth-terra`` along with the remaining dependencies which are not already installed.
 
 To check if everything worked fine, you can do::
 

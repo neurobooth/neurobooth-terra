@@ -26,7 +26,7 @@ jobs:
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
-          --health-timeout 5s
+          --health-timeout 10s
           --health-retries 5
         ports:
           # Maps tcp port 5432 on service container to the host

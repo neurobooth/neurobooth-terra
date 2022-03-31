@@ -5,14 +5,17 @@ Create Entity-Relation diagram from Postgres table
 
 This example demonstrates how to create postgres table with neurobooth-terra.
 """
+import os
 import pygraphviz as pgv
 
 from neurobooth_terra import Table
 import psycopg2
 
 #### Initialize connection to database
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
+user = os.environ['POSTGRES_USER']
+password = os.environ['POSTGRES_PASSWORD']
+connect_str = (f"dbname='neurobooth' user={user} host='localhost' "
+               f"password={password}")
 
 conn = psycopg2.connect(connect_str)
 

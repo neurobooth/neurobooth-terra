@@ -1,6 +1,7 @@
 import os
 import subprocess
 from tempfile import TemporaryDirectory, NamedTemporaryFile
+import warnings
 
 import psycopg2
 
@@ -23,7 +24,7 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
     out = subprocess.run(["rsync", src_dirname, dest_dirname, '-arzi'],
                          capture_output=True)
     if len(out.stderr) > 0:
-        raise ValueError(out.stderr)
+        warnings.warn(out.stderr)
 
     out = out.stdout.decode('ascii').split('\n')
 

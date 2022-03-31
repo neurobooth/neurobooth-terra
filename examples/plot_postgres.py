@@ -16,21 +16,15 @@ on postgres tables with neurobooth-terra.
 
 # %%
 # To run this example, it is necessary to set up a local database called
-# 'neurobooth' with user 'neuroboother'. Make sure the Postgres server is
-# running::
+# 'neurobooth'. Make sure the Postgres server is running::
 #
 #      $ pg_ctl -D /usr/local/var/postgres start
 #
 # Then create a database 'neurobooth'::
 #
 #      $ createdb neurobooth
-#
-# And a user 'neuroboother'::
-#
-#      $ createuser -P -s -e neuroboother
-#
-# Now, let us open python or ipython and import the necessary functions.
 
+import os
 from neurobooth_terra import list_tables, create_table, drop_table, Table
 
 import psycopg2
@@ -38,8 +32,10 @@ import pandas as pd
 
 # %%
 # Then, we will create a connection using ``psycopg2``.
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
+user = os.environ['POSTGRES_USER']
+password = os.environ['POSTGRES_PASSWORD']
+connect_str = (f"dbname='neurobooth' user={user} host='localhost' "
+               f"password={password}")
 
 conn = psycopg2.connect(connect_str)
 

@@ -5,6 +5,7 @@ Export from dbdesigner
 
 This example demonstrates how to create postgres table with neurobooth-terra.
 """
+import os
 
 from neurobooth_terra import drop_table
 import psycopg2
@@ -14,8 +15,10 @@ from neurobooth_terra import execute, drop_table
 
 ###############################################################################
 # First, we will create a connection using ``psycopg2``.
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
+user = os.environ['POSTGRES_USER']
+password = os.environ['POSTGRES_PASSWORD']
+connect_str = (f"dbname='neurobooth' user={user} host='localhost' "
+               f"password={password}")
 
 conn = psycopg2.connect(connect_str)
 

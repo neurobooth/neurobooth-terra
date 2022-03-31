@@ -12,13 +12,15 @@ ssh_args = dict(
 )
 
 db_args = dict(
-    database='neurobooth', user='neuroboother', password='neuroboothrocks'
+    database='neurobooth', user=os.environ['POSTGRES_USER'],
+    password=os.environ['POSTGRES_PASSWORD']
 )
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
 
 if API_KEY is None:
-    raise ValueError('Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first')
+    raise ValueError('Please define the environment variable '
+                     'NEUROBOOTH_REDCAP_TOKEN first')
 
 project = Project(URL, API_KEY, lazy=True)

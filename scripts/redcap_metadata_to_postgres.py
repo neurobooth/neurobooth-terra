@@ -35,9 +35,10 @@ from config import ssh_args, db_args, project
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 # You will need to request for the Redcap API token from Redcap interface.
 
-survey_ids = {'consent': 96398,
+survey_ids = {'consent': 99891,
+              'consent_nih_sca': 99896,
               'contact': 99916,
-              'demographics': 99917,
+              'demographic': 99917,
               'clinical': 99918,
               'visit_dates': 99919,
               'neurobooth_falls': 99920,
@@ -45,25 +46,28 @@ survey_ids = {'consent': 96398,
               'neuro_qol_le_short_form': 99922,
               'neuro_qol_cognitive_function_short_form': 99923,
               'neuro_qol_stigma_short_form': 99924,
-              'neuro_qol_ability_to_participate_in_social_roles_a': 99925,
-              'neuro_qol_satisfaction_with_social_roles_and_activ': 99926,
+              'neuro_qol_participate_social_roles_short_form': 99925,
+              'neuro_qol_satisfaction_social_roles_short_form': 99926,
               'neuro_qol_anxiety_short_form': 99927,
-              'neuro_qol_emotional_and_behavioral_dyscontrol_shor': 99928,
+              'neuro_qol_emotional_dyscontrol_short_form': 99928,
               'neuro_qol_positive_affect_and_wellbeing_short_form': 99929,
               'neuro_qol_fatigue_short_form': 99930,
               'neuro_qol_sleep_disturbance_short_form': 99931,
-              'cpib': 99932,
+              'communicative_participation_item_bank': 99932,
               'chief_short_form': 99933,
               'neurobooth_vision_prom_ataxia': 99934,
               'promis_10': 99935,
               'system_usability_scale': 99936,
               'study_feedback': 99937,
               'neuro_qol_depression_short_form': 99938,
+              'neurobooth_vision_prom_ataxia': 99934,
               'prom_ataxia': 102336,
-              'dysarthria_impact_scale': 102384}
+              'dysarthria_impact_scale': 102384,
+              'ataxia_pd_scales': 103620}
 
 # TODOs
 # table column mapping
+# email regardless of error/warning
 
 # %%
 # Next, we fetch the metadata table. This table is the master table
@@ -132,14 +136,16 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
 
-        table_metadata = Table('human_obs_data', conn)
+        table_metadata = Table('rc_data_dictionary', conn)
         table_metadata.insert_rows(rows_metadata, cols_metadata,
                                    on_conflict='update')
 
-        for table_id, table_info in table_infos.items():
+        # for table_id, table_info in table_infos.items():
+        for table_id, _ in survey_ids.items():
+            table_info = table_infos[table_id]
             print(f'Overwriting table {table_id}')
-            drop_table(table_id, conn)
-            table = create_table(table_id, conn, table_info['columns'],
+            drop_table('rc_' + table_id, conn)
+            table = create_table('rc_' + table_id, conn, table_info['columns'],
                                  table_info['dtypes'],
                                  primary_key=['subject_id', 'redcap_event_name'])
             df = fetch_survey(project, survey_name=table_id,

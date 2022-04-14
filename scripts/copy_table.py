@@ -9,8 +9,20 @@ from config import ssh_args, db_args
 
 from neurobooth_terra import Table
 
-update_log_session = False
-update_log_task = False
+# need data governance
+# access levels to not change database ad-hoc
+# calendar to limit development times
+# renaming columns
+
+def sanitize_date(s):
+    if s is not None:
+        return s[0].strftime('%Y-%m-%d')
+
+
+import pandas as pd
+
+update_log_session = True
+update_log_task = True
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
@@ -18,26 +30,18 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
         table_task = Table('log_task', conn)
         table_session = Table('log_session', conn)
         task_df = table_task.query().reset_index()
+        session_df = table_session.query().reset_index()
 
-        cols = ['subject_id', 'date', 'study_id',
-                'collection_id', 'staff_id', 'application_id']
-        rows = list()
-        log_task_ids = list()
-        for _, row in task_df.iterrows():
-            date_time = None
-            if row.date_times is not None:
-                date_time = row.date_times[0].strftime('%Y-%m-%d')
-            rows.append((row.subject_id, date_time, 'study1',
-                         row.collection_id, 'AN', 'neurobooth_os'))
-            log_task_ids.append(row.log_task_id)
+        task_df['date_times'] = task_df['date_times'].apply(sanitize_date)
+        session_df = session_df.astype({'date': 'str'})
+        task_df = task_df.rename(columns={'date_times': 'date'})
 
-        if update_log_session:
-            table_session.insert_rows(rows, cols)
+        task_df_full = pd.merge(session_df, task_df, how='left',
+                                on=['subject_id', 'date'])
 
         # now let us insert the foreign key to log_session
-        session_df = table_session.query().reset_index()
-        rows = [(log_task_ids[row_idx], row.log_session_id)
-                for row_idx, (_, row) in enumerate(session_df.iterrows())]
+        rows = [(row.log_task_id, row.log_session_id_x)
+                for row_idx, (_, row) in enumerate(task_df_full.iterrows())]
         columns = ['log_task_id', 'log_session_id']
 
         if update_log_task:

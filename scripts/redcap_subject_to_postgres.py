@@ -18,6 +18,7 @@ survey_id = 99915
 # TODOs
 # cascading should not be deleting.
 # cascading of filenames
+# add column for test_subject_boolean
 
 redcap_df = fetch_survey(project, survey_name='subject',
                          survey_id=survey_id, cast_dtype=False)

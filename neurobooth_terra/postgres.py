@@ -466,8 +466,18 @@ class Table:
             df = df.set_index(pk)
         return df
 
-    def delete_row(self, condition):
-        delete_cmd = f'DELETE FROM {self.table_id} WHERE {condition};'
+    def delete_row(self, condition=None):
+        """Delete rows from table.
+
+        Parameters
+        ----------
+        condition : str
+            The condition to filter rows by and delete them.
+        """
+        delete_cmd = f'DELETE FROM {self.table_id} '
+        if condition is not None:
+            delete_cmd += f'WHERE {condition};'
+        delete_cmd += ';'
         execute(self.conn, self.cursor, delete_cmd)
 
     def drop(self):

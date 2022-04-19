@@ -34,10 +34,10 @@ def write_file(sensor_file_table, db_table, fname, id=0):
     sensor_file_table.insert_rows(
         [(f'sensor_{id}', [fname])], cols=column_names)
 
-    time_copied = datetime.datetime.now().strftime('%Y-%M-%d %H:%M:%S')
-    column_names = ['sensor_file_id', 'dest_dirname', 'fname',
+    time_copied = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    column_names = ['sensor_file_id', 'src_dirname', 'fname',
                     'time_copied', 'rsync_operation', 'is_deleted']
-    db_table.insert_rows([(f'sensor_{id}', dir, fname, None, None, False)],
+    db_table.insert_rows([(f'sensor_{id}', dir, fname, time_copied, None, False)],
                          cols=column_names)
 
 
@@ -51,6 +51,8 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
 
     out = out.stdout.decode('ascii').split('\n')
 
+    # what happens if it exits midway?
+    # check hashes before writing to table.
     column_names = ['sensor_file_id', 'src_dirname', 'dest_dirname', 'fname',
                     'time_copied', 'rsync_operation', 'is_deleted']
     db_rows = list()
@@ -69,33 +71,67 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
     return db_rows
 
 
-def delete_files(dest_dir, db_table, threshold=0.9, older_than=30):
+def delete_files(db_table, src_dir, suitable_dest_dir=None, threshold=0.9,
+                 older_than=30):
     """Delete files if x% of disk is filled.
 
     Parameters
     ----------
-    dest_dir : str
-        The destination directory path.
     db_table : instance of Table
-        The database table containing information about file transfers.
+        The database table containing information about file transfers. The
+        row corresponding to the transferred file is updated with
+        is_deleted=True.
+    src_dir : str
+        The source directory path from which to delete files.
+    suitable_dest_dir : str | None
+        The destination directory path where the files should have been copied.
+        If None, delete files regardless of which directory they have been
+        copied to.
     threshold : float
         A fraction between 0. and 1. If more than threshold fraction of the
         source directory is filled, these files will be deleted.
     older_than : int
-        If a file is older than older_days, they will be deleted.
+        If a file is older than older_than days in both src_dir and
+        suitable_dest_dir, they will be deleted.
     """
-    stats = shutil.disk_usage(dest_dir)
+    stats = shutil.disk_usage(src_dir)
     if stats.used / stats.total < threshold:
         return
-    files_df = db_table.query(
-        where="DATE_PART('day', AGE(current_timestamp, time_copied)) < 30")
-    for _, files_row in files_df.iterrows():
-        assert dest_dir == files_row.dest_dirname
-        fname = os.path.join(dest_dir, files_row.fname)
-        os.remove(fname)
-        # XXX: might be a little inefficient but probably more robust
-        # in case of failure.
-        db_table.insert_rows([(True,)], column_names=['is_deleted'])
+
+    where = "DATE_PART('day', AGE(current_timestamp, time_copied)) < 30 "
+    where += "AND is_deleted=False "
+    where += f"AND src_dirname='{src_dir}' "
+
+    where_transferred = where
+    if suitable_dest_dir is not None:
+        where_transferred = where + f"AND dest_dirname='{suitable_dest_dir}'"
+    else:
+        where_transferred = where + "AND dest_dirname IS NOT NULL"
+    transferred_files_df = db_table.query(where=where_transferred)
+
+    where_untransferred = where + f"AND dest_dirname IS NULL"
+    untransferred_files_df = db_table.query(where=where_untransferred)
+    if len(untransferred_files_df) > 0:
+        print(f'The following files are older than {older_than} days but not '
+              f'transferred to {suitable_dest_dir} yet')
+        print(untransferred_files_df)
+
+    for operation_id, files_row in transferred_files_df.iterrows():
+        if suitable_dest_dir is not None:
+            assert suitable_dest_dir == files_row.dest_dirname
+
+        fname = os.path.join(src_dir, files_row.fname)
+        try:
+            os.remove(fname)
+        except Exception as e:
+            print(f'Deleting ...\n')
+            print(files_row)
+            raise(e)
+        # XXX: might be a little inefficient to loop file-by-file but
+        # probably more robust in case of failure.
+        db_table.insert_rows([(operation_id, True,)],
+                             cols=['operation_id', 'is_deleted'],
+                             on_conflict='update')
 
 
 db_args = dict(database='neurobooth', user='neuroboother',
@@ -128,7 +164,6 @@ with TemporaryDirectory() as src_dirname:
         for id in range(5):
             with NamedTemporaryFile(dir=src_dirname, delete=False) as fp:
                 fp.write(b'Hello world!')
-                sdfdf
                 # Adonay would need this in his code.
                 with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
                     sensor_file_table = Table('sensor_file_log', conn)
@@ -140,10 +175,5 @@ with TemporaryDirectory() as src_dirname:
             db_table = Table('file', conn)
             db_rows = transfer_files(src_dirname, dest_dirname, db_table,
                                      sensor_file_table)
-
-        # This would be a separate script
-        with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
-            db_table = Table('file', conn)
-            db_rows = transfer_files(src_dirname, dest_dirname, db_table,
-                                     sensor_file_table)
-            delete_files(dest_dirname, db_table, threshold=0.1)
+            delete_files(db_table, src_dirname, suitable_dest_dir=None,
+                         threshold=0.1)

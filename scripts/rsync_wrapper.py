@@ -41,6 +41,24 @@ def write_file(sensor_file_table, db_table, fname, id=0):
                          cols=column_names)
 
 
+def _do_files_match(src_dirname, dest_dirname, fname):
+    """Compare two files using a hash."""
+
+    # we could also generate hash in Python but reading the file in Python
+    # may be more memory intense.
+    out_src = subprocess.run(["shasum", os.path.join(src_dirname, fname)],
+                             capture_output=True).stdout.decode('ascii')
+    out_dest = subprocess.run(["shasum", os.path.join(dest_dirname, fname)],
+                              capture_output=True).stdout.decode('ascii')
+
+    hash_src, hash_dest = out_src.split(' ')[0], out_dest.split(' ')[0]
+    if hash_src != hash_dest:  # could be partially copied?
+        print(f'hash of file {fname} does not match: '
+              f'({hash_src}, {hash_dest})')
+        return False
+    return True
+
+
 def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
     """Transfer files using rsync."""
     out = subprocess.run(["rsync", src_dirname, dest_dirname, '-arzi',
@@ -51,8 +69,11 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
 
     out = out.stdout.decode('ascii').split('\n')
 
-    # what happens if it exits midway?
-    # check hashes before writing to table.
+    # >f tells us that a file will be transferred but it does not tell us
+    # if rsync did actually manage to finish the transfer. Therefore, we
+    # will run manually check the hashes of the files before writing to the
+    # table.
+
     column_names = ['sensor_file_id', 'src_dirname', 'dest_dirname', 'fname',
                     'time_copied', 'rsync_operation', 'is_deleted']
     db_rows = list()
@@ -60,9 +81,14 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
         if this_out.startswith('>f'):
             operation, fname, date_copied, time_copied = this_out.split(' ')
             _, fname = os.path.split(fname)
+            # only write to table if files match with hash
+            if not _do_files_match(src_dirname, dest_dirname, fname):
+                continue
+
             df = sensor_file_table.query(
                 where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
             sensor_file_id = df.sensor_file_id[0]
+
             db_rows.append((sensor_file_id, src_dirname, dest_dirname,
                             fname, f'{date_copied}_{time_copied}', operation,
                             False))

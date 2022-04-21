@@ -7,7 +7,7 @@ import datetime
 import shutil
 import subprocess
 import warnings
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory, NamedTemporaryFile, mkdtemp
 
 import psycopg2
 
@@ -73,18 +73,17 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
     # if rsync did actually manage to finish the transfer. Therefore, we
     # will run manually check the hashes of the files before writing to the
     # table.
-
     column_names = ['sensor_file_id', 'src_dirname', 'dest_dirname', 'fname',
                     'time_copied', 'rsync_operation', 'is_deleted']
     db_rows = list()
     for this_out in out:
         if this_out.startswith('>f'):
             operation, fname, date_copied, time_copied = this_out.split(' ')
-            _, fname = os.path.split(fname)
             # only write to table if files match with hash
             if not _do_files_match(src_dirname, dest_dirname, fname):
                 continue
 
+            # _, fname = os.path.split(fname)
             df = sensor_file_table.query(
                 where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
             sensor_file_id = df.sensor_file_id[0]
@@ -185,21 +184,23 @@ with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
                  foreign_key={'sensor_file_id': 'sensor_file_log'})
 
 
-with TemporaryDirectory() as src_dirname:
-    with TemporaryDirectory() as dest_dirname:
-        for id in range(5):
-            with NamedTemporaryFile(dir=src_dirname, delete=False) as fp:
-                fp.write(b'Hello world!')
-                # Adonay would need this in his code.
-                with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
-                    sensor_file_table = Table('sensor_file_log', conn)
-                    db_table = Table('file', conn)
-                    write_file(sensor_file_table, db_table, fp.name, id)
-
-        # This would be a separate script
+src_dirname = mkdtemp() + '/'
+# with TemporaryDirectory() as src_dirname:
+dest_dirname = mkdtemp()
+# with TemporaryDirectory() as dest_dirname:
+for id in range(5):
+    with NamedTemporaryFile(dir=src_dirname, delete=False) as fp:
+        fp.write(b'Hello world!')
+        # Adonay would need this in his code.
         with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
+            sensor_file_table = Table('sensor_file_log', conn)
             db_table = Table('file', conn)
-            db_rows = transfer_files(src_dirname, dest_dirname, db_table,
-                                     sensor_file_table)
-            delete_files(db_table, src_dirname, suitable_dest_dir=None,
-                         threshold=0.1)
+            write_file(sensor_file_table, db_table, fp.name, id)
+
+# This would be a separate script
+with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
+    db_table = Table('file', conn)
+    db_rows = transfer_files(src_dirname, dest_dirname, db_table,
+                             sensor_file_table)
+    delete_files(db_table, src_dirname, suitable_dest_dir=None,
+                 threshold=0.1)

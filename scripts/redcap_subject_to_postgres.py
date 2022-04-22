@@ -27,6 +27,10 @@ redcap_df = redcap_df.rename(columns={'record_id': 'subject_id',
                                       # XXX: what is the new convention?
                                       'date_of_birth': 'date_of_birth_subject'})
 
+# filter out incomplete rows
+redcap_df = redcap_df.astype({'subject_complete': 'int'})
+redcap_df = redcap_df[redcap_df['subject_complete'] == 2]
+
 redcap_df = redcap_df[~pd.isna(redcap_df[f'end_time_subject'])]
 rows_subject, cols_subject = dataframe_to_tuple(
     redcap_df,

@@ -73,7 +73,7 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
     # if rsync did actually manage to finish the transfer. Therefore, we
     # will run manually check the hashes of the files before writing to the
     # table.
-    column_names = ['sensor_file_id', 'src_dirname', 'dest_dirname', 'fname',
+    column_names = ['log_sensor_file_id', 'src_dirname', 'dest_dirname', 'fname',
                     'time_copied', 'rsync_operation', 'is_deleted']
     db_rows = list()
     for this_out in out:
@@ -96,7 +96,7 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
     return db_rows
 
 
-def delete_files(db_table, src_dir, suitable_dest_dir=None, threshold=0.9,
+def delete_files(db_table, target_dir, suitable_dest_dir=None, threshold=0.9,
                  older_than=30):
     """Delete files if x% of disk is filled.
 
@@ -106,7 +106,7 @@ def delete_files(db_table, src_dir, suitable_dest_dir=None, threshold=0.9,
         The database table containing information about file transfers. The
         row corresponding to the transferred file is updated with
         is_deleted=True.
-    src_dir : str
+    target_dir : str
         The source directory path from which to delete files.
     suitable_dest_dir : str | None
         The destination directory path where the files should have been copied.
@@ -119,14 +119,41 @@ def delete_files(db_table, src_dir, suitable_dest_dir=None, threshold=0.9,
         If a file is older than older_than days in both src_dir and
         suitable_dest_dir, they will be deleted.
     """
+
+    # Null      Nas     False
+    # Nas       who     False
+    # who       neo     False
+
+    # target_dir = Nas, suitable_dest = neo
+    # Null      Nas     True
+    # Nas       who     False
+    # who       neo     False
+
+    # target_dir = who, suitable_dest = neo
+    # Null      Nas     True
+    # Nas       who     True
+    # who       neo     False
+
     stats = shutil.disk_usage(src_dir)
     if stats.used / stats.total < threshold:
         return
 
-    where = "DATE_PART('day', AGE(current_timestamp, time_copied)) < 30 "
-    where += "AND is_deleted=False "
-    where += f"AND src_dirname='{src_dir}' "
+    where = f"dest_dirname='{target_dir}' "
+    where += f"AND DATE_PART('day', AGE(current_timestamp, time_copied)) > {older_than} "
+    where += "AND is_deleted=False"
 
+    files_to_delete = db_table.query(where=where)
+
+    where = f"suitable_dest_dirname='{suitable_dest_dir}' "
+    where += "AND is_deleted=False"  # just to be safe
+    files_transferred = db_table.query()
+
+    files_transferred = pd.merge([files_to_delete, files_transferred], on='log_sensor_file_id')
+
+    # output files that are in target_dir but not in log_file table (rc notes)
+    # output files that are in target_dir for 30 days but not in suitable
+    # directory (shouldn't happen)
+    """
     where_transferred = where
     if suitable_dest_dir is not None:
         where_transferred = where + f"AND dest_dirname='{suitable_dest_dir}'"
@@ -140,6 +167,7 @@ def delete_files(db_table, src_dir, suitable_dest_dir=None, threshold=0.9,
         print(f'The following files are older than {older_than} days but not '
               f'transferred to {suitable_dest_dir} yet')
         print(untransferred_files_df)
+    """
 
     for operation_id, files_row in transferred_files_df.iterrows():
         if suitable_dest_dir is not None:
@@ -154,6 +182,9 @@ def delete_files(db_table, src_dir, suitable_dest_dir=None, threshold=0.9,
             raise(e)
         # XXX: might be a little inefficient to loop file-by-file but
         # probably more robust in case of failure.
+
+        # another query to check for rows where destination_dir
+        # is the src_dir
         db_table.insert_rows([(operation_id, True,)],
                              cols=['operation_id', 'is_deleted'],
                              on_conflict='update')
@@ -184,7 +215,7 @@ with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
                  foreign_key={'sensor_file_id': 'sensor_file_log'})
 
 
-src_dirname = mkdtemp() + '/'
+src_dirname = mkdtemp() + os.sep
 # with TemporaryDirectory() as src_dirname:
 dest_dirname = mkdtemp()
 # with TemporaryDirectory() as dest_dirname:

@@ -195,14 +195,14 @@ db_args = dict(database='neurobooth', user='neuroboother',
 
 # Create tables temporarily for testing purposes
 with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
-    table_id = 'sensor_file_log'
+    table_id = 'log_sensor_file'
     column_names = ['sensor_file_id', 'sensor_file_path']
     dtypes = ['VARCHAR (255)', 'text[]']
     drop_table(table_id, conn)
     create_table(table_id, conn, column_names, dtypes,
                  primary_key='sensor_file_id')
 
-    table_id = 'file'
+    table_id = 'log_file'
     column_names = ['operation_id', 'sensor_file_id', 'src_dirname',
                     'dest_dirname', 'fname', 'time_copied', 'rsync_operation',
                     'is_deleted']
@@ -212,7 +212,7 @@ with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
     drop_table(table_id, conn)
     create_table(table_id, conn, column_names, dtypes,
                  primary_key='operation_id',
-                 foreign_key={'sensor_file_id': 'sensor_file_log'})
+                 foreign_key={'sensor_file_id': 'log_sensor_file'})
 
 
 src_dirname = mkdtemp() + os.sep
@@ -224,13 +224,13 @@ for id in range(5):
         fp.write(b'Hello world!')
         # Adonay would need this in his code.
         with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
-            sensor_file_table = Table('sensor_file_log', conn)
-            db_table = Table('file', conn)
+            sensor_file_table = Table('log_sensor_file', conn)
+            db_table = Table('log_file', conn)
             write_file(sensor_file_table, db_table, fp.name, id)
 
 # This would be a separate script
 with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
-    db_table = Table('file', conn)
+    db_table = Table('log_file', conn)
     db_rows = transfer_files(src_dirname, dest_dirname, db_table,
                              sensor_file_table)
     delete_files(db_table, src_dirname, suitable_dest_dir=None,

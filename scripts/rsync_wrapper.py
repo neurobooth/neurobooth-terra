@@ -10,6 +10,7 @@ import warnings
 from tempfile import TemporaryDirectory, NamedTemporaryFile, mkdtemp
 
 import psycopg2
+import pandas as pd
 
 from neurobooth_terra import create_table, drop_table, Table
 
@@ -118,23 +119,38 @@ def delete_files(db_table, target_dir, suitable_dest_dir=None, threshold=0.9,
     older_than : int
         If a file is older than older_than days in both src_dir and
         suitable_dest_dir, they will be deleted.
+
+    Notes
+    -----
+    Let's say the data was first written to "Nas", then copied to "who"
+    and from "who" to "neo"
+
+    src       dest    is_deleted
+    ----------------------------
+    Null      Nas     False
+    Nas       who     False
+    who       neo     False
+
+    Now, if we want to delete the file from "Nas" and ensure that it has
+    been copied to the *final* destination neo, we provide the following
+    arguments to the function:
+
+      target_dir = Nas, suitable_dest = neo
+
+    Null      Nas     True
+    Nas       who     False
+    who       neo     False
+
+    Note that is_deleted bool is set to True where dest = target_dir
+
+    Here is another example
+      target_dir = who, suitable_dest = neo
+
+    Null      Nas     True
+    Nas       who     True
+    who       neo     False
     """
-
-    # Null      Nas     False
-    # Nas       who     False
-    # who       neo     False
-
-    # target_dir = Nas, suitable_dest = neo
-    # Null      Nas     True
-    # Nas       who     False
-    # who       neo     False
-
-    # target_dir = who, suitable_dest = neo
-    # Null      Nas     True
-    # Nas       who     True
-    # who       neo     False
-
-    stats = shutil.disk_usage(src_dir)
+    stats = shutil.disk_usage(target_dir)
     if stats.used / stats.total < threshold:
         return
 
@@ -142,38 +158,33 @@ def delete_files(db_table, target_dir, suitable_dest_dir=None, threshold=0.9,
     where += f"AND DATE_PART('day', AGE(current_timestamp, time_copied)) > {older_than} "
     where += "AND is_deleted=False"
 
-    files_to_delete = db_table.query(where=where)
+    fnames_to_delete = db_table.query(where=where).fname
 
-    where = f"suitable_dest_dirname='{suitable_dest_dir}' "
+    if len(fnames_to_delete) == 0:
+        print('No files to delete')
+        return
+
+    fnames = ', '.join(fnames_to_delete.tolist())
+    where = f"dest_dirname!='{suitable_dest_dir}' "
     where += "AND is_deleted=False"  # just to be safe
-    files_transferred = db_table.query()
+    where += "AND fname IN ({fnames})"
+    fnames_not_transferred = db_table.query().fname
+    print(f'The files {fnames_not_transferred} have been in target_dir '
+          f'for more than {older_than} days but have not been transferred '
+          'to {suitable_dest_dir}')
+    # TODO: output files that are in target_dir but not in log_file table
+    # (e.g., research coordinator notes). Might require function to walk
+    # over sub-folders.
 
-    files_transferred = pd.merge([files_to_delete, files_transferred], on='log_sensor_file_id')
+    where = where.replace("dest_dirname!=", "dest_dirname=")
+    fnames_transferred = db_table.query().fname
+    where = f"dest_dirname='{target_dir}' "
+    where += "AND fname IN ({fnames_transferred})"
+    files_transferred_df = db_table.query(where=where)
 
-    # output files that are in target_dir but not in log_file table (rc notes)
-    # output files that are in target_dir for 30 days but not in suitable
-    # directory (shouldn't happen)
-    """
-    where_transferred = where
-    if suitable_dest_dir is not None:
-        where_transferred = where + f"AND dest_dirname='{suitable_dest_dir}'"
-    else:
-        where_transferred = where + "AND dest_dirname IS NOT NULL"
-    transferred_files_df = db_table.query(where=where_transferred)
+    for operation_id, files_row in files_transferred_df.iterrows():
 
-    where_untransferred = where + f"AND dest_dirname IS NULL"
-    untransferred_files_df = db_table.query(where=where_untransferred)
-    if len(untransferred_files_df) > 0:
-        print(f'The following files are older than {older_than} days but not '
-              f'transferred to {suitable_dest_dir} yet')
-        print(untransferred_files_df)
-    """
-
-    for operation_id, files_row in transferred_files_df.iterrows():
-        if suitable_dest_dir is not None:
-            assert suitable_dest_dir == files_row.dest_dirname
-
-        fname = os.path.join(src_dir, files_row.fname)
+        fname = os.path.join(target_dir, files_row.fname)
         try:
             os.remove(fname)
         except Exception as e:
@@ -183,8 +194,6 @@ def delete_files(db_table, target_dir, suitable_dest_dir=None, threshold=0.9,
         # XXX: might be a little inefficient to loop file-by-file but
         # probably more robust in case of failure.
 
-        # another query to check for rows where destination_dir
-        # is the src_dir
         db_table.insert_rows([(operation_id, True,)],
                              cols=['operation_id', 'is_deleted'],
                              on_conflict='update')

@@ -15,6 +15,24 @@ import pandas as pd
 from neurobooth_terra import create_table, drop_table, Table
 
 
+def _do_files_match(src_dirname, dest_dirname, fname):
+    """Compare two files using a hash."""
+
+    # we could also generate hash in Python but reading the file in Python
+    # may be more memory intense.
+    out_src = subprocess.run(["shasum", os.path.join(src_dirname, fname)],
+                             capture_output=True).stdout.decode('ascii')
+    out_dest = subprocess.run(["shasum", os.path.join(dest_dirname, fname)],
+                              capture_output=True).stdout.decode('ascii')
+
+    hash_src, hash_dest = out_src.split(' ')[0], out_dest.split(' ')[0]
+    if hash_src != hash_dest:  # could be partially copied?
+        print(f'hash of file {fname} does not match: '
+              f'({hash_src}, {hash_dest})')
+        return False
+    return True
+
+
 def write_file(sensor_file_table, db_table, fname, id=0):
     """Write a file.
 
@@ -40,24 +58,6 @@ def write_file(sensor_file_table, db_table, fname, id=0):
                     'time_copied', 'rsync_operation', 'is_deleted']
     db_table.insert_rows([(f'sensor_{id}', dir, fname, time_copied, None, False)],
                          cols=column_names)
-
-
-def _do_files_match(src_dirname, dest_dirname, fname):
-    """Compare two files using a hash."""
-
-    # we could also generate hash in Python but reading the file in Python
-    # may be more memory intense.
-    out_src = subprocess.run(["shasum", os.path.join(src_dirname, fname)],
-                             capture_output=True).stdout.decode('ascii')
-    out_dest = subprocess.run(["shasum", os.path.join(dest_dirname, fname)],
-                              capture_output=True).stdout.decode('ascii')
-
-    hash_src, hash_dest = out_src.split(' ')[0], out_dest.split(' ')[0]
-    if hash_src != hash_dest:  # could be partially copied?
-        print(f'hash of file {fname} does not match: '
-              f'({hash_src}, {hash_dest})')
-        return False
-    return True
 
 
 def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):

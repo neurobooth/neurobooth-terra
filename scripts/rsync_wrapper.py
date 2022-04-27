@@ -31,12 +31,12 @@ def write_file(sensor_file_table, db_table, fname, id=0):
         The row number of sensor_file_table to be used as primary key.
     """
     dir, fname = os.path.split(fp.name)
-    column_names = ['sensor_file_id', 'sensor_file_path']
+    column_names = ['log_sensor_file_id', 'sensor_file_path']
     sensor_file_table.insert_rows(
         [(f'sensor_{id}', [fname])], cols=column_names)
 
     time_copied = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    column_names = ['sensor_file_id', 'src_dirname', 'fname',
+    column_names = ['log_sensor_file_id', 'src_dirname', 'fname',
                     'time_copied', 'rsync_operation', 'is_deleted']
     db_table.insert_rows([(f'sensor_{id}', dir, fname, time_copied, None, False)],
                          cols=column_names)
@@ -87,9 +87,9 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
             # _, fname = os.path.split(fname)
             df = sensor_file_table.query(
                 where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
-            sensor_file_id = df.sensor_file_id[0]
+            log_sensor_file_id = df.log_sensor_file_id[0]
 
-            db_rows.append((sensor_file_id, src_dirname, dest_dirname,
+            db_rows.append((log_sensor_file_id, src_dirname, dest_dirname,
                             fname, f'{date_copied}_{time_copied}', operation,
                             False))
 
@@ -205,14 +205,14 @@ db_args = dict(database='neurobooth', user='neuroboother',
 # Create tables temporarily for testing purposes
 with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
     table_id = 'log_sensor_file'
-    column_names = ['sensor_file_id', 'sensor_file_path']
+    column_names = ['log_sensor_file_id', 'sensor_file_path']
     dtypes = ['VARCHAR (255)', 'text[]']
     drop_table(table_id, conn)
     create_table(table_id, conn, column_names, dtypes,
-                 primary_key='sensor_file_id')
+                 primary_key='log_sensor_file_id')
 
     table_id = 'log_file'
-    column_names = ['operation_id', 'sensor_file_id', 'src_dirname',
+    column_names = ['operation_id', 'log_sensor_file_id', 'src_dirname',
                     'dest_dirname', 'fname', 'time_copied', 'rsync_operation',
                     'is_deleted']
     dtypes = ['SERIAL', 'text', 'text',
@@ -221,7 +221,7 @@ with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
     drop_table(table_id, conn)
     create_table(table_id, conn, column_names, dtypes,
                  primary_key='operation_id',
-                 foreign_key={'sensor_file_id': 'log_sensor_file'})
+                 foreign_key={'log_sensor_file_id': 'log_sensor_file'})
 
 
 src_dirname = mkdtemp() + os.sep

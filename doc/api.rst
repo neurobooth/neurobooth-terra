@@ -51,9 +51,11 @@ These are functions related to processing data dictionary
 Data flow
 ---------
 
-.. currentmodule:: neurobooth_terra.data_flow
+.. currentmodule:: neurobooth_terra.dataflow
 
 .. autosummary::
    :toctree: generated/
 
+   write_file
+   transfer_files
    delete_files

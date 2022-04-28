@@ -150,33 +150,33 @@ as primary key.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.alter_column" title="neurobooth_terra.Table.alter_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alter_column</span></code></a>(col[, default])</p></td>
 <td><p>Alter a column in the table.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.drop_column" title="neurobooth_terra.Table.drop_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_column</span></code></a>(col)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.delete_row" title="neurobooth_terra.Table.delete_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_row</span></code></a>([condition])</p></td>
+<td><p>Delete rows from table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.drop_column" title="neurobooth_terra.Table.drop_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_column</span></code></a>(col)</p></td>
 <td><p>Drop a column from the table.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert_rows" title="neurobooth_terra.Table.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(vals, cols[, on_conflict, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.insert_rows" title="neurobooth_terra.Table.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(vals, cols[, on_conflict, …])</p></td>
 <td><p>Manual insertion into tables</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>([include_columns, where])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.query" title="neurobooth_terra.Table.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>([include_columns, where])</p></td>
 <td><p>Run a query.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#neurobooth_terra.Table.update_row" title="neurobooth_terra.Table.update_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_row</span></code></a>(pk_val, vals, cols)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.update_row" title="neurobooth_terra.Table.update_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_row</span></code></a>(pk_val, vals, cols)</p></td>
 <td><p>Update values in a row</p></td>
 </tr>
 </tbody>
 </table>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 58%" />
-<col style="width: 42%" />
+<col style="width: 47%" />
+<col style="width: 53%" />
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><strong>close</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>delete_row</strong></p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p><strong>drop</strong></p></td>
+<tr class="row-even"><td><p><strong>drop</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -206,8 +206,8 @@ as primary key.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_row</span></code>(condition)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#neurobooth_terra.Table.delete_row" title="neurobooth_terra.Table.delete_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_row</span></code></a>([condition])</p></td>
+<td><p>Delete rows from table.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop</span></code>()</p></td>
 <td><p></p></td>
@@ -256,6 +256,20 @@ If you want to specify a prefix that
 autoincrements, you can say:
 dict(prefix=prefix), e.g.,
 dict(prefix=’SUBJECT’)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="neurobooth_terra.Table.delete_row">
+<span class="sig-name descname"><span class="pre">delete_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/postgres.html#Table.delete_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.Table.delete_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete rows from table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>condition</strong><span class="classifier">str</span></dt><dd><p>The condition to filter rows by and delete them.</p>
 </dd>
 </dl>
 </dd>

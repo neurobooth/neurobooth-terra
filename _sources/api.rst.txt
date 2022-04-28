@@ -48,4 +48,14 @@ These are functions related to processing data dictionary
    get_tables_structure
    subselect_table_structure
 
+Data flow
+---------
 
+.. currentmodule:: neurobooth_terra.dataflow
+
+.. autosummary::
+   :toctree: generated/
+
+   write_file
+   transfer_files
+   delete_files

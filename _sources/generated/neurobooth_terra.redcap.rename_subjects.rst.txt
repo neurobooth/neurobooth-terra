@@ -1,6 +1,0 @@
-﻿neurobooth\_terra.redcap.rename\_subjects
-=========================================
-
-.. currentmodule:: neurobooth_terra.redcap
-
-.. autofunction:: rename_subjects

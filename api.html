@@ -78,6 +78,7 @@
 <li><a class="reference internal" href="#data-dictionary">Data dictionary</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#data-flow">Data flow</a></li>
 </ul>
 </li>
 </ul>
@@ -176,10 +177,10 @@
 <td><p>Extract the field annotation and create new columns for them</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.map_dtypes.html#neurobooth_terra.redcap.map_dtypes" title="neurobooth_terra.redcap.map_dtypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_dtypes</span></code></a>(s)</p></td>
-<td><p>Map data types from Redcap to database and Python.</p></td>
+<td><p>Create new columns mapping Redcap data types to Postgres and Python.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.get_response_array.html#neurobooth_terra.redcap.get_response_array" title="neurobooth_terra.redcap.get_response_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_response_array</span></code></a>(s)</p></td>
-<td><p>Get response array.</p></td>
+<td><p>Add response array dictionary mapping answer choices to answer text.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.redcap.get_tables_structure.html#neurobooth_terra.redcap.get_tables_structure" title="neurobooth_terra.redcap.get_tables_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tables_structure</span></code></a>(metadata[, include_surveys])</p></td>
 <td><p>Get the column names and datatypes for the tables.</p></td>
@@ -190,6 +191,26 @@
 </tbody>
 </table>
 </section>
+</section>
+<section id="data-flow">
+<h2>Data flow<a class="headerlink" href="#data-flow" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.dataflow.write_file.html#neurobooth_terra.dataflow.write_file" title="neurobooth_terra.dataflow.write_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_file</span></code></a>(sensor_file_table, db_table, fname)</p></td>
+<td><p>Write a file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/neurobooth_terra.dataflow.transfer_files.html#neurobooth_terra.dataflow.transfer_files" title="neurobooth_terra.dataflow.transfer_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_files</span></code></a>(src_dir, dest_dir, db_table, …)</p></td>
+<td><p>Transfer files using rsync.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/neurobooth_terra.dataflow.delete_files.html#neurobooth_terra.dataflow.delete_files" title="neurobooth_terra.dataflow.delete_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_files</span></code></a>(db_table, target_dir, …[, …])</p></td>
+<td><p>Delete files if x% of disk is filled.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 

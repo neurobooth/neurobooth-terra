@@ -1,0 +1,6 @@
+﻿neurobooth\_terra.dataflow.write\_file
+======================================
+
+.. currentmodule:: neurobooth_terra.dataflow
+
+.. autofunction:: write_file

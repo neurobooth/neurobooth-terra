@@ -1,0 +1,6 @@
+﻿neurobooth\_terra.dataflow.delete\_files
+========================================
+
+.. currentmodule:: neurobooth_terra.dataflow
+
+.. autofunction:: delete_files

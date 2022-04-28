@@ -212,7 +212,7 @@ We can get a list of tables in the database by doing
  .. code-block:: none
 
 
-    ['device', 'sensor', 'subject', 'contact', 'test_consent', 'test', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'sensor_file_log', 'collection']
+    ['device', 'sensor', 'subject', 'contact', 'test_consent', 'log_sensor_file', 'log_file', 'sensor_file_log', 'file', 'test', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'collection']
 
 
 
@@ -416,7 +416,7 @@ To delete an entire table, we can do
  .. code-block:: none
 
 
-    ['device', 'sensor', 'contact', 'test_consent', 'test', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'sensor_file_log', 'collection']
+    ['device', 'sensor', 'contact', 'test_consent', 'log_sensor_file', 'log_file', 'sensor_file_log', 'file', 'test', 'study', 'register', 'clinical', 'demograph', 'human_obs_log', 'observer', 'human_obs_data', 'instruction', 'tech_obs_data', 'stimulus', 'tech_obs_log', 'collection']
 
 
 
@@ -446,7 +446,7 @@ Don't forget to close the connection once done!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.320 seconds)
+   **Total running time of the script:** ( 0 minutes  3.451 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_postgres.py:

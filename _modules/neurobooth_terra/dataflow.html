@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>neurobooth_terra.dataflow &#8212; neurobooth-terra  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          neurobooth-terra</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../auto_examples/index.html">Examples</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../whats_new.html">Changes</a></li>
+                <li><a href="https://github.com/neurobooth/neurobooth-terra">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for neurobooth_terra.dataflow</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for file transfers.&quot;&quot;&quot;</span>
+
+<span class="c1"># Author: Mainak Jas &lt;mainakjas@gmail.com&gt;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">def</span> <span class="nf">_do_files_match</span><span class="p">(</span><span class="n">src_dirname</span><span class="p">,</span> <span class="n">dest_dirname</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compare two files using a hash.&quot;&quot;&quot;</span>
+
+    <span class="c1"># we could also generate hash in Python but reading the file in Python</span>
+    <span class="c1"># may be more memory intense.</span>
+    <span class="n">out_src</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;shasum&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src_dirname</span><span class="p">,</span> <span class="n">fname</span><span class="p">)],</span>
+                             <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+    <span class="n">out_dest</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;shasum&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_dirname</span><span class="p">,</span> <span class="n">fname</span><span class="p">)],</span>
+                              <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+
+    <span class="n">hash_src</span><span class="p">,</span> <span class="n">hash_dest</span> <span class="o">=</span> <span class="n">out_src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out_dest</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">hash_src</span> <span class="o">!=</span> <span class="n">hash_dest</span><span class="p">:</span>  <span class="c1"># could be partially copied?</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hash of file </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s1"> does not match: &#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">hash_src</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">hash_dest</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="write_file"><a class="viewcode-back" href="../../generated/neurobooth_terra.dataflow.write_file.html#neurobooth_terra.dataflow.write_file">[docs]</a><span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">sensor_file_table</span><span class="p">,</span> <span class="n">db_table</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sensor_file_table : instance of Table</span>
+<span class="sd">        The table containing information about the sensors used in a session</span>
+<span class="sd">        and the files.</span>
+<span class="sd">    db_table : instance of Table</span>
+<span class="sd">        The table containing information about the file transfers.</span>
+<span class="sd">    fname : str</span>
+<span class="sd">        The filename to write.</span>
+<span class="sd">    id : int</span>
+<span class="sd">        The row number of sensor_file_table to be used as primary key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">dir</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>  <span class="c1"># ensure trailing slash</span>
+    <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;log_sensor_file_id&#39;</span><span class="p">,</span> <span class="s1">&#39;sensor_file_path&#39;</span><span class="p">]</span>
+    <span class="n">sensor_file_table</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span>
+        <span class="p">[(</span><span class="sa">f</span><span class="s1">&#39;sensor_</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">fname</span><span class="p">])],</span> <span class="n">cols</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span>
+
+    <span class="n">time_copied</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+    <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;log_sensor_file_id&#39;</span><span class="p">,</span> <span class="s1">&#39;src_dirname&#39;</span><span class="p">,</span> <span class="s1">&#39;fname&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;dest_dirname&#39;</span><span class="p">,</span> <span class="s1">&#39;time_copied&#39;</span><span class="p">,</span> <span class="s1">&#39;rsync_operation&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;is_deleted&#39;</span><span class="p">]</span>
+    <span class="n">db_table</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">([(</span><span class="sa">f</span><span class="s1">&#39;sensor_</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span>
+                           <span class="nb">dir</span><span class="p">,</span> <span class="n">time_copied</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">)],</span>
+                         <span class="n">cols</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="transfer_files"><a class="viewcode-back" href="../../generated/neurobooth_terra.dataflow.transfer_files.html#neurobooth_terra.dataflow.transfer_files">[docs]</a><span class="k">def</span> <span class="nf">transfer_files</span><span class="p">(</span><span class="n">src_dir</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">,</span> <span class="n">db_table</span><span class="p">,</span> <span class="n">sensor_file_table</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transfer files using rsync.&quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;rsync&quot;</span><span class="p">,</span> <span class="n">src_dir</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">,</span> <span class="s1">&#39;-arzi&#39;</span><span class="p">,</span>
+                          <span class="s2">&quot;--out-format=</span><span class="si">%i</span><span class="s2"> %n%L %t&quot;</span><span class="p">],</span>
+                         <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># &gt;f tells us that a file will be transferred but it does not tell us</span>
+    <span class="c1"># if rsync did actually manage to finish the transfer. Therefore, we</span>
+    <span class="c1"># will run manually check the hashes of the files before writing to the</span>
+    <span class="c1"># table.</span>
+    <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;log_sensor_file_id&#39;</span><span class="p">,</span> <span class="s1">&#39;src_dirname&#39;</span><span class="p">,</span> <span class="s1">&#39;dest_dirname&#39;</span><span class="p">,</span> <span class="s1">&#39;fname&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;time_copied&#39;</span><span class="p">,</span> <span class="s1">&#39;rsync_operation&#39;</span><span class="p">,</span> <span class="s1">&#39;is_deleted&#39;</span><span class="p">]</span>
+    <span class="n">db_rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">this_out</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">this_out</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&gt;f&#39;</span><span class="p">):</span>
+            <span class="n">operation</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">date_copied</span><span class="p">,</span> <span class="n">time_copied</span> <span class="o">=</span> <span class="n">this_out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="c1"># only write to table if files match with hash</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_do_files_match</span><span class="p">(</span><span class="n">src_dir</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">sensor_file_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+                <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;sensor_file_path @&gt; ARRAY[&#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&#39;]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="n">log_sensor_file_id</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">log_sensor_file_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># ensure trailing slash (but don&#39;t provide to rsync)</span>
+            <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">src_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src_dir</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">db_rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">log_sensor_file_id</span><span class="p">,</span> <span class="n">src_dir</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">,</span>
+                            <span class="n">fname</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">date_copied</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">time_copied</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span>
+                            <span class="kc">False</span><span class="p">))</span>
+
+    <span class="n">db_table</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span><span class="n">db_rows</span><span class="p">,</span> <span class="n">column_names</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db_rows</span></div>
+
+
+<div class="viewcode-block" id="delete_files"><a class="viewcode-back" href="../../generated/neurobooth_terra.dataflow.delete_files.html#neurobooth_terra.dataflow.delete_files">[docs]</a><span class="k">def</span> <span class="nf">delete_files</span><span class="p">(</span><span class="n">db_table</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">,</span> <span class="n">suitable_dest_dir</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                 <span class="n">older_than</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete files if x% of disk is filled.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db_table : instance of Table</span>
+<span class="sd">        The database table containing information about file transfers. The</span>
+<span class="sd">        row corresponding to the transferred file is updated with</span>
+<span class="sd">        is_deleted=True.</span>
+<span class="sd">    target_dir : str</span>
+<span class="sd">        The source directory path from which to delete files.</span>
+<span class="sd">    suitable_dest_dir : str</span>
+<span class="sd">        The destination directory path where the files should have been copied.</span>
+<span class="sd">    threshold : float</span>
+<span class="sd">        A fraction between 0. and 1. If more than threshold fraction of the</span>
+<span class="sd">        source directory is filled, these files will be deleted.</span>
+<span class="sd">    older_than : int</span>
+<span class="sd">        If a file is older than older_than days in both src_dir and</span>
+<span class="sd">        suitable_dest_dir, they will be deleted.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Let&#39;s say the data was first written to &quot;NAS&quot;, then copied to &quot;who&quot;</span>
+<span class="sd">    and from &quot;who&quot; to &quot;neo&quot;:</span>
+
+<span class="sd">    .. cssclass:: table-striped</span>
+
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | src | dest| is_deleted |</span>
+<span class="sd">    +=====+=====+============+</span>
+<span class="sd">    | NULL| NAS |   False    |</span>
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | Nas | who |   False    |</span>
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | who | neo |   False    |</span>
+<span class="sd">    +-----+-----+------------+</span>
+
+<span class="sd">    Now, if we want to delete the file from &quot;Nas&quot; and ensure that it has</span>
+<span class="sd">    been copied to the *final* destination &quot;neo&quot;, we provide the following</span>
+<span class="sd">    arguments to the function:</span>
+
+<span class="sd">    target_dir = NAS, suitable_dest = neo</span>
+
+<span class="sd">    .. cssclass:: table-striped</span>
+
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | src | dest| is_deleted |</span>
+<span class="sd">    +=====+=====+============+</span>
+<span class="sd">    | NULL| NAS |   True     |</span>
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | NAS | who |   False    |</span>
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | who | neo |   False    |</span>
+<span class="sd">    +-----+-----+------------+</span>
+
+<span class="sd">    Note that ``is_deleted`` bool is set to ``True`` where dest = target_dir</span>
+
+<span class="sd">    Here is another example:</span>
+
+<span class="sd">    target_dir = who, suitable_dest = neo</span>
+
+<span class="sd">    .. cssclass:: table-striped</span>
+
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | src | dest| is_deleted |</span>
+<span class="sd">    +=====+=====+============+</span>
+<span class="sd">    | NULL| NAS |   True     |</span>
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | NAS | who |   True     |</span>
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    | who | neo |   False    |</span>
+<span class="sd">    +-----+-----+------------+</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ensure trailing slash</span>
+    <span class="n">target_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">suitable_dest_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">suitable_dest_dir</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">disk_usage</span><span class="p">(</span><span class="n">target_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stats</span><span class="o">.</span><span class="n">used</span> <span class="o">/</span> <span class="n">stats</span><span class="o">.</span><span class="n">total</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dest_dirname=&#39;</span><span class="si">{</span><span class="n">target_dir</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+    <span class="n">where</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;AND DATE_PART(&#39;day&#39;, AGE(current_timestamp, time_copied)) &gt; </span><span class="si">{</span><span class="n">older_than</span><span class="si">}</span><span class="s2"> &quot;</span>
+    <span class="n">where</span> <span class="o">+=</span> <span class="s2">&quot;AND is_deleted=False&quot;</span>
+    <span class="n">fnames_to_delete</span> <span class="o">=</span> <span class="n">db_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">)</span><span class="o">.</span><span class="n">fname</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fnames_to_delete</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No files to delete in dest_dirname that are older than&#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">older_than</span><span class="si">}</span><span class="s1"> days&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">fnames</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="se">\&#39;</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">fnames_to_delete</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+    <span class="n">fnames</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fnames</span><span class="p">)</span>
+    <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dest_dirname!=&#39;</span><span class="si">{</span><span class="n">suitable_dest_dir</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+    <span class="n">where</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;AND src_dirname IS NOT NULL &quot;</span>  <span class="c1"># exclude write operations</span>
+    <span class="n">where</span> <span class="o">+=</span> <span class="s2">&quot;AND is_deleted=False &quot;</span>  <span class="c1"># just to be safe</span>
+    <span class="n">where</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;AND fname IN (</span><span class="si">{</span><span class="n">fnames</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="n">fnames_not_transferred</span> <span class="o">=</span> <span class="n">db_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">)</span><span class="o">.</span><span class="n">fname</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fnames_not_transferred</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The files </span><span class="si">{</span><span class="n">fnames_not_transferred</span><span class="si">}</span><span class="s1"> have been in target_dir &#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;for more than </span><span class="si">{</span><span class="n">older_than</span><span class="si">}</span><span class="s1"> days but have not been transferred &#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;to suitable_dest_dir=</span><span class="si">{</span><span class="n">suitable_dest_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># TODO: output files that are in target_dir but not in log_file table</span>
+    <span class="c1"># (e.g., research coordinator notes). Might require function to walk</span>
+    <span class="c1"># over sub-folders.</span>
+
+    <span class="n">where</span> <span class="o">=</span> <span class="n">where</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;dest_dirname!=&quot;</span><span class="p">,</span> <span class="s2">&quot;dest_dirname=&quot;</span><span class="p">)</span>
+    <span class="n">fnames_transferred</span> <span class="o">=</span> <span class="n">db_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">)</span><span class="o">.</span><span class="n">fname</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">fnames_transferred</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="se">\&#39;</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">fnames_transferred</span><span class="p">]</span>
+    <span class="n">fnames_transferred</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fnames_transferred</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fnames_transferred</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No files have been transferred to suitable_dest_dir&#39;</span><span class="p">)</span>
+
+    <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dest_dirname=&#39;</span><span class="si">{</span><span class="n">target_dir</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+    <span class="n">where</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;AND fname IN (</span><span class="si">{</span><span class="n">fnames_transferred</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="n">files_transferred_df</span> <span class="o">=</span> <span class="n">db_table</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">operation_id</span><span class="p">,</span> <span class="n">files_row</span> <span class="ow">in</span> <span class="n">files_transferred_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">files_row</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Deleting ... </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Deleting ...</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">files_row</span><span class="p">)</span>
+            <span class="k">raise</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="c1"># XXX: might be a little inefficient to loop file-by-file but</span>
+        <span class="c1"># probably more robust in case of failure.</span>
+
+        <span class="n">db_table</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">([(</span><span class="n">operation_id</span><span class="p">,</span> <span class="kc">True</span><span class="p">,)],</span>
+                             <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;operation_id&#39;</span><span class="p">,</span> <span class="s1">&#39;is_deleted&#39;</span><span class="p">],</span>
+                             <span class="n">on_conflict</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Neurobooth Developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>neurobooth_terra.dataflow.delete_files &#8212; neurobooth-terra  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          neurobooth-terra</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../auto_examples/index.html">Examples</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../whats_new.html">Changes</a></li>
+                <li><a href="https://github.com/neurobooth/neurobooth-terra">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">neurobooth_terra.dataflow.delete_files</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/generated/neurobooth_terra.dataflow.delete_files.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="neurobooth-terra-dataflow-delete-files">
+<h1>neurobooth_terra.dataflow.delete_files<a class="headerlink" href="#neurobooth-terra-dataflow-delete-files" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="neurobooth_terra.dataflow.delete_files">
+<span class="sig-prename descclassname"><span class="pre">neurobooth_terra.dataflow.</span></span><span class="sig-name descname"><span class="pre">delete_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suitable_dest_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">older_than</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neurobooth_terra/dataflow.html#delete_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neurobooth_terra.dataflow.delete_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete files if x% of disk is filled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>db_table</strong><span class="classifier">instance of Table</span></dt><dd><p>The database table containing information about file transfers. The
+row corresponding to the transferred file is updated with
+is_deleted=True.</p>
+</dd>
+<dt><strong>target_dir</strong><span class="classifier">str</span></dt><dd><p>The source directory path from which to delete files.</p>
+</dd>
+<dt><strong>suitable_dest_dir</strong><span class="classifier">str</span></dt><dd><p>The destination directory path where the files should have been copied.</p>
+</dd>
+<dt><strong>threshold</strong><span class="classifier">float</span></dt><dd><p>A fraction between 0. and 1. If more than threshold fraction of the
+source directory is filled, these files will be deleted.</p>
+</dd>
+<dt><strong>older_than</strong><span class="classifier">int</span></dt><dd><p>If a file is older than older_than days in both src_dir and
+suitable_dest_dir, they will be deleted.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Let’s say the data was first written to “NAS”, then copied to “who”
+and from “who” to “neo”:</p>
+<table class="table-striped docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>src</p></th>
+<th class="head"><p>dest</p></th>
+<th class="head"><p>is_deleted</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NULL</p></td>
+<td><p>NAS</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nas</p></td>
+<td><p>who</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>who</p></td>
+<td><p>neo</p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+<p>Now, if we want to delete the file from “Nas” and ensure that it has
+been copied to the <em>final</em> destination “neo”, we provide the following
+arguments to the function:</p>
+<p>target_dir = NAS, suitable_dest = neo</p>
+<table class="table-striped docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>src</p></th>
+<th class="head"><p>dest</p></th>
+<th class="head"><p>is_deleted</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NULL</p></td>
+<td><p>NAS</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p>NAS</p></td>
+<td><p>who</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>who</p></td>
+<td><p>neo</p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">is_deleted</span></code> bool is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> where dest = target_dir</p>
+<p>Here is another example:</p>
+<p>target_dir = who, suitable_dest = neo</p>
+<table class="table-striped docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>src</p></th>
+<th class="head"><p>dest</p></th>
+<th class="head"><p>is_deleted</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NULL</p></td>
+<td><p>NAS</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p>NAS</p></td>
+<td><p>who</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p>who</p></td>
+<td><p>neo</p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Neurobooth Developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

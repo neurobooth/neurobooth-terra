@@ -121,33 +121,56 @@ def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
 
     Notes
     -----
-    Let's say the data was first written to "Nas", then copied to "who"
-    and from "who" to "neo"
+    Let's say the data was first written to "NAS", then copied to "who"
+    and from "who" to "neo":
 
-    src       dest    is_deleted
-    ----------------------------
-    Null      Nas     False
-    Nas       who     False
-    who       neo     False
+    .. cssclass:: table-striped
+
+    +-----+-----+------------+
+    | src | dest| is_deleted |
+    +=====+=====+============+
+    | NULL| NAS |   False    |
+    +-----+-----+------------+
+    | Nas | who |   False    |
+    +-----+-----+------------+
+    | who | neo |   False    |
+    +-----+-----+------------+
 
     Now, if we want to delete the file from "Nas" and ensure that it has
-    been copied to the *final* destination neo, we provide the following
+    been copied to the *final* destination "neo", we provide the following
     arguments to the function:
 
-      target_dir = Nas, suitable_dest = neo
+    target_dir = NAS, suitable_dest = neo
 
-    Null      Nas     True
-    Nas       who     False
-    who       neo     False
+    .. cssclass:: table-striped
 
-    Note that is_deleted bool is set to True where dest = target_dir
+    +-----+-----+------------+
+    | src | dest| is_deleted |
+    +=====+=====+============+
+    | NULL| NAS |   True     |
+    +-----+-----+------------+
+    | NAS | who |   False    |
+    +-----+-----+------------+
+    | who | neo |   False    |
+    +-----+-----+------------+
 
-    Here is another example
-      target_dir = who, suitable_dest = neo
+    Note that ``is_deleted`` bool is set to ``True`` where dest = target_dir
 
-    Null      Nas     True
-    Nas       who     True
-    who       neo     False
+    Here is another example:
+
+    target_dir = who, suitable_dest = neo
+
+    .. cssclass:: table-striped
+
+    +-----+-----+------------+
+    | src | dest| is_deleted |
+    +=====+=====+============+
+    | NULL| NAS |   True     |
+    +-----+-----+------------+
+    | NAS | who |   True     |
+    +-----+-----+------------+
+    | who | neo |   False    |
+    +-----+-----+------------+
     """
     # ensure trailing slash
     target_dir = os.path.join(target_dir, '')

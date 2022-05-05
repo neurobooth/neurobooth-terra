@@ -93,3 +93,6 @@ def test_delete(mock_data):
         delete_files(db_table, target_dir=src_dirname,
                      suitable_dest_dir=dest_dirname,
                      threshold=0.1, older_than=-1)
+        df = db_table.query(where='is_deleted=True')
+        assert df.src_dirname.isna().all()  # directly written not copied
+        assert (df.dest_dirname == src_dirname).all()

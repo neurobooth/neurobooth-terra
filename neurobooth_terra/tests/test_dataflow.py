@@ -70,6 +70,10 @@ def test_write(mock_data):
             fname = os.path.join('test_subfolder', fname)
             write_file(sensor_file_table, db_table, dest_dir, fname, id=5)
 
+        with pytest.raises(ValueError, match='does not exist'):
+            write_file(sensor_file_table, db_table, dest_dir, fname='blah',
+                       id=6)
+
 
 def test_transfer(mock_data):
     """Test transfer of files."""

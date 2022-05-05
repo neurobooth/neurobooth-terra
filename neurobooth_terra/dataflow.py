@@ -29,7 +29,7 @@ def _do_files_match(src_dirname, dest_dirname, fname):
     return True
 
 
-def write_file(sensor_file_table, db_table, fname, id=0):
+def write_file(sensor_file_table, db_table, dest_dir, fname, id=0):
     """Write a file.
 
     Parameters
@@ -39,13 +39,21 @@ def write_file(sensor_file_table, db_table, fname, id=0):
         and the files.
     db_table : instance of Table
         The table containing information about the file transfers.
+    dest_dir : str
+        The destination directory.
     fname : str
         The filename to write.
     id : int
         The row number of sensor_file_table to be used as primary key.
     """
-    dir, fname = os.path.split(fname)
-    dir = os.path.join(dir, '')  # ensure trailing slash
+    dest_dir = os.path.join(dest_dir, '')  # ensure trailing slash
+
+    if not isinstance(fname, (str, os.PathLike)):
+        raise ValueError(f'Expected pathlike object for fname, got {type(fname)}')
+
+    if not os.path.exists(os.path.join(dest_dir, fname)):
+        raise ValueError(f'The fname {fname} does not exist')
+
     column_names = ['log_sensor_file_id', 'sensor_file_path']
     sensor_file_table.insert_rows(
         [(f'sensor_{id}', [fname])], cols=column_names)
@@ -55,7 +63,7 @@ def write_file(sensor_file_table, db_table, fname, id=0):
                     'dest_dirname', 'time_copied', 'rsync_operation',
                     'is_deleted']
     db_table.insert_rows([(f'sensor_{id}', None, fname,
-                           dir, time_copied, None, False)],
+                           dest_dir, time_copied, None, False)],
                          cols=column_names)
 
 

@@ -29,7 +29,7 @@ def _do_files_match(src_dirname, dest_dirname, fname):
     return True
 
 
-def write_file(sensor_file_table, db_table, dest_dir, fname, id=0):
+def write_files(sensor_file_table, db_table, dest_dir):
     """Write a file.
 
     Parameters
@@ -41,30 +41,31 @@ def write_file(sensor_file_table, db_table, dest_dir, fname, id=0):
         The table containing information about the file transfers.
     dest_dir : str
         The destination directory.
-    fname : str
-        The filename to write.
-    id : int
-        The row number of sensor_file_table to be used as primary key.
     """
     dest_dir = os.path.join(dest_dir, '')  # ensure trailing slash
 
-    if not isinstance(fname, (str, os.PathLike)):
-        raise ValueError(f'Expected pathlike object for fname, got {type(fname)}')
+    log_file_df = db_table.query()
+    sensor_file_df = sensor_file_table.query()
 
-    if not os.path.exists(os.path.join(dest_dir, fname)):
-        raise ValueError(f'The fname {fname} does not exist')
+    # assuming one sensor_file per row
+    sensor_fnames = sum(sensor_file_df.sensor_file_path.tolist(), [])
+    sensor_file_ids = sensor_file_df.index.tolist()
+    assert len(sensor_file_ids) == len(sensor_fnames)
+    missing_fnames = [(sensor_file_id, fname)
+                      for sensor_file_id, fname in zip(sensor_file_ids, sensor_fnames)
+                      if fname not in log_file_df.fname.tolist()]
 
-    column_names = ['log_sensor_file_id', 'sensor_file_path']
-    sensor_file_table.insert_rows(
-        [(f'sensor_{id}', [fname])], cols=column_names)
-
-    time_copied = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     column_names = ['log_sensor_file_id', 'src_dirname', 'fname',
-                    'dest_dirname', 'time_copied', 'rsync_operation',
+                    'dest_dirname', 'time_verified', 'rsync_operation',
                     'is_deleted']
-    db_table.insert_rows([(f'sensor_{id}', None, fname,
-                           dest_dir, time_copied, None, False)],
-                         cols=column_names)
+    for sensor_file_id, fname in missing_fnames:
+        if os.path.exists(os.path.join(dest_dir, fname)):
+            time_verified = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            db_table.insert_rows([(sensor_file_id, None, fname,
+                                 dest_dir, time_verified, None, False)],
+                                 cols=column_names)
+        else:
+            print(f'{fname} does not exist in {dest_dir}')
 
 
 def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
@@ -82,11 +83,11 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
     # will run manually check the hashes of the files before writing to the
     # table.
     column_names = ['log_sensor_file_id', 'src_dirname', 'dest_dirname', 'fname',
-                    'time_copied', 'rsync_operation', 'is_deleted']
+                    'time_verified', 'rsync_operation', 'is_deleted']
     db_rows = list()
     for this_out in out:
         if this_out.startswith('>f'):
-            operation, fname, date_copied, time_copied = this_out.split(' ')
+            operation, fname, date_copied, time_verified = this_out.split(' ')
             # only write to table if files match with hash
             if not _do_files_match(src_dir, dest_dir, fname):
                 continue
@@ -95,15 +96,24 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
                 where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
             log_sensor_file_id = df.log_sensor_file_id[0]
 
+            # TODO: we want to print out files where log_sensor_file_id is not
+            # found. And if not found, we don't write to table but print.
+
             # ensure trailing slash (but don't provide to rsync)
             dest_dir = os.path.join(dest_dir, '')
             src_dir = os.path.join(src_dir, '')
             db_rows.append((log_sensor_file_id, src_dir, dest_dir,
-                            fname, f'{date_copied}_{time_copied}', operation,
+                            fname, f'{date_copied}_{time_verified}', operation,
                             False))
 
     db_table.insert_rows(db_rows, column_names)
     return db_rows
+
+#
+#  /a/b/c file.txt
+#  /a/b/  c/file.txt
+
+# find files in /a/b/
 
 
 def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
@@ -189,7 +199,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
         return
 
     where = f"dest_dirname='{target_dir}' "
-    where += f"AND DATE_PART('day', AGE(current_timestamp, time_copied)) > {older_than} "
+    where += f"AND DATE_PART('day', AGE(current_timestamp, time_verified)) > {older_than} "
     where += "AND is_deleted=False"
     fnames_to_delete = db_table.query(where=where).fname
 

@@ -56,6 +56,6 @@ Data flow
 .. autosummary::
    :toctree: generated/
 
-   write_file
-   transfer_files
+   write_files
+   copy_files
    delete_files

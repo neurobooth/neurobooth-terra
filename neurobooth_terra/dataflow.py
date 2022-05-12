@@ -48,11 +48,15 @@ def write_files(sensor_file_table, db_table, dest_dir):
     sensor_file_df = sensor_file_table.query()
 
     # assuming one sensor_file per row
-    sensor_fnames = sum(sensor_file_df.sensor_file_path.tolist(), [])
+    sensor_fnames_df = sensor_file_df.sensor_file_path.tolist()
     sensor_file_ids = sensor_file_df.index.tolist()
-    assert len(sensor_file_ids) == len(sensor_fnames)
+    sensor_fnames = list()
+    for sensor_fname_row, sensor_file_id in zip(sensor_fnames_df, sensor_file_ids):
+        for this_sensor_fname in sensor_fname_row:
+            sensor_fnames.append((sensor_file_id, this_sensor_fname))
+
     missing_fnames = [(sensor_file_id, fname)
-                      for sensor_file_id, fname in zip(sensor_file_ids, sensor_fnames)
+                      for sensor_file_id, fname in sensor_fnames
                       if fname not in log_file_df.fname.tolist()]
 
     column_names = ['log_sensor_file_id', 'src_dirname', 'fname',

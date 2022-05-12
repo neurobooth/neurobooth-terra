@@ -85,7 +85,7 @@ def test_copy(mock_data):
         db_table = Table('log_file', conn)
         sensor_file_table = Table('log_sensor_file', conn)
         db_rows = copy_files(src_dirname, dest_dirname, db_table,
-                                 sensor_file_table)
+                             sensor_file_table)
 
 
 def test_delete(mock_data):

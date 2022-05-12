@@ -9,7 +9,7 @@ from neurobooth_terra.dataflow import write_files
 from config import ssh_args, db_args
 
 do_create_table = False
-write_table = False
+write_table = True
 dest_dir = '/autofs/nas/neurobooth/data_test/'
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:

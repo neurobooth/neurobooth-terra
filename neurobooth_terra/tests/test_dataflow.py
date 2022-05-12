@@ -6,7 +6,7 @@ import pytest
 import psycopg2
 
 from neurobooth_terra import create_table, drop_table, Table
-from neurobooth_terra.dataflow import write_file, transfer_files, delete_files
+from neurobooth_terra.dataflow import write_files, transfer_files, delete_files
 
 db_args = dict(database='neurobooth', user='neuroboother',
                password='neuroboothrocks')
@@ -31,7 +31,7 @@ def mock_data():
 
         table_id = 'log_file'
         column_names = ['operation_id', 'log_sensor_file_id', 'src_dirname',
-                        'dest_dirname', 'fname', 'time_copied',
+                        'dest_dirname', 'fname', 'time_verified',
                         'rsync_operation', 'is_deleted']
         dtypes = ['SERIAL', 'text', 'text',
                   'text', 'text', 'timestamp', 'text',
@@ -60,7 +60,10 @@ def test_write(mock_data):
             with NamedTemporaryFile(dir=src_dirname, delete=False) as fp:
                 fp.write(b'Hello world!')
                 dest_dir, fname = os.path.split(fp.name)
-                write_file(sensor_file_table, db_table, dest_dir, fname, id)
+                sensor_file_table.insert_rows([(f'sensor_file_{id}', [fname])],
+                                              cols=['log_sensor_file_id', 'sensor_file_path'])
+
+        write_files(sensor_file_table, db_table, dest_dir)
 
         # Write file to a subfolder
         dest_dir2 = os.path.join(src_dirname, 'test_subfolder')
@@ -68,11 +71,9 @@ def test_write(mock_data):
             fp.write(b'test')
             _, fname = os.path.split(fp.name)
             fname = os.path.join('test_subfolder', fname)
-            write_file(sensor_file_table, db_table, dest_dir, fname, id=5)
-
-        with pytest.raises(ValueError, match='does not exist'):
-            write_file(sensor_file_table, db_table, dest_dir, fname='blah',
-                       id=6)
+            sensor_file_table.insert_rows([(f'sensor_file{id + 1}', [fname])],
+                                          cols=['log_sensor_file_id', 'sensor_file_path'])
+        write_files(sensor_file_table, db_table, dest_dir)
 
 
 def test_transfer(mock_data):

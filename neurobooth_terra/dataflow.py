@@ -94,10 +94,12 @@ def transfer_files(src_dir, dest_dir, db_table, sensor_file_table):
 
             df = sensor_file_table.query(
                 where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
-            log_sensor_file_id = df.log_sensor_file_id[0]
 
-            # TODO: we want to print out files where log_sensor_file_id is not
-            # found. And if not found, we don't write to table but print.
+            if len(df.log_sensor_file_id) > 0:
+                log_sensor_file_id = df.log_sensor_file_id[0]
+            else:
+                print(f'log_sensor_file_id not found for {fname}')
+                continue
 
             # ensure trailing slash (but don't provide to rsync)
             dest_dir = os.path.join(dest_dir, '')

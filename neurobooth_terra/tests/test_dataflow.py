@@ -6,7 +6,7 @@ import pytest
 import psycopg2
 
 from neurobooth_terra import create_table, drop_table, Table
-from neurobooth_terra.dataflow import write_files, transfer_files, delete_files
+from neurobooth_terra.dataflow import write_files, copy_files, delete_files
 
 db_args = dict(database='neurobooth', user='neuroboother',
                password='neuroboothrocks')
@@ -78,13 +78,13 @@ def test_write(mock_data):
         write_files(sensor_file_table, db_table, dest_dir)
 
 
-def test_transfer(mock_data):
-    """Test transfer of files."""
+def test_copy(mock_data):
+    """Test copy of files."""
     src_dirname, dest_dirname = mock_data
     with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
         db_table = Table('log_file', conn)
         sensor_file_table = Table('log_sensor_file', conn)
-        db_rows = transfer_files(src_dirname, dest_dirname, db_table,
+        db_rows = copy_files(src_dirname, dest_dirname, db_table,
                                  sensor_file_table)
 
 

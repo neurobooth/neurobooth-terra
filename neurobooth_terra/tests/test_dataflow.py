@@ -23,8 +23,8 @@ def mock_data():
 
     with psycopg2.connect(port='5432', host='localhost', **db_args) as conn:
         table_id = 'log_sensor_file'
-        column_names = ['log_sensor_file_id', 'sensor_file_path']
-        dtypes = ['VARCHAR (255)', 'text[]']
+        column_names = ['log_sensor_file_id', 'sensor_file_path', 'another_column']
+        dtypes = ['VARCHAR (255)', 'text[]', 'VARCHAR (255)']
         drop_table(table_id, conn)
         create_table(table_id, conn, column_names, dtypes,
                      primary_key='log_sensor_file_id')
@@ -73,6 +73,8 @@ def test_write(mock_data):
             fname = os.path.join('test_subfolder', fname)
             sensor_file_table.insert_rows([(f'sensor_file{id + 1}', [fname])],
                                           cols=['log_sensor_file_id', 'sensor_file_path'])
+        write_files(sensor_file_table, db_table, dest_dir)
+        # no error should be thrown if no new files to write
         write_files(sensor_file_table, db_table, dest_dir)
 
 

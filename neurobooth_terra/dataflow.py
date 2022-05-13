@@ -74,6 +74,8 @@ def write_files(sensor_file_table, db_table, dest_dir):
 
 def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     """Transfer files using rsync."""
+    # XXX: If Python process dies or interrupts the rsync, then we won't have
+    # *any* of the rsync transfers from that run written to the log_file table.
     out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi',
                           "--out-format=%i %n%L %t"],
                          capture_output=True)

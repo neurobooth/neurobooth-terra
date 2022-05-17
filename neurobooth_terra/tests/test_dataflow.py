@@ -32,10 +32,10 @@ def mock_data():
         table_id = 'log_file'
         column_names = ['operation_id', 'log_sensor_file_id', 'src_dirname',
                         'dest_dirname', 'fname', 'time_verified',
-                        'rsync_operation', 'is_deleted']
+                        'rsync_operation', 'is_deleted', 'is_finished']
         dtypes = ['SERIAL', 'text', 'text',
                   'text', 'text', 'timestamp', 'text',
-                  'boolean']
+                  'boolean', 'boolean']
         drop_table(table_id, conn)
         create_table(table_id, conn, column_names, dtypes,
                      primary_key='operation_id',

@@ -72,11 +72,23 @@ def write_files(sensor_file_table, db_table, dest_dir):
             print(f'{fname} does not exist in {dest_dir}')
 
 
+def _update_copystatus(db_table):
+    """Update copy status after checking if files match"""
+    log_file_df = db_table.query(where='is_finished=False')
+    for operation_id, log_file_row in log_file_df.iterrows():
+        if _do_files_match(log_file_row['src_dirname'],
+                           log_file_row['dest_dirname'],
+                           log_file_row['fname']):
+            db_table.insert_rows([(operation_id, True,)],
+                                 ['operation_id', 'is_finished'],
+                                 on_conflict='update')
+
+
 def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     """Transfer files using rsync."""
-    # XXX: If Python process dies or interrupts the rsync, then we won't have
-    # *any* of the rsync transfers from that run written to the log_file table.
-    out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi',
+
+    _update_copystatus(db_table)
+    out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi', '--dry-run',
                           "--out-format=%i %n%L %t"],
                          capture_output=True)
     if len(out.stderr) > 0:
@@ -89,14 +101,11 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     # will run manually check the hashes of the files before writing to the
     # table.
     column_names = ['log_sensor_file_id', 'src_dirname', 'dest_dirname', 'fname',
-                    'time_verified', 'rsync_operation', 'is_deleted']
+                    'time_verified', 'rsync_operation', 'is_deleted', 'is_finished']
     db_rows = list()
     for this_out in out:
         if this_out.startswith('>f'):
             operation, fname, date_copied, time_verified = this_out.split(' ')
-            # only write to table if files match with hash
-            if not _do_files_match(src_dir, dest_dir, fname):
-                continue
 
             df = sensor_file_table.query(
                 where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
@@ -112,9 +121,18 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
             src_dir = os.path.join(src_dir, '')
             db_rows.append((log_sensor_file_id, src_dir, dest_dir,
                             fname, f'{date_copied}_{time_verified}', operation,
-                            False))
+                            False, False))
 
     db_table.insert_rows(db_rows, column_names)
+
+    # XXX: If Python process dies or interrupts the rsync, then we won't have
+    # *any* of the rsync transfers from that run written to the log_file table.
+    out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi',
+                          "--out-format=%i %n%L %t"],
+                         capture_output=True)
+
+    _update_copystatus(db_table)
+
     return db_rows
 
 #
@@ -208,7 +226,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
 
     where = f"dest_dirname='{target_dir}' "
     where += f"AND DATE_PART('day', AGE(current_timestamp, time_verified)) > {older_than} "
-    where += "AND is_deleted=False"
+    where += "AND is_deleted=False AND is_finished=True"
     fnames_to_delete = db_table.query(where=where).fname
 
     if len(fnames_to_delete) == 0:
@@ -220,7 +238,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
     fnames = ', '.join(fnames)
     where = f"dest_dirname!='{suitable_dest_dir}' "
     where += f"AND src_dirname IS NOT NULL "  # exclude write operations
-    where += "AND is_deleted=False "  # just to be safe
+    where += "AND is_deleted=False AND is_finished=True"  # just to be safe
     where += f"AND fname IN ({fnames})"
     fnames_not_transferred = db_table.query(where=where).fname.tolist()
     if len(fnames_not_transferred) > 0:

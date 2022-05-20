@@ -4,6 +4,7 @@
 
 import os
 import shutil
+import time
 import datetime
 import subprocess
 import warnings
@@ -82,6 +83,11 @@ def _update_copystatus(db_table):
             db_table.insert_rows([(operation_id, True,)],
                                  ['operation_id', 'is_finished'],
                                  on_conflict='update')
+        else:
+            db_table.delete_row(where=f"operation_id={operation_id}")
+            print(f"The file transfer from {log_file_row['src_dirname']}"
+                  f"to {log_file_row['dest_dirname']} did not finish for"
+                  f"file {log_file_row['fname']}")
 
 
 def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
@@ -125,12 +131,15 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
 
     db_table.insert_rows(db_rows, column_names)
 
+    t1 = time.time()
     # XXX: If Python process dies or interrupts the rsync, then we won't have
     # *any* of the rsync transfers from that run written to the log_file table.
     out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi',
                           "--out-format=%i %n%L %t"],
                          capture_output=True)
 
+    t2 = time.time()
+    print(f'Time taken by rsync is {(t2 - t1) / 3600.} hours')
     _update_copystatus(db_table)
 
     return db_rows

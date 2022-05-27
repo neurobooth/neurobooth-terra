@@ -73,7 +73,7 @@ def write_files(sensor_file_table, db_table, dest_dir):
             print(f'{fname} does not exist in {dest_dir}')
 
 
-def _update_copystatus(db_table):
+def _update_copystatus(db_table, show_unfinished=False):
     """Update copy status after checking if files match"""
     log_file_df = db_table.query(where='is_finished=False')
     for operation_id, log_file_row in log_file_df.iterrows():
@@ -83,17 +83,17 @@ def _update_copystatus(db_table):
             db_table.insert_rows([(operation_id, True,)],
                                  ['operation_id', 'is_finished'],
                                  on_conflict='update')
-        else:
+        elif show_unfinished:
             db_table.delete_row(where=f"operation_id={operation_id}")
-            print(f"The file transfer from {log_file_row['src_dirname']}"
-                  f"to {log_file_row['dest_dirname']} did not finish for"
+            print(f"The file transfer from {log_file_row['src_dirname']} "
+                  f"to {log_file_row['dest_dirname']} did not finish for "
                   f"file {log_file_row['fname']}")
 
 
 def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     """Transfer files using rsync."""
 
-    _update_copystatus(db_table)
+    _update_copystatus(db_table, show_unfinished=True)
     out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi', '--dry-run',
                           "--out-format=%i %n%L %t"],
                          capture_output=True)
@@ -140,7 +140,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
 
     t2 = time.time()
     print(f'Time taken by rsync is {(t2 - t1) / 3600.} hours')
-    _update_copystatus(db_table)
+    _update_copystatus(db_table, show_unfinished=False)
 
     return db_rows
 

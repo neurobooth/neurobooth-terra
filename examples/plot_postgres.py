@@ -117,7 +117,7 @@ print(table_subject.query())
 # Delete
 # ------
 # We can also delete rows in our table
-table_subject.delete_row(condition="subject_id = 'yd53'")
+table_subject.delete_row(where="subject_id = 'yd53'")
 print(table_subject.query())
 
 # %%

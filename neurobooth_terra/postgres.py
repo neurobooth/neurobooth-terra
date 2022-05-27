@@ -466,17 +466,17 @@ class Table:
             df = df.set_index(pk)
         return df
 
-    def delete_row(self, condition=None):
+    def delete_row(self, where=None):
         """Delete rows from table.
 
         Parameters
         ----------
-        condition : str
+        where : str
             The condition to filter rows by and delete them.
         """
         delete_cmd = f'DELETE FROM {self.table_id} '
-        if condition is not None:
-            delete_cmd += f'WHERE {condition};'
+        if where is not None:
+            delete_cmd += f'WHERE {where};'
         delete_cmd += ';'
         execute(self.conn, self.cursor, delete_cmd)
 

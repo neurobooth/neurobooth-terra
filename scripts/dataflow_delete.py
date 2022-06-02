@@ -1,5 +1,6 @@
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
+import shutil
 import psycopg2
 
 from neurobooth_terra import Table, copy_table
@@ -17,6 +18,14 @@ table_id = 'log_file'
 # don't run rsync on weekend
 # run this file on weekend.
 
+if dry_run:
+    stats = shutil.disk_usage(target_dir)
+    threshold = stats.used / stats.total - 0.1  # ensure that it deletes
+    older_than = 1
+else:
+    threshold = 0.9
+    older_than = 30
+
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
@@ -29,5 +38,5 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
         else:
             db_table = Table(table_id, conn)
 
-        delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
-                     older_than=1, dry_run=dry_run)
+        delete_files(db_table, target_dir, suitable_dest_dir,
+                     threshold=threshold, older_than=older_than, dry_run=dry_run)

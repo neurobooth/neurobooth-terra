@@ -237,7 +237,9 @@ def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
     suitable_dest_dir = os.path.join(suitable_dest_dir, '')
 
     stats = shutil.disk_usage(target_dir)
-    if stats.used / stats.total < threshold:
+    fraction_occupied = stats.used / stats.total
+    print(f'Fraction {fraction_occupied} is occupied')
+    if fraction_occupied < threshold:
         return
 
     where = f"dest_dirname='{target_dir}' "

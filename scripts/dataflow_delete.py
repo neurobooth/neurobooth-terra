@@ -14,6 +14,9 @@ suitable_dest_dir = '/autofs/nas/neurobooth/data_test_backup/'
 dry_run = True
 table_id = 'log_file'
 
+# don't run rsync on weekend
+# run this file on weekend.
+
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
@@ -27,4 +30,4 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             db_table = Table(table_id, conn)
 
         delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
-                     older_than=30, dry_run=dry_run)
+                     older_than=1, dry_run=dry_run)

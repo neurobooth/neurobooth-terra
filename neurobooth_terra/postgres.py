@@ -125,7 +125,7 @@ def copy_table(src_table_id, target_table_id, conn):
         The connection object
     """
     cursor = conn.cursor()
-    cmd = (f'CREATE TABLE {target_table_id} IF NOT EXISTS '
+    cmd = (f'CREATE TABLE {target_table_id} '
            f'AS SELECT * FROM {src_table_id}')
     execute(conn, cursor, cmd)
     cursor.close()

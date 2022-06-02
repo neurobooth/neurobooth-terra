@@ -152,7 +152,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
 
 
 def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
-                 older_than=30):
+                 older_than=30, dry_run=False):
     """Delete files if x% of disk is filled.
 
     Parameters
@@ -171,6 +171,10 @@ def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
     older_than : int
         If a file is older than older_than days in both src_dir and
         suitable_dest_dir, they will be deleted.
+    dry_run : int
+        If True, will run all the database operations but not actually
+        delete the files. Pass a copy of the log_file table to db_table
+        for the dry run to avoid inconsistencies.
 
     Notes
     -----
@@ -225,6 +229,9 @@ def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
     | who | neo |   False    |
     +-----+-----+------------+
     """
+    if dry_run:
+        assert 'copy' in db_table.table_id
+
     # ensure trailing slash
     target_dir = os.path.join(target_dir, '')
     suitable_dest_dir = os.path.join(suitable_dest_dir, '')
@@ -272,13 +279,13 @@ def delete_files(db_table, target_dir, suitable_dest_dir, threshold=0.9,
     for operation_id, files_row in files_transferred_df.iterrows():
 
         fname = os.path.join(target_dir, files_row.fname)
-        try:
+        if os.path.exists(fname):
             print(f'Deleting ... {fname}')
-            os.remove(fname)
-        except Exception as e:
-            print(f'Deleting ...\n')
-            print(files_row)
-            raise(e)
+            if not dry_run:
+                os.remove(fname)
+        else:
+            print(f'File not found while deleting ... {fname}\n')
+
         # XXX: might be a little inefficient to loop file-by-file but
         # probably more robust in case of failure.
 

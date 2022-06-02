@@ -112,6 +112,25 @@ def drop_table(table_id, conn):
     cursor.close()
 
 
+def copy_table(src_table_id, target_table_id, conn):
+    """Copy a table.
+
+    Parameters
+    ----------
+    src_table_id : str
+        The table ID of the source table.
+    target_table_id : str
+        The table ID of the copied table.
+    conn : instance of psycopg2.Postgres
+        The connection object
+    """
+    cursor = conn.cursor()
+    cmd = (f'CREATE TABLE {target_table_id} IF NOT EXISTS '
+           f'AS SELECT * FROM {src_table_id}')
+    execute(conn, cursor, cmd)
+    cursor.close()
+
+
 def create_table(table_id, conn, column_names, dtypes,
                  primary_key=None, foreign_key=None, index=None):
     """Create a table.

@@ -11,19 +11,22 @@ if os.path.exists(dest_dir):
 else:
     os.makedirs(dest_dir, exist_ok=True)
 
+print('Beginning copy')
 t1 = time.time()
-out = subprocess.run(["cp", src_dir, dest_dir], capture_output=True)
+out = subprocess.run(["cp", "-R", src_dir, dest_dir], capture_output=True)
 t2 = time.time()
-
+print('Done')
 time_cp = t2 - t1
 
 shutil.rmtree(dest_dir)
 
+print('Beginning rsync')
 t1 = time.time()
 out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi',
                       "--out-format=%i %n%L %t"],
                      capture_output=True)
 t2 = time.time()
+print('Done')
 
 time_rsync = t2 - t1
 

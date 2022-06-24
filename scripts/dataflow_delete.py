@@ -15,6 +15,7 @@ suitable_dest_dir = '/autofs/nas/neurobooth/data_test_backup/'
 dry_run = True
 table_id = 'log_file'
 
+# why is rsync so slow?
 # don't run rsync on weekend
 # run this file on weekend.
 

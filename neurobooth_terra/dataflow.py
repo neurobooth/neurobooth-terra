@@ -3,6 +3,7 @@
 # Author: Mainak Jas <mainakjas@gmail.com>
 
 import os
+from pydoc import source_synopsis
 import shutil
 import time
 import datetime
@@ -31,7 +32,7 @@ def _do_files_match(src_dirname, dest_dirname, fname):
 
 
 def write_files(sensor_file_table, db_table, dest_dir):
-    """Write a file.
+    """Write a file to log_file table.
 
     Parameters
     ----------
@@ -43,9 +44,10 @@ def write_files(sensor_file_table, db_table, dest_dir):
     dest_dir : str
         The destination directory.
     """
+    _, session_name = os.path.split(dest_dir)
     dest_dir = os.path.join(dest_dir, '')  # ensure trailing slash
 
-    log_file_df = db_table.query()
+    log_file_df = db_table.query(where=f"dest_dirname='{dest_dir}'")
     sensor_file_df = sensor_file_table.query()
 
     # assuming one sensor_file per row
@@ -54,7 +56,9 @@ def write_files(sensor_file_table, db_table, dest_dir):
     sensor_fnames = list()
     for sensor_fname_row, sensor_file_id in zip(sensor_fnames_df, sensor_file_ids):
         for this_sensor_fname in sensor_fname_row:
-            sensor_fnames.append((sensor_file_id, this_sensor_fname))
+            _, this_sensor_fname = os.path.split(this_sensor_fname)
+            if session_name in this_sensor_fname:
+                sensor_fnames.append((sensor_file_id, this_sensor_fname))
 
     missing_fnames = [(sensor_file_id, fname)
                       for sensor_file_id, fname in sensor_fnames
@@ -70,7 +74,7 @@ def write_files(sensor_file_table, db_table, dest_dir):
                                  dest_dir, time_verified, None, False)],
                                  cols=column_names)
         else:
-            print(f'{fname} does not exist in {dest_dir}')
+            print(f'{fname} exists in log_sensor_file table, but does not exist in {dest_dir}')
 
 
 def _update_copystatus(db_table, show_unfinished=False):
@@ -98,9 +102,10 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
                           "--out-format=%i %n%L %t"],
                          capture_output=True)
     if len(out.stderr) > 0:
-        warnings.warn(out.stderr)
+        warnings.warn(out.stderr.decode('ascii'))
 
     out = out.stdout.decode('ascii').split('\n')
+
 
     # >f tells us that a file will be transferred but it does not tell us
     # if rsync did actually manage to finish the transfer. Therefore, we

@@ -1,6 +1,7 @@
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
 import psycopg2
+import os
 
 from neurobooth_terra import Table, create_table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
@@ -9,15 +10,32 @@ from neurobooth_terra.dataflow import copy_files
 from config import ssh_args, db_args
 
 src_dir = '/autofs/nas/neurobooth/data_test/'
-dest_dir = '/autofs/nas/neurobooth/data_test_backup/'
+dest_dir_1 = '/space/neo/3/neurobooth/data_test/'
+dest_dir_2 = '/space/drwho/3/neurobooth/data_test/'
+table_id = 'log_file_copy'
+
+sessions = []
+for (_, session_folders, _) in os.walk(src_dir):
+    sessions.extend(session_folders)
+    break
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
 
         sensor_file_table = Table('log_sensor_file', conn)
-        db_table = Table('log_file', conn)
-        copy_files(src_dir, dest_dir, db_table, sensor_file_table)
+        db_table = Table(table_id, conn)
+        for session in sessions[2:]:
+            # set source dir - NAS
+            trg_dir = os.path.join(src_dir, session)
+            # set dest dir - neo if subject id odd, else drwho
+            subj_id = int(session.split('_')[0])
+            if subj_id % 2: #odd
+                dest_dir = os.path.join(dest_dir_1, session)
+            else: #even
+                dest_dir = os.path.join(dest_dir_2, session)
+
+            copy_files(trg_dir, dest_dir, db_table, sensor_file_table)
 
 # xdf and csv are not represented, other files did not get written due to
 # non-graceful exists.

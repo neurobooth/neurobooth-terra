@@ -19,8 +19,6 @@ for (_, session_folders, _) in os.walk(dest_dir):
     sessions.extend(session_folders)
     break
 
-sessions = sessions[2:]
-
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:

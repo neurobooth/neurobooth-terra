@@ -25,7 +25,7 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
 
         sensor_file_table = Table('log_sensor_file', conn)
         db_table = Table(table_id, conn)
-        for session in sessions[2:]:
+        for session in sessions:
             # set source dir - NAS
             trg_dir = os.path.join(src_dir, session)
             # set dest dir - neo if subject id odd, else drwho

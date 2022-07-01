@@ -98,7 +98,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     """Transfer files using rsync."""
 
     _update_copystatus(db_table, show_unfinished=True)
-    out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi', '--dry-run',
+    out = subprocess.run(["rsync", src_dir, dest_dir, '-a', '--dry-run',
                           "--out-format=%i %n%L %t"],
                          capture_output=True)
     if len(out.stderr) > 0:
@@ -116,7 +116,10 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     db_rows = list()
     for this_out in out:
         if this_out.startswith('>f'):
-            operation, fname, date_copied, time_verified = this_out.split(' ')
+            try:
+                operation, fname, date_copied, time_verified = this_out.split(' ')
+            except:
+                continue
 
             df = sensor_file_table.query(
                 where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
@@ -139,7 +142,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     t1 = time.time()
     # XXX: If Python process dies or interrupts the rsync, then we won't have
     # *any* of the rsync transfers from that run written to the log_file table.
-    out = subprocess.run(["rsync", src_dir, dest_dir, '-arzi',
+    out = subprocess.run(["rsync", src_dir, dest_dir, '-a',
                           "--out-format=%i %n%L %t"],
                          capture_output=True)
 

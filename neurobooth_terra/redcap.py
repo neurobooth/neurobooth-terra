@@ -174,7 +174,7 @@ def get_response_array(s):
         The pandas series object containing new entries for the response array
     """
     choices = s['select_choices_or_calculations']
-    if s['field_type'] not in ['radio', 'checkbox']:
+    if s['field_type'] not in ['radio', 'checkbox', 'dropdown']:
         return s
 
     response_array = dict()

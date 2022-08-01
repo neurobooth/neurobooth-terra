@@ -9,15 +9,16 @@ from neurobooth_terra.dataflow import copy_files
 
 from config import ssh_args, db_args
 
-src_dir = '/autofs/nas/neurobooth/data_test/'
-dest_dir_1 = '/space/neo/3/neurobooth/data_test/'
-dest_dir_2 = '/space/drwho/3/neurobooth/data_test/'
-table_id = 'log_file_copy'
+src_dir = '/autofs/nas/neurobooth/data/'
+dest_dir_1 = '/space/neo/3/neurobooth/data/'
+dest_dir_2 = '/space/drwho/3/neurobooth/data/'
+table_id = 'log_file'
 
 sessions = []
 for (_, session_folders, _) in os.walk(src_dir):
     sessions.extend(session_folders)
     break
+sessions.remove('old')
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,

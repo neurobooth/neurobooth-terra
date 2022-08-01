@@ -116,10 +116,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     db_rows = list()
     for this_out in out:
         if this_out.startswith('>f'):
-            try:
-                operation, fname, date_copied, time_verified = this_out.split(' ')
-            except:
-                continue
+            operation, fname, date_copied, time_verified = this_out.split(' ')
 
             df = sensor_file_table.query(
                 where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()

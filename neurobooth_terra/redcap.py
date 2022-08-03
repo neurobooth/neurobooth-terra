@@ -359,9 +359,12 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
         for column_name in fixed_columns:
             row.append(fixed_columns[column_name])
 
+        for indicator_column in indicator_columns:
+            row.append(df_row[indicator_column])
+
         rows.append(tuple(row))
 
-    cols = df_columns + list(fixed_columns.keys())
+    cols = df_columns + list(fixed_columns.keys()) + indicator_columns
 
     return rows, cols
 

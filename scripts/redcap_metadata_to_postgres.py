@@ -145,8 +145,8 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             table_info = table_infos[table_id]
             print(f'Overwriting table {table_id}')
             drop_table('rc_' + table_id, conn)
-            table = create_table('rc_' + table_id, conn, table_info['columns'],
-                                 table_info['dtypes'],
+            table = create_table('rc_' + table_id, conn, table_info['columns']+table_info['indicator_columns'],
+                                 table_info['dtypes']+(['smallint[]']*len(table_info['indicator_columns'])),
                                  primary_key=['subject_id', 'redcap_event_name'])
             df = fetch_survey(project, survey_name=table_id,
                               survey_id=survey_ids[table_id])

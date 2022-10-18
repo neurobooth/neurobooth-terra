@@ -11,14 +11,15 @@ from config import ssh_args, db_args
 
 do_create_table = False
 write_table = True
-dest_dir = '/autofs/nas/neurobooth/data/'
-table_id = 'log_file'
+dest_dir = '/autofs/nas/neurobooth/data_test/'
+table_id = 'log_file_copy'
 
 sessions = []
 for (_, session_folders, _) in os.walk(dest_dir):
     sessions.extend(session_folders)
     break
-sessions.remove('old')
+if 'old' in sessions:
+    sessions.remove('old')
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,

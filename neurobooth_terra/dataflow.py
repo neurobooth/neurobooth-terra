@@ -388,7 +388,6 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     where += f"AND EXTRACT(EPOCH FROM (current_timestamp - time_verified)) > {record_older_than} "
     where += "AND is_deleted=False AND is_finished is null"
     fnames_to_delete_df = db_table.query(where=where)
-    # fnames_to_delete = fnames_to_delete_df.fname
 
     ### Query for subset of files from above that got copied to destination 30 days ago ###
     # dest_dirname is either of suitable_dest, src_dirname is not null (i.e. is NAS,

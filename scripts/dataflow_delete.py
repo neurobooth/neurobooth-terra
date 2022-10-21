@@ -1,4 +1,5 @@
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
+#        : Siddharth Patel <spatel@phmi.partners.org>
 
 import shutil
 import psycopg2
@@ -8,6 +9,8 @@ from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import delete_files
 
 from config import ssh_args, db_args
+
+num_secs_in_a_day = 24*3600 # total number of seconds in a day - conversion factor
 
 target_dir = '/autofs/nas/neurobooth/data_test/' # The directory from where files will be deleted
 
@@ -21,27 +24,27 @@ table_id = 'log_file_copy' # log_file if target_dir is 'neurobooth/data'
 if dry_run:
     stats = shutil.disk_usage(target_dir)
     threshold = stats.used / stats.total - 0.1  # ensure that it deletes
-    record_older_than = 20 # days
-    copied_older_than = 15 # days
+    record_older_than_days = 20 # days
+    copied_older_than_days = 15 # days
+    # time elapsed is needed in seconds for sql query
+    record_older_than = record_older_than_days * num_secs_in_a_day # seconds
+    copied_older_than = copied_older_than_days * num_secs_in_a_day # seconds
+
 else:
     threshold = 0.85
-    record_older_than = 45 # days
-    copied_older_than = 30 # days
+    record_older_than_days = 60/num_secs_in_a_day # converting days to seconds for testing
+    copied_older_than_days = 30/num_secs_in_a_day # converting days to seconds for testing
+    # time elapsed is needed in seconds for sql query
+    record_older_than = record_older_than_days * num_secs_in_a_day # seconds
+    copied_older_than = copied_older_than_days * num_secs_in_a_day # seconds
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
 
-        # if dry_run:
-        #     copy_table(src_table_id=table_id,
-        #                target_table_id=table_id + '_copy',
-        #                conn=conn)
-        #     db_table = Table(table_id + '_copy', conn)
-        # else:
-        #     db_table = Table(table_id, conn)
-
         db_table = Table(table_id, conn)
 
+        # TODO: Remove two suitable destination directories
         delete_files(db_table,
                      target_dir,
                      suitable_dest_dir1,
@@ -50,3 +53,5 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
                      record_older_than=record_older_than,
                      copied_older_than=copied_older_than,
                      dry_run=dry_run)
+        
+        # TODO: above block runs again for the second destination directory

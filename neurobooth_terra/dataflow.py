@@ -91,7 +91,7 @@ def write_files(sensor_file_table, db_table, dest_dir_session):
                                  cols=column_names)
         else:
             # files with these extensions are not tracked yet
-            if not any(ext in fname for ext in ['asc', 'xdf', 'txt', 'csv', 'jittered']):
+            if not any(ext in fname for ext in ['xdf', 'txt', 'csv', 'jittered']):
                 print(f'{fname} exists in log_sensor_file table, but does not exist in {dest_dir}')
 
 
@@ -103,11 +103,11 @@ def _do_files_match(src_dirname, dest_dirname, fname):
     # the same, function returns true
     if fname.endswith('.bag') or fname.endswith('.avi'):
 
-        src_mtime = os.path.getsize(os.path.join(src_dirname, os.path.split(fname)[-1]))
+        src_mtime = os.path.getmtime(os.path.join(src_dirname, os.path.split(fname)[-1]))
         src_fsize = os.path.getsize(os.path.join(src_dirname, os.path.split(fname)[-1]))
 
         dest_mtime = os.path.getmtime(os.path.join(dest_dirname, os.path.split(fname)[-1]))
-        dest_fsize = os.path.getmtime(os.path.join(dest_dirname, os.path.split(fname)[-1]))
+        dest_fsize = os.path.getsize(os.path.join(dest_dirname, os.path.split(fname)[-1]))
 
         if (src_fsize==dest_fsize) and (src_mtime==dest_mtime):
             return True
@@ -210,7 +210,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
                 log_sensor_file_id = df.log_sensor_file_id[0]
             else:
                 # files with these extensions are not tracked yet
-                if not any(ext in fname for ext in ['asc', 'xdf', 'txt', 'csv', 'jittered']):
+                if not any(ext in fname for ext in ['xdf', 'txt', 'csv', 'jittered']):
                     print(f'log_sensor_file_id not found for {fname}')
                 continue
 

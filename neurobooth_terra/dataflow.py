@@ -269,7 +269,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
 
 def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
                  threshold=0.85, record_older_than=45, copied_older_than=30,
-                 dry_run=False):
+                 dry_run=True):
     """Delete files if x% of disk is filled.
 
     Parameters
@@ -417,6 +417,8 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
                                                          right_on='fname')
     # saving files to delete union df as csv
     outfile = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")+'_'+'delete_union_dataframe.csv'
+    if dry_run:
+        outfile = outfile.replace('.csv', '_DRY_RUN.csv')
     files_to_delete_union_df.to_csv(outfile)
 
     ### Deleting files ###

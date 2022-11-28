@@ -281,6 +281,13 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
                  dry_run=True):
     """Delete files if x% of disk is filled.
 
+        Delete files from NAS (source directory) when x% of NAS is filled.
+        This function has been written to specifically delete files from
+        NAS. As such the target_dir should always be NAS.
+        The function also needs two suitable_dest_directories, since data is
+        split between two storage servers. These destination directories can
+        change as new destinations are added to storage.
+
     Parameters
     ----------
     db_table : instance of Table
@@ -307,8 +314,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
 
     Notes
     -----
-    Let's say the data was first written to "NAS", then copied to "who"
-    and from "who" to "neo":
+    Let's say the data was written to "NAS", then copied to "who"
 
     .. cssclass:: table-striped
 
@@ -317,16 +323,14 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     +=====+=====+============+
     | NULL| NAS |   False    |
     +-----+-----+------------+
-    | Nas | who |   False    |
-    +-----+-----+------------+
-    | who | neo |   False    |
+    | NAS | who |   False    |
     +-----+-----+------------+
 
     Now, if we want to delete the file from "Nas" and ensure that it has
-    been copied to the *final* destination "neo", we provide the following
+    been copied to the *final* destination "who", we provide the following
     arguments to the function:
 
-    target_dir = NAS, suitable_dest = neo
+    target_dir = NAS, suitable_dest_dir1 = who, suitable_dest_dir2 = neo
 
     .. cssclass:: table-striped
 
@@ -337,31 +341,11 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     +-----+-----+------------+
     | NAS | who |   False    |
     +-----+-----+------------+
-    | who | neo |   False    |
-    +-----+-----+------------+
 
     Note that ``is_deleted`` bool is set to ``True`` where dest = target_dir
 
-    Here is another example:
-
-    target_dir = who, suitable_dest = neo
-
-    .. cssclass:: table-striped
-
-    +-----+-----+------------+
-    | src | dest| is_deleted |
-    +=====+=====+============+
-    | NULL| NAS |   True     |
-    +-----+-----+------------+
-    | NAS | who |   True     |
-    +-----+-----+------------+
-    | who | neo |   False    |
-    +-----+-----+------------+
     """
-    
-    # TODO: Remove two suitable dest directories,
-    # there should only be on one.
-    
+
     if dry_run:
         print('This is a dry run - nothing will be deleted')
     else:
@@ -403,9 +387,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     # but could be an alternate source as well), is_deleted is False (because redundancy),
     # is_finished is True - i.e. copied successfully with hash check, and age is older
     # than 30 days
-    # TODO: There should only be one destination directory
     where = f"(position('{suitable_dest_dir1}' in dest_dirname)>0 OR position('{suitable_dest_dir2}' in dest_dirname)>0) "
-    # TODO: src_dirname should be target_dir - i.e. location where we want to delete files
     where += f"AND src_dirname IS NOT NULL " # exclude write operations
     where += "AND is_deleted=False AND is_finished=True " # just to be safe
     where += f"AND EXTRACT(EPOCH FROM (current_timestamp - time_verified)) > {copied_older_than}"
@@ -415,37 +397,44 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     # removing session prefix and retaining only filename in fname column
     fnames_to_delete_df['fname'] = fnames_to_delete_df.fname.apply(lambda x: os.path.split(x)[-1])
     fnames_transferred_df['fname'] = fnames_transferred_df.fname.apply(lambda x: os.path.split(x)[-1])
-    # resetting index so that operation_id is part of df as its own column
-    # resetting only fnames_to_delte_df because these operation_ids will be updated in table
-    # we don't want to update operation_ids in fnames_transferred_df
-    # TODO: Before the merge, remove all columns that are not needed
+
+    # resetting index on fnames_to_delte_df to make index:operation_id
+    # as its own separate column
     fnames_to_delete_df.reset_index(inplace=True)
+
+    # Removing all columns that are not needed for delete operation
+    delete_cols_to_keep = ['operation_id', 'fname', 'dest_dirname']
+    fnames_to_delete_df = fnames_to_delete_df[delete_cols_to_keep]
+    transferred_cols_to_keep = ['fname'] # Only need 'fname' from transferred_df
+    fnames_transferred_df = fnames_transferred_df[transferred_cols_to_keep]
+
     # finding union between sets via an inner join
     files_to_delete_union_df = fnames_to_delete_df.merge(fnames_transferred_df,
                                                          how='inner',
                                                          left_on='fname',
                                                          right_on='fname')
-    # saving files to delete union df as csv
-    outfile = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")+'_'+'delete_union_dataframe.csv'
-    if dry_run:
-        outfile = outfile.replace('.csv', '_DRY_RUN.csv')
-    files_to_delete_union_df.to_csv(outfile)
 
     ### Deleting files ###
     for ix, files_row in files_to_delete_union_df.iterrows():
 
         operation_id = files_row.operation_id
-        fname = os.path.join(files_row.dest_dirname_x, files_row.fname)
+        fname = os.path.join(files_row.dest_dirname, files_row.fname)
 
         if os.path.exists(fname):
             ### Check by querying row by operation_id
             where = f'operation_id={operation_id}'
             assert_df = db_table.query(where=where)
             if (
+                # confirm that we only ever get one row,
+                # should always be true since operation_id is a primary key
                 len(assert_df)==1
-                # TODO: Add fname check, assert that target_dir is part of fname
-                and target_dir in assert_df.dest_dirname.iloc[0]
+                # confirm that fname from db matches fname that will be deleted
+                and os.path.split(fname)[-1] == os.path.split(assert_df.fname.iloc[0])[-1]
+                # confirm that target dir is in dest_dirname of db record
+                and assert_df.dest_dirname.iloc[0].startswith(target_dir)
+                # confirm that is_deleted is False for the file, since file is yet to be deleted
                 and assert_df.is_deleted.iloc[0]==False
+                # confirm that is_finished is None, since we are deleting from NAS
                 and assert_df.is_finished.iloc[0]==None
                 ):
                 print(f'Deleting ... {fname}')
@@ -455,7 +444,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
                                         cols=['operation_id', 'is_deleted'],
                                         on_conflict='update')
             else:
-                print(f'Query on operation_id {operation_id} failed before delete: {assert_df}')
+                print(f'Query or checks on operation_id {operation_id} failed before delete: {assert_df}')
         else:
             print(f'File not found while deleting ... {fname}')
 

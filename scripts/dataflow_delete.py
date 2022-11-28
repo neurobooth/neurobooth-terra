@@ -23,8 +23,8 @@ table_id = 'log_file' # log_file if target_dir is 'neurobooth/data', log_file_co
 if dry_run:
     stats = shutil.disk_usage(target_dir)
     threshold = stats.used / stats.total - 0.1  # ensure that it deletes
-    record_older_than_days = 35 # days
-    copied_older_than_days = 30 # days
+    record_older_than_days = 73 # days
+    copied_older_than_days = 45 # days
     # time elapsed is needed in seconds for sql query
     record_older_than = record_older_than_days * num_secs_in_a_day # seconds
     copied_older_than = copied_older_than_days * num_secs_in_a_day # seconds
@@ -43,7 +43,6 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
 
         db_table = Table(table_id, conn)
 
-        # TODO: Remove two suitable destination directories
         delete_files(db_table,
                      target_dir,
                      suitable_dest_dir1,
@@ -52,5 +51,3 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
                      record_older_than=record_older_than,
                      copied_older_than=copied_older_than,
                      dry_run=dry_run)
-        
-        # TODO: above block runs again for the second destination directory

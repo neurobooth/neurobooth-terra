@@ -53,6 +53,9 @@ def write_files(sensor_file_table, db_table, dest_dir_session):
         for i in x:
             c = c+str(i)
         return c
+    # Convert an array of filenames into a single concatenated string. If order of filenames in
+    # array is not maintained, this logic for detecting duplicates will break. However neurobooth_os
+    # generally writes filenames in array to neurobooth_terra in the same order.
     sensor_file_df['to_detect_duplicates'] =  sensor_file_df['sensor_file_path'].apply(concat_list_elements)
 
     # this is a list of lists - since sensor_file_path is an array in log_sensor_file table
@@ -82,13 +85,14 @@ def write_files(sensor_file_table, db_table, dest_dir_session):
     column_names = ['log_sensor_file_id', 'src_dirname', 'fname',
                     'dest_dirname', 'time_verified', 'rsync_operation',
                     'is_deleted']
+    column_values = [(sensor_file_id, None, fname, 
+                      dest_dir, time_verified, None,
+                      False)]
     for sensor_file_id, fname in missing_fnames:
         # removing session prefix from sensor file name before building full path-to-file
         if os.path.exists(os.path.join(dest_dir, os.path.split(fname)[-1])):
             time_verified = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            db_table.insert_rows([(sensor_file_id, None, fname,
-                                 dest_dir, time_verified, None, False)],
-                                 cols=column_names)
+            db_table.insert_rows(column_values, cols=column_names)
         else:
             # files with these extensions are not tracked yet
             if not any(ext in fname for ext in ['xdf', 'txt', 'csv', 'jittered']):
@@ -150,7 +154,7 @@ def _update_copystatus(db_table, show_unfinished=False):
                   f"file {log_file_row['fname']}")
 
 
-def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
+def copy_files(src_dir, dest_dir, db_table, sensor_file_table, num_of_days = 1000):
     """Copy files per session using rsync.
 
     First, an rsync dry run is executed to get details of copy.
@@ -168,6 +172,11 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     sensor_file_table : instance of Table
         The table containing information about the sensors used in a session
         and the files.
+    num_of_days : int
+        Number of days to wait before rewriting a file to the table. Currently
+        set to 1000 days so that files already written to the table are never
+        rewritten or duplicated. Parameter will be removed once check_file_edited
+        block is implemented.
     """
 
     # update copy status first, in case process failed on previous run
@@ -218,7 +227,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
             # If the file has already been copied over, skip file if copied less than num_of_days
             time_current_verification = datetime.datetime.strptime(f'{date_copied}_{time_verified}', "%Y/%m/%d_%H:%M:%S")
             qry = db_table.query(where=f"fname = '{fname}' and is_finished is True")
-            num_of_days = 1000
+            # num_of_days = 1000
             if len(qry)>0:
                 time_previously_verified = qry.iloc[-1].time_verified.to_pydatetime()
                 td =  time_current_verification - time_previously_verified
@@ -409,6 +418,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     # resetting index so that operation_id is part of df as its own column
     # resetting only fnames_to_delte_df because these operation_ids will be updated in table
     # we don't want to update operation_ids in fnames_transferred_df
+    # TODO: Before the merge, remove all columns that are not needed
     fnames_to_delete_df.reset_index(inplace=True)
     # finding union between sets via an inner join
     files_to_delete_union_df = fnames_to_delete_df.merge(fnames_transferred_df,
@@ -433,6 +443,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
             assert_df = db_table.query(where=where)
             if (
                 len(assert_df)==1
+                # TODO: Add fname check, assert that target_dir is part of fname
                 and target_dir in assert_df.dest_dirname.iloc[0]
                 and assert_df.is_deleted.iloc[0]==False
                 and assert_df.is_finished.iloc[0]==None

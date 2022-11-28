@@ -14,7 +14,6 @@ num_secs_in_a_day = 24*3600 # total number of seconds in a day - conversion fact
 
 target_dir = '/autofs/nas/neurobooth/data/' # The directory from where files will be deleted
 
-### TODO: Add logic here later when neo/3 and drwho/3 get full
 suitable_dest_dir1 = '/space/neo/3/neurobooth/data/'
 suitable_dest_dir2 = '/space/drwho/3/neurobooth/data/'
 

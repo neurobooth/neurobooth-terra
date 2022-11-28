@@ -43,4 +43,5 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             else: #even
                 dest_dir = os.path.join(dest_dir_2, session)
 
+            # Note: dest_dir does not have a trailing slash here!
             copy_files(trg_dir, dest_dir, db_table, sensor_file_table)

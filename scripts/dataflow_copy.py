@@ -1,4 +1,5 @@
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
+#        : Siddharth Patel <spatel@phmi.partners.org>
 
 import psycopg2
 import os
@@ -9,23 +10,29 @@ from neurobooth_terra.dataflow import copy_files
 
 from config import ssh_args, db_args
 
-src_dir = '/autofs/nas/neurobooth/data/'
-dest_dir_1 = '/space/neo/3/neurobooth/data/'
-dest_dir_2 = '/space/drwho/3/neurobooth/data/'
-table_id = 'log_file'
+src_dir = '/autofs/nas/neurobooth/data_test/'
+### TODO: Add logic here later when neo/3 and drwho/3 get full
+dest_dir_1 = '/space/neo/3/neurobooth/data_test/'
+dest_dir_2 = '/space/drwho/3/neurobooth/data_test/'
+table_id = 'log_file_copy'
 
+# get all sessions living in NAS
 sessions = []
 for (_, session_folders, _) in os.walk(src_dir):
     sessions.extend(session_folders)
     break
-sessions.remove('old')
+# remove session 'old' that's a data dump of irrelevant data
+if 'old' in sessions:
+    sessions.remove('old')
 
+# Copying data to two separate destinations based on odd/even subject_ids
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(port=tunnel.local_bind_port,
                           host=tunnel.local_bind_host, **db_args) as conn:
 
         sensor_file_table = Table('log_sensor_file', conn)
         db_table = Table(table_id, conn)
+        # copy data session by session
         for session in sessions:
             # set source dir - NAS
             trg_dir = os.path.join(src_dir, session)
@@ -36,27 +43,5 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             else: #even
                 dest_dir = os.path.join(dest_dir_2, session)
 
+            # Note: dest_dir does not have a trailing slash here!
             copy_files(trg_dir, dest_dir, db_table, sensor_file_table)
-
-# xdf and csv are not represented, other files did not get written due to
-# non-graceful exists.
-# Possible ways to handling retrospective entries added to log_sensor_file:
-# 1. Do not affect write_files assuming files still exist on NAS.
-#    It will simply copy over the new entries to log_file.
-# 2. However, retrospective entries should be added for copy operations.
-#    For example, if the data was copied from NAS to DrWho, the subsequent
-#    rsync operation will not produce an output for that file and hence
-#    it will not be added automatically to log_file.
-# 3. For deletion, there are two options:
-#    a. Retrospectively adding the data_verified by looking at file header (?)
-#    b. Use date_verified as current date and let the deletion happen x days
-#       from when the retrospective correction was done.
-#
-# class Foo:
-#    __enter__()
-#        pass
-#    __exit__():
-#        pass
-#
-# with Foo as foo:
-#    # do whatever

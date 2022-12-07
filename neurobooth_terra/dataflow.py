@@ -287,6 +287,10 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
         The function also needs two suitable_dest_directories, since data is
         split between two storage servers. These destination directories can
         change as new destinations are added to storage.
+        
+        Changes needed to make this a generalized function are commented in
+        code. To generalize, there should only be one suitable destination
+        directory, and this function should be called once for each destination
 
     Parameters
     ----------
@@ -379,6 +383,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     # (i.e. we treat these files and NAS as source)
     where = f"position('{target_dir}' in dest_dirname)>0 "
     where += f"AND EXTRACT(EPOCH FROM (current_timestamp - time_verified)) > {record_older_than} "
+    # is_finished will be True if source is different than NAS - change query to generalize
     where += "AND is_deleted=False AND is_finished is null"
     fnames_to_delete_df = db_table.query(where=where)
 
@@ -388,6 +393,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     # is_finished is True - i.e. copied successfully with hash check, and age is older
     # than 30 days
     where = f"(position('{suitable_dest_dir1}' in dest_dirname)>0 OR position('{suitable_dest_dir2}' in dest_dirname)>0) "
+    # src_dirname should be {target_dir} - change query to generalize
     where += f"AND src_dirname IS NOT NULL " # exclude write operations
     where += "AND is_deleted=False AND is_finished=True " # just to be safe
     where += f"AND EXTRACT(EPOCH FROM (current_timestamp - time_verified)) > {copied_older_than}"
@@ -435,6 +441,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
                 # confirm that is_deleted is False for the file, since file is yet to be deleted
                 and assert_df.is_deleted.iloc[0]==False
                 # confirm that is_finished is None, since we are deleting from NAS
+                # change this condition to generalize - this should be True for non NAS
                 and assert_df.is_finished.iloc[0]==None
                 ):
                 print(f'Deleting ... {fname}')
@@ -445,6 +452,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
                                         on_conflict='update')
             else:
                 print(f'Query or checks on operation_id {operation_id} failed before delete: {assert_df}')
+        # This else condition triggers in case files were moved to an alternate location/deleted
         else:
             print(f'File not found while deleting ... {fname}')
 

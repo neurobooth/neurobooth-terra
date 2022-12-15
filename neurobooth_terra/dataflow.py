@@ -85,13 +85,17 @@ def write_files(sensor_file_table, db_table, dest_dir_session):
     column_names = ['log_sensor_file_id', 'src_dirname', 'fname',
                     'dest_dirname', 'time_verified', 'rsync_operation',
                     'is_deleted']
-    column_values = [(sensor_file_id, None, fname, 
-                      dest_dir, time_verified, None,
-                      False)]
+    # Above column names correspond to following column values
+    # column_values = [(sensor_file_id, None, fname, 
+    #                   dest_dir, time_verified, None,
+    #                   False)]
     for sensor_file_id, fname in missing_fnames:
         # removing session prefix from sensor file name before building full path-to-file
         if os.path.exists(os.path.join(dest_dir, os.path.split(fname)[-1])):
             time_verified = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            column_values = [(sensor_file_id, None, fname, 
+                            dest_dir, time_verified, None,
+                            False)]
             db_table.insert_rows(column_values, cols=column_names)
         else:
             # files with these extensions are not tracked yet
@@ -144,7 +148,7 @@ def _update_copystatus(db_table, show_unfinished=False):
                            log_file_row['fname']
                            ):
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") # strf: '2022-10-18 15:58:38'
-            db_table.insert_rows([(operation_id, current_time, True,)],
+            db_table.insert_rows([(operation_id, current_time, True)],
                                  ['operation_id', 'time_verified', 'is_finished'],
                                  on_conflict='update')
         elif show_unfinished:
@@ -154,12 +158,21 @@ def _update_copystatus(db_table, show_unfinished=False):
                   f"file {log_file_row['fname']}")
 
 
-def copy_files(src_dir, dest_dir, db_table, sensor_file_table, num_of_days = 1000):
+def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     """Copy files per session using rsync.
 
     First, an rsync dry run is executed to get details of copy.
     The dry run output is used to track copy operations in the
     log_file table.
+
+    Note: copy_files has been intended to run only after write_files
+    has been executed via the write_file_info script. If copy files
+    is run without running write_files first, it will still copy
+    and add the records to the database table. write_file_script can
+    mostly be excuted posthoc as well, and the database state will
+    remain fine. Running delete_files will possibly break the database
+    state though. (Exhaustive testing of executing write->copy->delete
+    out of order has not been done)
     
     Parameters
     ----------
@@ -172,11 +185,6 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table, num_of_days = 100
     sensor_file_table : instance of Table
         The table containing information about the sensors used in a session
         and the files.
-    num_of_days : int
-        Number of days to wait before rewriting a file to the table. Currently
-        set to 1000 days so that files already written to the table are never
-        rewritten or duplicated. Parameter will be removed once check_file_edited
-        block is implemented.
     """
 
     # update copy status first, in case process failed on previous run
@@ -223,22 +231,29 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table, num_of_days = 100
                     print(f'log_sensor_file_id not found for {fname}')
                 continue
 
-            # TODO: Delete this block, and replace with check_file_edited block
-            # If the file has already been copied over, skip file if copied less than num_of_days
-            time_current_verification = datetime.datetime.strptime(f'{date_copied}_{time_verified}', "%Y/%m/%d_%H:%M:%S")
-            qry = db_table.query(where=f"fname = '{fname}' and is_finished is True")
-            # num_of_days = 1000
-            if len(qry)>0:
-                time_previously_verified = qry.iloc[-1].time_verified.to_pydatetime()
-                td =  time_current_verification - time_previously_verified
-                if td.total_seconds() < num_of_days*24*3600:
-                    continue
+            # Block to check if file has been edited!
+            # If file has already been copied over, check if files match. If they do match - continue
+            # Else: the file has been edited - therefore, set is_finished to false and continue.
+            # We continue either way because we don't want to rewrite this file to table. The rsync for
+            # this session will proceed anyway outside this loop, and edited file will be copied over.
+            # Then update copy status will run, and update is_finished to true, and time_verified
+            # to when it checks hashes
 
-            # TODO: If file has already been copied over, check if files match. If they do match - continue
-            # Else: set is_finished to false and continue. We continue either way because we don't want to
-            # rewrite this file to table. The rsync for this session will proceed anyway outside this
-            # loop. And edited file will be copied over. Then update copy status will run, and update
-            # is_finished to true, and time_verified to when it checks hashes
+            # Check if file has already been copied over
+            qry = db_table.query(where=f"fname = '{fname}' and is_finished is True")
+            qry.reset_index(inplace=True)
+            if len(qry)==1:
+                # if it has, then check if files match
+                if _do_files_match(src_dir, dest_dir, fname):
+                    # if files match -> continue
+                    continue
+                else:
+                    # update is_finished to False for the copied but edited file
+                    db_table.insert_rows([(int(qry.operation_id[0]), False)],
+                                         ['operation_id', 'is_finished'],
+                                         on_conflict='update')
+                    # and then continue to prevent writing to db table
+                    continue
 
             # Adding trailing slash before adding to database
             dest_dir = os.path.join(dest_dir, '')

@@ -43,5 +43,12 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             else: #even
                 dest_dir = os.path.join(dest_dir_2, session)
 
-            # Note: dest_dir does not have a trailing slash here!
+            # Note: trg_dir and dest_dir do not have trailing slashes here!
             copy_files(trg_dir, dest_dir, db_table, sensor_file_table)
+
+# For rsync it does not matter if trg_dir has a trailing slash,
+# however dest_dir must have a trailing slash during a copy run.
+# In this code, we pass dest_dir without a trailing slash, because
+# we do a dry run first, and the dry run should be done without
+# a trailing slash. Later we add trailing slashes before the
+# actual copy run.

@@ -10,11 +10,11 @@ from neurobooth_terra.dataflow import copy_files
 
 from config import ssh_args, db_args
 
-src_dir = '/autofs/nas/neurobooth/data_test/'
+src_dir = '/autofs/nas/neurobooth/data/'
 ### TODO: Add logic here later when neo/3 and drwho/3 get full
-dest_dir_1 = '/space/neo/3/neurobooth/data_test/'
-dest_dir_2 = '/space/drwho/3/neurobooth/data_test/'
-table_id = 'log_file_copy'
+dest_dir_1 = '/space/neo/3/neurobooth/data/'
+dest_dir_2 = '/space/drwho/3/neurobooth/data/'
+table_id = 'log_file'
 
 # get all sessions living in NAS
 sessions = []

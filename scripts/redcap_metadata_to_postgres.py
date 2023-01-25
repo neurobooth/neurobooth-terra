@@ -63,7 +63,9 @@ survey_ids = {'consent': 99891,
               'neurobooth_vision_prom_ataxia': 99934,
               'prom_ataxia': 102336,
               'dysarthria_impact_scale': 102384,
-              'ataxia_pd_scales': 103620}
+              'ataxia_pd_scales': 103620,
+              'participant_and_consent_information': 124062,
+              'handedness_questionnaire': 123490}
 
 # TODOs
 # table column mapping
@@ -109,6 +111,8 @@ metadata['redcap_form_description'][~is_descriptive] = None
 metadata['question'] = metadata['field_label']
 metadata['question'][is_descriptive] = None
 
+if 'database_table_name' not in metadata.columns:
+    metadata['database_table_name'] = np.nan
 metadata['database_table_name'] = metadata['database_table_name'].fillna(
     value=metadata['redcap_form_name'])
 

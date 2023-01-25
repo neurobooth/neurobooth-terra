@@ -202,7 +202,8 @@ def map_dtypes(s):
     text_dtype_mapping = {'date_mdy': 'date', 'email': 'varchar(255)',
                           'datetime_seconds_ymd': 'timestamp',
                           'datetime_seconds_mdy': 'timestamp',
-                          'mrn_6d': 'integer', 'number': 'integer',
+                          'datetime_mdy': 'timestamp',
+                          'mrn_6d': 'integer', 'number': 'bigint',
                           'phone': 'varchar(15)'}
     python_dtype_mapping = {'smallint[]': 'list',
                             'boolean': 'bool',
@@ -293,7 +294,7 @@ def get_tables_structure(metadata, include_surveys=None):
 def subselect_table_structure(table_info, df_cols):
     """Subselect columns that are in the report."""
 
-    table_info_new = {'columns': list(), 'dtypes': list(),
+    table_info_new = {'columns': list(), 'indicator_columns': list(), 'dtypes': list(),
                       'python_dtypes': list()}
     for col, dtype, python_dtype in zip(table_info['columns'],
                                         table_info['dtypes'],
@@ -302,7 +303,11 @@ def subselect_table_structure(table_info, df_cols):
             table_info_new['columns'].append(col)
             table_info_new['dtypes'].append(dtype)
             table_info_new['python_dtypes'].append(python_dtype)
-    table_info_new['indicator_columns'] = table_info['indicator_columns']
+    # table_info_new['indicator_columns'] = table_info['indicator_columns']
+    for col in df_cols:
+        if col.split('___')[0] in table_info['indicator_columns']:
+            table_info_new['indicator_columns'].append(col.split('___')[0])
+    table_info_new['indicator_columns'] = list(set(table_info_new['indicator_columns']))
     return table_info_new
 
 

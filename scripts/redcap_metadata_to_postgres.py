@@ -27,6 +27,7 @@ from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 import psycopg2
 
 from neurobooth_terra import Table, create_table, drop_table
+from neurobooth_terra.views.views import create_views, drop_views
 from config import ssh_args, db_args, project
 
 # %%
@@ -55,7 +56,6 @@ survey_ids = {'consent': 99891,
               'neuro_qol_sleep_disturbance_short_form': 99931,
               'communicative_participation_item_bank': 99932,
               'chief_short_form': 99933,
-              'neurobooth_vision_prom_ataxia': 99934,
               'promis_10': 99935,
               'system_usability_scale': 99936,
               'study_feedback': 99937,
@@ -73,7 +73,7 @@ survey_ids = {'consent': 99891,
 
 # %%
 # Next, we fetch the metadata table. This table is the master table
-# that contains columns and their informations. It can be used to infer
+# that contains columns and their information. It can be used to infer
 # information about the columns: example, what choices are available for a
 # particular question.
 
@@ -92,7 +92,7 @@ print('[Done]')
 
 for column in ['section_header', 'field_label']:
     metadata[column] = metadata[column].apply(
-        lambda x : x.strip('\n') if isinstance(x, str) else x
+        lambda x: x.strip('\n') if isinstance(x, str) else x
     )
 
 # feature of interest
@@ -137,8 +137,14 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
 )
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(port=tunnel.local_bind_port,
-                          host=tunnel.local_bind_host, **db_args) as conn:
+    with psycopg2.connect(
+            port=tunnel.local_bind_port,
+            host=tunnel.local_bind_host,
+            **db_args
+    ) as conn:
+
+        # Drop views first, as they may depend on the below tables
+        drop_views(conn, verbose=True)
 
         table_metadata = Table('rc_data_dictionary', conn)
         table_metadata.insert_rows(rows_metadata, cols_metadata,
@@ -179,3 +185,5 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
                 indicator_columns=table_info['indicator_columns'])
 
             table.insert_rows(rows, columns)
+
+        create_views(conn, verbose=True)

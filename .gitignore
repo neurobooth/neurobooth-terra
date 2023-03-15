@@ -2,7 +2,11 @@
 **/__pycache__/**
 *.egg*
 
+.idea/
+
 doc/_build/
 doc/generated/
 doc/auto_examples/
 
+*.csv
+*.out

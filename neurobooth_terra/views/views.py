@@ -5,6 +5,7 @@ from psycopg2._psycopg import connection
 
 VIEWS = [  # Below list should be in intended order of view creation
     'rc_ataxia_pd_scales_clean',
+    'v_longitudinal_summary',
 ]
 
 

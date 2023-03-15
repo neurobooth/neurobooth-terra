@@ -12,12 +12,11 @@ SELECT
     scales.end_time_ataxia_pd_scales,
     (scales.in_person_boolean_ataxia_pd_scales = 1) AS in_person_boolean,
     CASE
-        WHEN scales.rater_ataxia_pd_scales = 1 THEN 'Jeremy Schmahmann'
-        WHEN scales.rater_ataxia_pd_scales = 2 THEN 'Christopher Stephen'
-        WHEN scales.rater_ataxia_pd_scales = 3 THEN 'Anoopum Gupta'
         WHEN scales.rater_ataxia_pd_scales = 4 THEN scales.ataxia_pd_other_rater
-        WHEN scales.rater_ataxia_pd_scales = 5 THEN 'Albert Hung'
-        WHEN scales.rater_ataxia_pd_scales = 6 THEN 'Anne-Marie Wills'
+        WHEN scales.rater_ataxia_pd_scales IS NOT NULL THEN ( -- Look up associated rater from the data dictionary
+            SELECT dd.response_array->>scales.rater_ataxia_pd_scales::text FROM rc_data_dictionary dd
+            WHERE dd.database_table_name = 'ataxia_pd_scales' AND dd.field_name = 'rater_ataxia_pd_scales'
+        )
     END AS rater_name,
     scales.comments_ataxia_pd_scales,
 

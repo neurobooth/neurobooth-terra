@@ -65,7 +65,8 @@ survey_ids = {'consent': 99891,
               'dysarthria_impact_scale': 102384,
               'ataxia_pd_scales': 103620,
               'participant_and_consent_information': 124062,
-              'handedness_questionnaire': 123490}
+              'handedness_questionnaire': 123490,
+              'end_of_visit_details': 127247}
 
 # TODOs
 # table column mapping

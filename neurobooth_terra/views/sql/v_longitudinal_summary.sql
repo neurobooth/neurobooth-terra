@@ -3,13 +3,10 @@ WITH latest_diagnosis AS (
 	SELECT DISTINCT ON (subject_id)
 		subject_id,
 		primary_diagnosis,
-		other_primary_diagnosis,
-		other_ataxia,
-		other_neuropathy,
-		other_dementia,
+		primary_diagnosis_id,
 		secondary_diagnosis,
 		diagnosis_notes
-	FROM rc_clinical
+	FROM rc_clinical_clean
 	ORDER BY
 		subject_id,
 		end_time_clinical DESC NULLS LAST
@@ -34,10 +31,7 @@ SELECT
 	visit_summary.last_visit,
 	visit_summary.total_days,
 	latest_diagnosis.primary_diagnosis,
-	latest_diagnosis.other_primary_diagnosis,
-	latest_diagnosis.other_ataxia,
-	latest_diagnosis.other_neuropathy,
-	latest_diagnosis.other_dementia,
+	latest_diagnosis.primary_diagnosis_id,
 	latest_diagnosis.secondary_diagnosis,
 	latest_diagnosis.diagnosis_notes
 FROM visit_summary

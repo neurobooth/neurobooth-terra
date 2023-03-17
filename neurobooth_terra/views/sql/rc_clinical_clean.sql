@@ -56,8 +56,6 @@ SELECT
     clin.first_symptom,
     clin.genetic_testing_boolean,
     clin.mri_boolean,
-    clin.harvard_biomarker_boolean,
-    clin.biobank_boolean,
 
     -- ========================================
     -- Comorbidities
@@ -88,6 +86,8 @@ SELECT
     -- ========================================
     clin.neuropheno_id,
     clin.adult_remote_id AS remote_sca_id,
+    clin.harvard_biomarker_boolean,
+    clin.biobank_boolean,
     1 = ANY(clin.drug_trial_past_or_present) AS drug_trial_present,
     2 = ANY(clin.drug_trial_past_or_present)  AS drug_trial_past,
     clin.drug_trial_name

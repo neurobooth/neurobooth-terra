@@ -78,14 +78,58 @@ survey_ids = {'consent': 99891,
 # information about the columns: example, what choices are available for a
 # particular question.
 
+def _correct_response_array(metadata_df):
+    '''Correct response array values for field_name
+    
+    Response array of the form "1, English | 2, Spanish"
+    can have errors, such as missing coding, or we might
+    need to change the array values - for example change
+    1 to 99, or correct an array of the form "5, Never | 2.5,"
+    
+    This function corrects for such cases.
+    
+    In case a coding value is missing like for "2.5," the
+    error encountered is
+    File "neurobooth-terra/neurobooth_terra/redcap.py", line 183, in get_response_array
+    k, v = c.strip().split(', ', maxsplit=1)
+    ValueError: not enough values to unpack (expected 2, got 1) 
+    
+    '''
+    correction_dict={}
+    # Correction dictionary should have the field_name that needs correcting
+    # as the key, and the actual correction as the value.
+    # eg.: correction_dict['name-of-field'] = ['response-array-string','correction']
+    # The value is an array of the string that needs replacing, and the string
+    # that is the correction.
+    # The string that needs to be corrected is generally a response array number
+    # that either doesn't have a value, or has an incorrect value.
+    correction_dict['prom_ataxia_54'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_55'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_56'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_57'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_58'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_59'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_60'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_61'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_62'] = ['2.5,', '2.5, Sometimes+Often']
+    correction_dict['prom_ataxia_63'] = ['2.5,', '2.5, Sometimes+Often']
+
+    for ky, vl in correction_dict.items():
+        metadata_df.loc[ky, 'select_choices_or_calculations'] = metadata_df.loc[ky, 'select_choices_or_calculations'].replace(vl[0], vl[1])
+
+    return metadata_df
+
 print('Fetching metadata ...')
 metadata = project.export_metadata(format='df')
+# make any correction to redcap data dictionary as soon as it is received from redcap
+metadata = _correct_response_array(metadata)
 metadata_fields = ['field_label', 'form_name', 'section_header',
                    'field_type', 'select_choices_or_calculations',
                    'required_field', 'matrix_group_name', 'field_annotation',
                    'text_validation_type_or_show_slider_number']
 metadata = metadata[metadata_fields]
 metadata.to_csv('data_dictionary.csv')
+# print(metadata.loc['prom_ataxia_54', 'select_choices_or_calculations'])
 print('[Done]')
 
 # metadata = metadata[metadata.redcap_form_name.isin(
@@ -179,6 +223,10 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
                                  f'that are not found in data dictionary')
 
             table_info = subselect_table_structure(table_info, df.columns)
+            if table_id=='prom_ataxia':
+                for col in [c for c in df.columns if c.startswith('prom_ataxia_')]:
+                    df[col] = [23 if v==2.5 else v for v in df[col]]
+                print(df.to_csv('prom_ataxia.csv'))
             df = df.astype(dict(zip(table_info['columns'],
                                     table_info['python_dtypes'])))
             rows, columns = dataframe_to_tuple(

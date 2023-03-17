@@ -30,7 +30,7 @@ if dry_run:
     copied_older_than = copied_older_than_days * num_secs_in_a_day # seconds
 
 else:
-    threshold = 0.85
+    threshold = 0.95
     record_older_than_days = 60 # days (divide by num_secs_in_a_day to convert days to seconds for testing)
     copied_older_than_days = 45 # days (divide by num_secs_in_a_day to convert days to seconds for testing)
     # time elapsed is needed in seconds for sql query

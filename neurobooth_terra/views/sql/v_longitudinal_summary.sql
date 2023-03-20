@@ -1,4 +1,4 @@
--- CREATE OR REPLACE VIEW v_longitudinal_summary AS
+CREATE OR REPLACE VIEW v_longitudinal_summary AS
 WITH latest_diagnosis AS (
 	SELECT DISTINCT ON (subject_id)
 		subject_id,

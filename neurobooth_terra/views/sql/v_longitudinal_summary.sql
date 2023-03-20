@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW v_longitudinal_summary AS
+-- CREATE OR REPLACE VIEW v_longitudinal_summary AS
 WITH latest_diagnosis AS (
 	SELECT DISTINCT ON (subject_id)
 		subject_id,
@@ -10,6 +10,15 @@ WITH latest_diagnosis AS (
 	ORDER BY
 		subject_id,
 		end_time_clinical DESC NULLS LAST
+), latest_demographic AS (
+	SELECT DISTINCT ON (subject_id)
+		subject_id,
+		age_first_contact,
+		gender
+	FROM rc_demographic_clean
+	ORDER BY
+		subject_id,
+		end_time_demographic DESC NULLS LAST
 ), visit_summary AS (
 	SELECT
 		visit.subject_id,
@@ -30,6 +39,8 @@ SELECT
 	visit_summary.first_visit,
 	visit_summary.last_visit,
 	visit_summary.total_days,
+	latest_demographic.age_first_contact,
+	latest_demographic.gender,
 	latest_diagnosis.primary_diagnosis,
 	latest_diagnosis.primary_diagnosis_id,
 	latest_diagnosis.secondary_diagnosis,
@@ -37,6 +48,8 @@ SELECT
 FROM visit_summary
 LEFT JOIN latest_diagnosis
 	ON visit_summary.subject_id = latest_diagnosis.subject_id
+LEFT JOIN latest_demographic
+	ON visit_summary.subject_id = latest_demographic.subject_id
 ORDER BY
 	visit_summary.subject_id
 ;

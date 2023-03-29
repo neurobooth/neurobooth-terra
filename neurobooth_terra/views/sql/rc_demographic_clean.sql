@@ -9,7 +9,7 @@ SELECT
     -- ========================================
     -- METADATA
     -- ========================================
-    dem.subject_id,
+    pinfo.subject_id,
     dem.redcap_event_name,
     pinfo.test_subject_boolean,
     CASE

@@ -143,7 +143,7 @@ SELECT
     dem.comments_demographic
 
 FROM rc_demographic dem
-LEFT OUTER JOIN rc_participant_and_consent_information pinfo
+RIGHT OUTER JOIN rc_participant_and_consent_information pinfo
     ON dem.subject_id = pinfo.subject_id  -- Should by a many-to-one join
 ORDER BY
     subject_id,

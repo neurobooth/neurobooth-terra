@@ -71,7 +71,7 @@ print(f'\nreserve_threshold set at {round(reserve_threshold/1024**4, 2)} TB\n')
 
 src_dir = '/autofs/nas/neurobooth/data/'
 table_id = 'log_file'
-dry_run = True
+dry_run = False
 
 
 # get all sessions living in NAS
@@ -103,9 +103,9 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             else:
                 print(f'copying already copied session {session} to {dest_dir}')
 
-            # if not dry_run:
-            #     # Note: trg_dir and dest_dir do not have trailing slashes here!
-            #     copy_files(trg_dir, dest_dir, db_table, sensor_file_table)
+            if not dry_run:
+                # Note: trg_dir and dest_dir do not have trailing slashes here!
+                copy_files(trg_dir, dest_dir, db_table, sensor_file_table)
 
 # For rsync it does not matter if trg_dir has a trailing slash,
 # however dest_dir must have a trailing slash during a copy run.

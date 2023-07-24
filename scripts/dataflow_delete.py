@@ -2,6 +2,7 @@
 #        : Siddharth Patel <spatel@phmi.partners.org>
 
 import shutil
+import json
 import psycopg2
 
 from neurobooth_terra import Table, copy_table
@@ -14,8 +15,8 @@ num_secs_in_a_day = 24*3600 # total number of seconds in a day - conversion fact
 
 target_dir = '/autofs/nas/neurobooth/data/' # The directory from where files will be deleted
 
-suitable_dest_dir1 = '/space/neo/3/neurobooth/data/'
-suitable_dest_dir2 = '/space/drwho/3/neurobooth/data/'
+configs = json.load(open('../dataflow_config.json'))
+suitable_dest_dir = configs['suitable_volumes']  # list
 
 dry_run = False
 table_id = 'log_file' # log_file if target_dir is 'neurobooth/data', log_file_copy for testing
@@ -45,8 +46,7 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
 
         delete_files(db_table,
                      target_dir,
-                     suitable_dest_dir1,
-                     suitable_dest_dir2,
+                     suitable_dest_dir,
                      threshold=threshold,
                      record_older_than=record_older_than,
                      copied_older_than=copied_older_than,

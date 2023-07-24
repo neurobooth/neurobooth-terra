@@ -1,0 +1,9 @@
+{
+  "reserve_threshold": 2199023255552,
+  "suitable_volumes": [
+    "/space/drwho/3/neurobooth/data/",
+    "/space/neo/3/neurobooth/data/",
+    "/space/drwho/4/neurobooth/data/",
+    "/space/neo/5/neurobooth/data/"
+  ]
+}

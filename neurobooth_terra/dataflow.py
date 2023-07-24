@@ -227,7 +227,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
                 log_sensor_file_id = df.log_sensor_file_id[0]
             else:
                 # files with these extensions are not tracked yet
-                if not any(ext in fname for ext in ['xdf', 'txt', 'csv', 'jittered']):
+                if not any(ext in fname for ext in ['xdf', 'txt', 'csv', 'jittered', 'asc', 'log']):
                     print(f'log_sensor_file_id not found for {fname}')
                 continue
 
@@ -291,7 +291,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     return db_rows
 
 
-def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
+def delete_files(db_table, target_dir, suitable_dest_dir,
                  threshold=0.85, record_older_than=45, copied_older_than=30,
                  dry_run=True):
     """Delete files if x% of disk is filled.
@@ -299,9 +299,9 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
         Delete files from NAS (source directory) when x% of NAS is filled.
         This function has been written to specifically delete files from
         NAS. As such the target_dir should always be NAS.
-        The function also needs two suitable_dest_directories, since data is
-        split between two storage servers. These destination directories can
-        change as new destinations are added to storage.
+        The function also needs a list of suitable_dest_directories. New
+        destination directories can be added as more volumes are added
+        to storage.
         
         Changes needed to make this a generalized function are commented in
         code. To generalize, there should only be one suitable destination
@@ -315,18 +315,16 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
         is_deleted=True.
     target_dir : str
         The source directory path from which to delete files.
-    suitable_dest_dir1 : str
-        The destination directory path where the files should have been copied.
-    suitable_dest_dir2 : str
-        The destination directory path where the files should have been copied.
+    suitable_dest_dir : list
+        A list of destination directory paths where the files are been copied.
     threshold : float
         A fraction between 0. and 1. If more than threshold fraction of the
         source directory is filled, these files will be deleted.
     record_older_than : int
     copied_older_than : int
         If a file is older than record_older_than days in src_dir and
-        copied_older_than in suitable_dest_dir1 or suitable_dest_dir2,
-        they will be deleted.
+        copied_older_than in any of suitable_dest_dir, they will be
+        deleted.
     dry_run : boolean
         If True, will run all the database operations but not actually
         delete the files.
@@ -349,7 +347,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     been copied to the *final* destination "who", we provide the following
     arguments to the function:
 
-    target_dir = NAS, suitable_dest_dir1 = who, suitable_dest_dir2 = neo
+    target_dir = NAS, suitable_dest_dir = [who, neo]
 
     .. cssclass:: table-striped
 
@@ -372,8 +370,9 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
 
     # ensure trailing slash
     target_dir = os.path.join(target_dir, '')
-    suitable_dest_dir1 = os.path.join(suitable_dest_dir1, '')
-    suitable_dest_dir2 = os.path.join(suitable_dest_dir2, '')
+    volumes = []
+    for vol in suitable_dest_dir:
+        volumes.append(os.path.join(vol, ''))
 
     stats = shutil.disk_usage(target_dir)
     fraction_occupied = stats.used / stats.total
@@ -407,7 +406,10 @@ def delete_files(db_table, target_dir, suitable_dest_dir1, suitable_dest_dir2,
     # but could be an alternate source as well), is_deleted is False (because redundancy),
     # is_finished is True - i.e. copied successfully with hash check, and age is older
     # than 30 days
-    where = f"(position('{suitable_dest_dir1}' in dest_dirname)>0 OR position('{suitable_dest_dir2}' in dest_dirname)>0) "
+    where = ''
+    for vol in volumes:
+        where += f"position('{vol}' in dest_dirname)>0 OR "
+    where = '(' + where[:-4] + ')' + ' '
     # src_dirname should be {target_dir} - change query to generalize
     where += f"AND src_dirname IS NOT NULL " # exclude write operations
     where += "AND is_deleted=False AND is_finished=True " # just to be safe

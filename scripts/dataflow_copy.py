@@ -54,7 +54,7 @@ def check_if_copied(session: str, volumes: list) -> tuple:
     return False, ''
 
 
-configs = json.load(open('../dataflow_config.json'))
+configs = json.load(open('/space/neurobooth/1/applications/neurobooth-terra/dataflow_config.json'))
 suitable_volumes = configs['suitable_volumes']  # list
 reserve_threshold = configs['reserve_threshold']  # int
 
@@ -100,8 +100,6 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             if not is_copied:
                 dest_dir = os.path.join(get_volume_to_fill(suitable_volumes, reserve_threshold), session)
                 print(f'copying new session {session} to {dest_dir}')
-            else:
-                print(f'copying already copied session {session} to {dest_dir}')
 
             if not dry_run:
                 # Note: trg_dir and dest_dir do not have trailing slashes here!

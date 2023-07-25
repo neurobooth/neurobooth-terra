@@ -15,7 +15,7 @@ num_secs_in_a_day = 24*3600 # total number of seconds in a day - conversion fact
 
 target_dir = '/autofs/nas/neurobooth/data/' # The directory from where files will be deleted
 
-configs = json.load(open('../dataflow_config.json'))
+configs = json.load(open('/space/neurobooth/1/applications/neurobooth-terra/dataflow_config.json'))
 suitable_dest_dir = configs['suitable_volumes']  # list
 
 dry_run = False

@@ -227,7 +227,8 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
                 log_sensor_file_id = df.log_sensor_file_id[0]
             else:
                 # files with these extensions are not tracked yet
-                if not any(ext in fname for ext in ['xdf', 'txt', 'csv', 'jittered', 'asc', 'log']):
+                untracked_extensions = ['xdf', 'txt', 'csv', 'jittered', 'asc', 'log']
+                if not any(ext in fname for ext in untracked_extensions):
                     print(f'log_sensor_file_id not found for {fname}')
                 continue
 
@@ -291,7 +292,7 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     return db_rows
 
 
-def delete_files(db_table, target_dir, suitable_dest_dir,
+def delete_files(db_table, target_dir, suitable_dest_dirs,
                  threshold=0.85, record_older_than=45, copied_older_than=30,
                  dry_run=True):
     """Delete files if x% of disk is filled.
@@ -315,15 +316,16 @@ def delete_files(db_table, target_dir, suitable_dest_dir,
         is_deleted=True.
     target_dir : str
         The source directory path from which to delete files.
-    suitable_dest_dir : list
-        A list of destination directory paths where the files are been copied.
+    suitable_dest_dirs : list
+        A list of all destination directory paths where the files have been
+        copied.
     threshold : float
         A fraction between 0. and 1. If more than threshold fraction of the
         source directory is filled, these files will be deleted.
     record_older_than : int
     copied_older_than : int
         If a file is older than record_older_than days in src_dir and
-        copied_older_than in any of suitable_dest_dir, they will be
+        copied_older_than in any of suitable_dest_dirs, they will be
         deleted.
     dry_run : boolean
         If True, will run all the database operations but not actually
@@ -347,7 +349,7 @@ def delete_files(db_table, target_dir, suitable_dest_dir,
     been copied to the *final* destination "who", we provide the following
     arguments to the function:
 
-    target_dir = NAS, suitable_dest_dir = [who, neo]
+    target_dir = NAS, suitable_dest_dirs = [who, neo, ...]
 
     .. cssclass:: table-striped
 
@@ -370,17 +372,15 @@ def delete_files(db_table, target_dir, suitable_dest_dir,
 
     # ensure trailing slash
     target_dir = os.path.join(target_dir, '')
-    volumes = []
-    for vol in suitable_dest_dir:
-        volumes.append(os.path.join(vol, ''))
+    volumes = [os.path.join(vol, '') for vol in suitable_dest_dirs]
 
     stats = shutil.disk_usage(target_dir)
     fraction_occupied = stats.used / stats.total
 
     print(f'Deleting files older than: {int(record_older_than/(24*3600))} days in {target_dir} and '
           f'copied successfully more than: {int(copied_older_than/(24*3600))} days ago')
-    print(f'Threshold is set at: {round(threshold*100, 2)}%')
-    print(f'Fraction: {round(fraction_occupied*100, 2)}% is occupied')
+    print(f'Threshold is set at: {(threshold*100):.2f}%')
+    print(f'Fraction: {(fraction_occupied*100):.2f}% is occupied')
 
     if fraction_occupied < threshold:
         print('Threshold not reached: nothing to delete')
@@ -406,10 +406,8 @@ def delete_files(db_table, target_dir, suitable_dest_dir,
     # but could be an alternate source as well), is_deleted is False (because redundancy),
     # is_finished is True - i.e. copied successfully with hash check, and age is older
     # than 30 days
-    where = ''
-    for vol in volumes:
-        where += f"position('{vol}' in dest_dirname)>0 OR "
-    where = '(' + where[:-4] + ')' + ' '
+    volume_qry_conditions = [f"position('{vol}' in dest_dirname) > 0" for vol in volumes]
+    where = '(' + ' OR '.join(volume_qry_conditions) + ') '
     # src_dirname should be {target_dir} - change query to generalize
     where += f"AND src_dirname IS NOT NULL " # exclude write operations
     where += "AND is_deleted=False AND is_finished=True " # just to be safe

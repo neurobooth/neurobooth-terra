@@ -16,7 +16,10 @@ num_secs_in_a_day = 24*3600 # total number of seconds in a day - conversion fact
 target_dir = '/autofs/nas/neurobooth/data/' # The directory from where files will be deleted
 
 configs = json.load(open('/space/neurobooth/1/applications/neurobooth-terra/dataflow_config.json'))
-suitable_dest_dir = configs['suitable_volumes']  # list
+delete_threshold = configs['delete_threshold'] # float: fraction between 0 and 1 indicating % filled
+suitable_dest_dirs = configs['suitable_volumes']  # list
+if len(suitable_dest_dirs) < 1:
+    raise ValueError(f'No destination directories provided')
 
 dry_run = False
 table_id = 'log_file' # log_file if target_dir is 'neurobooth/data', log_file_copy for testing
@@ -31,7 +34,7 @@ if dry_run:
     copied_older_than = copied_older_than_days * num_secs_in_a_day # seconds
 
 else:
-    threshold = 0.85
+    threshold = delete_threshold
     record_older_than_days = 60 # days (divide by num_secs_in_a_day to convert days to seconds for testing)
     copied_older_than_days = 45 # days (divide by num_secs_in_a_day to convert days to seconds for testing)
     # time elapsed is needed in seconds for sql query
@@ -46,7 +49,7 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
 
         delete_files(db_table,
                      target_dir,
-                     suitable_dest_dir,
+                     suitable_dest_dirs,
                      threshold=threshold,
                      record_older_than=record_older_than,
                      copied_older_than=copied_older_than,

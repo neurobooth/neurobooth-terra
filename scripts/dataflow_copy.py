@@ -1,10 +1,11 @@
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 #        : Siddharth Patel <spatel@phmi.partners.org>
 
-import psycopg2
+
 import os
 import shutil
 import json
+import psycopg2
 
 from neurobooth_terra import Table, create_table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
@@ -44,28 +45,30 @@ def get_volume_to_fill(volumes: list, threshold: int) -> str:
     return max(vol_disk_usage, key=vol_disk_usage.get)
 
 
-def check_if_copied(session: str, volumes: list) -> tuple:
+def check_if_copied(session: str, volumes: list[str]) -> tuple[bool, str]:
     ''' Checks if a session is already copied to one of the volumes,
         and returns the volume path if copied
     '''
     for vol in volumes:
-        if os.path.exists(os.path.join(vol, session)):
-            return True, os.path.join(vol, session)
+        session_path = os.path.join(vol, session)
+        if os.path.exists(session_path):
+            return True, session_path
     return False, ''
 
 
 configs = json.load(open('/space/neurobooth/1/applications/neurobooth-terra/dataflow_config.json'))
 suitable_volumes = configs['suitable_volumes']  # list
-reserve_threshold = configs['reserve_threshold']  # int
+reserve_threshold = configs['reserve_threshold_bytes']  # int
 
 
 # ---- Printing disk usage statistics ---- #
+TERRABYTE = 1024**4  # 1TB = 1024 bytes ** 4
 print("Disk Usage Statistics\n")
 print("Volume\t\t\t\t\tTotal (TB)\tUsed (TB)\tAvailable (TB)")
 for vol in suitable_volumes:
     stats = shutil.disk_usage(vol)
-    print(vol, round(stats.total/1024**4, 2), round(stats.used/1024**4, 2), round(stats.free/1024**4, 2), sep='\t\t')
-print(f'\nreserve_threshold set at {round(reserve_threshold/1024**4, 2)} TB\n')
+    print(f'{vol}\t\t{stats.total/TERRABYTE:.2f}\t\t{stats.used/TERRABYTE:.2f}\t\t{stats.free/TERRABYTE:.2f}')
+print(f'\nreserve_threshold set at {reserve_threshold/TERRABYTE:.2f} TB\n')
 # ---------------------------------------- #
 
 
@@ -95,8 +98,9 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
         for session in sessions:
             # set source dir - NAS
             trg_dir = os.path.join(src_dir, session)
-            # check if session is already copied
+            # set to existing dest_dir if session is already copied
             is_copied, dest_dir = check_if_copied(session, suitable_volumes)
+            # if copying a new session for the first time, set dest_dir based on remaining space
             if not is_copied:
                 dest_dir = os.path.join(get_volume_to_fill(suitable_volumes, reserve_threshold), session)
                 print(f'copying new session {session} to {dest_dir}')

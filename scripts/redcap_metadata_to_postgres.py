@@ -63,6 +63,7 @@ survey_ids = {
     'neuro_qol_depression_short_form': 99938,
     'neurobooth_vision_prom_ataxia': 99934,
     'prom_ataxia': 102336,
+    'prom_ataxia_short_form': 142151,
     'dysarthria_impact_scale': 102384,
     'ataxia_pd_scales': 103620,
     'participant_and_consent_information': 124062,

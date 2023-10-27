@@ -14,7 +14,7 @@ import warnings
 import pandas as pd
 
 
-def write_files(sensor_file_table, db_table, dest_dir_session):
+def write_files(sensor_file_df, db_table, dest_dir_session):
     """Write a file to log_file table.
 
     Discovers new files as they appear in NAS and writes then to
@@ -26,9 +26,9 @@ def write_files(sensor_file_table, db_table, dest_dir_session):
 
     Parameters
     ----------
-    sensor_file_table : instance of Table
-        The table containing information about the sensors used in a session
-        and the files.
+    sensor_file_df : pandas DataFrame
+        The deduplicated dataframe of the table containing information
+        about the sensors used in a session and the files.
     db_table : instance of Table
         The table containing information about the file transfers.
     dest_dir : str
@@ -39,33 +39,13 @@ def write_files(sensor_file_table, db_table, dest_dir_session):
 
     # get log_file table where dest_dirname is NAS
     log_file_df = db_table.query(where=f"dest_dirname='{dest_dir}'")
-    # get log_sensor_file table
-    sensor_file_df = sensor_file_table.query()
-
-    # Sensors such as intel have duplicate sensor_file_paths but unique
-    # sensor_file_ids for depth vs rgb - same holds true for mbients that
-    # have one data file but two sensor_file_ids for accelerometer and
-    # gyroscope. Thus we can have duplicate sensor files over two rows
-
-    ### Removing duplicate sensor files, to write one file only once in log_file table
-    def concat_list_elements(x):
-        c=''
-        for i in x:
-            c = c+str(i)
-        return c
-    # Convert an array of filenames into a single concatenated string. If order of filenames in
-    # array is not maintained, this logic for detecting duplicates will break. However neurobooth_os
-    # generally writes filenames in array to neurobooth_terra in the same order.
-    sensor_file_df['to_detect_duplicates'] =  sensor_file_df['sensor_file_path'].apply(concat_list_elements)
-
+    
+    # get sensor file names and ids from deduplicated log_sensor_file_table
     # this is a list of lists - since sensor_file_path is an array in log_sensor_file table
-    sensor_fnames_list = sensor_file_df.drop_duplicates(subset='to_detect_duplicates',
-                                                        keep='first').sensor_file_path.tolist()
-    sensor_file_ids = sensor_file_df.drop_duplicates(subset='to_detect_duplicates',
-                                                     keep='first').index.tolist()
-    ### end remove duplicates
+    sensor_fnames_list = sensor_file_df.sensor_file_path.tolist()
+    sensor_file_ids = sensor_file_df.index.tolist()
 
-    # get all sensor file names from log_sensor_file table
+    # get all sensor file names from sensor file name list
     sensor_fnames = list()
     for sensor_fname_row, sensor_file_id in zip(sensor_fnames_list, sensor_file_ids):
         for this_sensor_fname in sensor_fname_row:

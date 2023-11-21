@@ -1,3 +1,4 @@
+import os
 import threading
 import queue
 import time
@@ -11,8 +12,10 @@ from neurobooth_terra.postgres import drop_table
 from neurobooth_terra.redcap import (iter_interval, extract_field_annotation,
                                      map_dtypes, rename_subject_ids)
 
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
+user = os.environ['POSTGRES_USER']
+password = os.environ['POSTGRES_PASSWORD']
+connect_str = (f"dbname='neurobooth' user={user} host='localhost' "
+               f"password={password}")
 
 
 def _keyboard_interrupt(signal):

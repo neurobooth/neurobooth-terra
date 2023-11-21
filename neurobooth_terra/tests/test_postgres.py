@@ -1,3 +1,4 @@
+import os
 import datetime
 
 import psycopg2
@@ -8,8 +9,10 @@ from numpy.testing import assert_raises
 from neurobooth_terra import Table, create_table, drop_table, query, list_tables
 from neurobooth_terra.postgres import execute
 
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-                "password='neuroboothrocks'")
+user = os.environ['POSTGRES_USER']
+password = os.environ['POSTGRES_PASSWORD']
+connect_str = (f"dbname='neurobooth' user={user} host='localhost' "
+               f"password={password}")
 
 def test_psql_connection():
     """Test that we can connect to the database"""

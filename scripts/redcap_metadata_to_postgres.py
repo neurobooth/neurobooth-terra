@@ -66,6 +66,7 @@ survey_ids = {
     'prom_ataxia_short_form': 142151,
     'dysarthria_impact_scale': 102384,
     'ataxia_pd_scales': 103620,
+    'alsfrs_r': 148735,
     'participant_and_consent_information': 124062,
     'handedness_questionnaire': 123490,
     'visual_activities_questionnaire': 139136,

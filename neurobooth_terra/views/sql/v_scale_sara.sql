@@ -11,6 +11,7 @@ SELECT
     scales.subject_id,
     scales.redcap_event_name,
     scales.ataxia_pd_scales_complete,
+    scales.visit_date,
     scales.end_time_ataxia_pd_scales,
     scales.in_person_boolean,
     scales.rater_name,

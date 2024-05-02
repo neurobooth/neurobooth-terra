@@ -9,6 +9,7 @@ SELECT
         WHEN ataxia_pd_scales_complete = 2 THEN TRUE
         ELSE FALSE
     END AS ataxia_pd_scales_complete,
+    scales.ataxia_pd_date_of_visit AS visit_date,
     scales.end_time_ataxia_pd_scales,
     (scales.in_person_boolean_ataxia_pd_scales = 1) AS in_person_boolean,
     CASE

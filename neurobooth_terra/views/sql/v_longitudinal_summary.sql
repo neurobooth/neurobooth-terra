@@ -2,14 +2,14 @@ CREATE OR REPLACE VIEW v_longitudinal_summary AS
 WITH latest_diagnosis AS (
 	SELECT DISTINCT ON (subject_id)
 		subject_id,
-		primary_diagnosis,
-		primary_diagnosis_id,
+		latest_primary_diagnosis,
+		latest_primary_diagnosis_id,
 		secondary_diagnosis,
 		diagnosis_notes
 	FROM rc_clinical_clean
 	ORDER BY
 		subject_id,
-		end_time_clinical DESC NULLS LAST
+		date_enrolled DESC NULLS LAST
 ), latest_demographic AS (
 	SELECT DISTINCT ON (subject_id)
 		subject_id,
@@ -41,8 +41,8 @@ SELECT
 	visit_summary.total_days,
 	latest_demographic.age_first_contact,
 	latest_demographic.gender,
-	latest_diagnosis.primary_diagnosis,
-	latest_diagnosis.primary_diagnosis_id,
+	latest_diagnosis.latest_primary_diagnosis,
+	latest_diagnosis.latest_primary_diagnosis_id,
 	latest_diagnosis.secondary_diagnosis,
 	latest_diagnosis.diagnosis_notes
 FROM visit_summary

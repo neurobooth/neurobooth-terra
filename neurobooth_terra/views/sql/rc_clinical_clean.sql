@@ -1,12 +1,12 @@
 CREATE OR REPLACE VIEW rc_clinical_clean AS
 WITH last_clin AS (  -- Temporary view that isolates the latest entry in the clinical table
-    SELECT clin_ranked.*
-    FROM (
-        SELECT *,
-            ROW_NUMBER() OVER (PARTITION BY subject_id ORDER BY date_enrolled DESC) AS inverse_visit_num
-        FROM rc_clinical
-    ) clin_ranked
-    WHERE clin_ranked.inverse_visit_num = 1
+    SELECT DISTINCT ON (subject_id)
+		subject_id,
+		primary_diagnosis
+	FROM rc_clinical
+	ORDER BY
+		subject_id,
+		date_enrolled DESC
 )
 SELECT
     -- ========================================

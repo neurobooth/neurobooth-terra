@@ -1,4 +1,13 @@
 CREATE OR REPLACE VIEW rc_clinical_clean AS
+WITH last_clin AS (  -- Temporary view that isolates the latest entry in the clinical table
+    SELECT clin_ranked.*
+    FROM (
+        SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY subject_id ORDER BY date_enrolled DESC) AS inverse_visit_num
+        FROM rc_clinical
+    ) clin_ranked
+    WHERE clin_ranked.inverse_visit_num = 1
+)
 SELECT
     -- ========================================
     -- METADATA
@@ -46,8 +55,22 @@ SELECT
             )
         END
         FROM UNNEST(clin.primary_diagnosis) as diag
-    ) as primary_diagnosis,
-    clin.primary_diagnosis AS primary_diagnosis_id,
+    ) as primary_diagnosis_at_visit,
+    clin.primary_diagnosis AS primary_diagnosis_id_at_visit,
+    ARRAY( -- Same as above, but for last_clin...
+        SELECT CASE
+            WHEN diag = 5  THEN clin.other_dementia
+            WHEN diag = 13 THEN clin.other_neuropathy
+            WHEN diag = 23 THEN clin.other_ataxia
+            WHEN diag = 24 THEN clin.other_primary_diagnosis
+            ELSE (
+                SELECT dd.response_array->>diag::text FROM rc_data_dictionary dd
+                WHERE dd.database_table_name = 'clinical' AND dd.field_name = 'primary_diagnosis'
+            )
+        END
+        FROM UNNEST(last_clin.primary_diagnosis) as diag
+    ) as latest_primary_diagnosis,
+    last_clin.primary_diagnosis AS latest_primary_diagnosis_id,
     clin.year_primary_diagnosis,
     clin.secondary_diagnosis,
     clin.diagnosis_notes,
@@ -93,7 +116,9 @@ SELECT
     clin.drug_trial_name
 
 FROM rc_clinical clin
+JOIN last_clin
+    ON last_clin.subject_id = clin.subject_id
 ORDER BY
-    subject_id,
-    redcap_event_name
+    clin.subject_id,
+    clin.redcap_event_name
 ;

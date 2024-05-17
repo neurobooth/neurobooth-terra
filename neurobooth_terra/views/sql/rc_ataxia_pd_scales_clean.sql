@@ -5,6 +5,8 @@ SELECT
     -- ========================================
     scales.subject_id,
     scales.redcap_event_name,
+    (regexp_match(scales.redcap_event_name, 'v(\d+)_arm_\d+'))[1]::int AS redcap_sequence_num,
+	(regexp_match(scales.redcap_event_name, 'v\d+_arm_(\d+)'))[1]::int AS redcap_study_arm,
     CASE
         WHEN ataxia_pd_scales_complete = 2 THEN TRUE
         ELSE FALSE

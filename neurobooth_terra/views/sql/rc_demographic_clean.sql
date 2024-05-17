@@ -11,6 +11,8 @@ SELECT
     -- ========================================
     pinfo.subject_id,
     dem.redcap_event_name,
+    (regexp_match(dem.redcap_event_name, 'v(\d+)_arm_\d+'))[1]::int AS redcap_sequence_num,
+	(regexp_match(dem.redcap_event_name, 'v\d+_arm_(\d+)'))[1]::int AS redcap_study_arm,
     pinfo.test_subject_boolean,
     CASE
         WHEN dem.demographic_complete = 2 THEN TRUE

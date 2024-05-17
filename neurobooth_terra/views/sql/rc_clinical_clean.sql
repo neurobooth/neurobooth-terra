@@ -14,6 +14,8 @@ SELECT
     -- ========================================
     clin.subject_id,
     clin.redcap_event_name,
+    (regexp_match(clin.redcap_event_name, 'v(\d+)_arm_\d+'))[1]::int AS redcap_sequence_num,
+	(regexp_match(clin.redcap_event_name, 'v\d+_arm_(\d+)'))[1]::int AS redcap_study_arm,
     CASE
         WHEN clin.clinical_complete = 2 THEN TRUE
         ELSE FALSE

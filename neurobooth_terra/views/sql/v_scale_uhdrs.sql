@@ -10,6 +10,8 @@ SELECT
     -- ========================================
     scales.subject_id,
     scales.redcap_event_name,
+    scales.redcap_sequence_num,
+    scales.redcap_study_arm,
     scales.ataxia_pd_scales_complete,
     scales.visit_date,
     scales.end_time_ataxia_pd_scales,

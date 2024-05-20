@@ -4,6 +4,7 @@ from psycopg2._psycopg import connection
 
 
 VIEWS = [  # Below list should be in intended order of view creation
+    'rc_visit_dates_clean',
     'rc_ataxia_pd_scales_clean',
     'rc_clinical_clean',
     'rc_demographic_clean',

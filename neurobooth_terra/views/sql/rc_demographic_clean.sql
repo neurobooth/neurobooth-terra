@@ -25,6 +25,7 @@ SELECT
     -- Physical Characteristics
     -- ========================================
     pinfo.subject_age_first_contact AS age_first_contact,
+    subj.date_of_birth_subject AS date_of_birth,
     CASE
         WHEN dem.gender_current = 7 THEN NULL
         ELSE ( -- Look up from the data dictionary
@@ -32,6 +33,10 @@ SELECT
             WHERE dd.database_table_name = 'demographic' AND dd.field_name = 'gender_current'
         )
     END AS gender,
+    ( -- Look up from the data dictionary
+        SELECT dd.response_array->>subj.gender_at_birth::text FROM rc_data_dictionary dd
+        WHERE dd.database_table_name = 'subject' AND dd.field_name = 'gender_at_birth'
+    ) AS gender_at_birth,
     ( -- Look up from the data dictionary
         SELECT dd.response_array->>dem.handedness::text FROM rc_data_dictionary dd
         WHERE dd.database_table_name = 'demographic' AND dd.field_name = 'handedness'
@@ -147,6 +152,8 @@ SELECT
 FROM rc_demographic dem
 RIGHT OUTER JOIN rc_participant_and_consent_information pinfo
     ON dem.subject_id = pinfo.subject_id  -- Should by a many-to-one join
+LEFT OUTER JOIN subject subj
+    ON pinfo.subject_id = subj.subject_id
 ORDER BY
     subject_id,
     redcap_event_name

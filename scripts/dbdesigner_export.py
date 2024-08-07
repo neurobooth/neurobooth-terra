@@ -9,13 +9,15 @@ This example demonstrates how to create postgres table with neurobooth-terra.
 from neurobooth_terra import drop_table
 import psycopg2
 from neurobooth_terra import execute, drop_table
+import credential_reader as reader
 
 # drop all tables
 
 ###############################################################################
 # First, we will create a connection using ``psycopg2``.
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
+db_args = reader.read_db_secrets()
+connect_str = (f"dbname={db_args['database']} user={db_args['user']}  host={db_args['host']} "
+               f"password={db_args['password']} ")
 
 conn = psycopg2.connect(connect_str)
 

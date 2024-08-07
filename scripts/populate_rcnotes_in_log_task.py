@@ -17,21 +17,15 @@ from sshtunnel import SSHTunnelForwarder
 from neurobooth_terra import Table
 
 
-def main(db_name: str, db_user: str, db_password) -> None:
+def main(db_args: Dict) -> None:
     """
     Populates RC notes in log_task table
-    :param db_name str  The name of the database
-    :param db_user str  The database username
-    :param db_password  The database user's password
+    params:
+        db_args Dict  The database credentials
 
     :returns: None
 
     """
-    db_args = dict(
-        database = db_name,
-        user = db_user,
-        password = db_password
-    )
 
     ssh_args = dict(
             ssh_address_or_host='neurodoor.nmr.mgh.harvard.edu',
@@ -93,3 +87,11 @@ def main(db_name: str, db_user: str, db_password) -> None:
                         if op.isfile(op.join(data_dir, field[0])) and op.isfile(op.join(data_dir, field[1])):
                             table_log_task.insert_rows(vals, cols, on_conflict='update')
                             print(vals)
+
+
+if __name__ == "__main__":
+
+    import credential_reader as reader
+    credentials = reader.read_db_secrets()
+    print (credentials)
+    main(credentials)

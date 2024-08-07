@@ -4,6 +4,7 @@ Edit the log_sensor_file table to preprend missing session folder prefixes to fi
 
 import psycopg2
 import re
+import credential_reader as reader
 
 from sshtunnel import SSHTunnelForwarder
 from neurobooth_terra import Table
@@ -18,10 +19,7 @@ ssh_args = dict(
         allow_agent=False
 )
 
-# TODO: Keeping these details as it's currently elsewhere in the codebase, but needs to be stripped and changed!!!
-db_args = dict(
-    database='neurobooth', user='neuroboother', password='neuroboothrocks',
-)
+db_args = reader.read_db_secrets()
 
 table_id = 'log_sensor_file'
 where = f"file_start_time >= '2024-07-01' and file_end_time < '2024-07-03'"

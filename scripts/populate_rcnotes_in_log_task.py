@@ -93,5 +93,4 @@ if __name__ == "__main__":
 
     import credential_reader as reader
     credentials = reader.read_db_secrets()
-    print (credentials)
     main(credentials)

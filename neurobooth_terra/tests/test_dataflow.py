@@ -7,9 +7,9 @@ import psycopg2
 
 from neurobooth_terra import create_table, drop_table, Table
 from neurobooth_terra.dataflow import write_files, copy_files, delete_files
+import scripts.credential_reader as reader
 
-db_args = dict(database='neurobooth', user='neuroboother',
-               password='neuroboothrocks')
+db_args = reader.read_db_secrets()
 
 
 @pytest.fixture(scope="session")

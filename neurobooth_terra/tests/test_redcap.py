@@ -10,10 +10,11 @@ from neurobooth_terra import create_table
 from neurobooth_terra.postgres import drop_table
 from neurobooth_terra.redcap import (iter_interval, extract_field_annotation,
                                      map_dtypes, rename_subject_ids)
+import scripts.credential_reader as reader
 
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
-
+db_args = reader.read_db_secrets()
+connect_str = (f"dbname={db_args['database']} user={db_args['user']} host={db_args['host']} "
+               f"password={db_args['password']} ")
 
 def _keyboard_interrupt(signal):
     while True:
@@ -24,6 +25,7 @@ def _keyboard_interrupt(signal):
 
 def test_iter_interval():
     """Test iter_interval."""
+
     times = list()
     wait = 2.
     process_time = 0.2

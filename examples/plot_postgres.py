@@ -35,11 +35,12 @@ from neurobooth_terra import list_tables, create_table, drop_table, Table
 
 import psycopg2
 import pandas as pd
-
+import scripts.credential_reader as reader
 # %%
 # Then, we will create a connection using ``psycopg2``.
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-               "password='neuroboothrocks'")
+db_args = reader.read_db_secrets()
+connect_str = (f"dbname={db_args['database']} user={db_args['user']}  host={db_args['host']} "
+               f"password={db_args['password']} ")
 
 conn = psycopg2.connect(connect_str)
 

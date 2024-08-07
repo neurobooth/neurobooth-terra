@@ -8,7 +8,7 @@ import psycopg2
 
 from sshtunnel import SSHTunnelForwarder
 from neurobooth_terra import Table
-
+import credential_reader as reader
 import os
 
 ssh_args = dict(
@@ -21,9 +21,7 @@ ssh_args = dict(
         allow_agent=False
 )
 
-db_args = dict(
-    database='neurobooth', user='neuroboother', password='neuroboothrocks',
-)
+db_args = reader.read_db_secrets()
 
 table_id = 'log_file'
 

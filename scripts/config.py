@@ -1,6 +1,7 @@
 """The SSH arguments and connection arguments."""
 import os
 from redcap import Project
+import credential_reader as reader
 
 ssh_args = dict(
         ssh_address_or_host='neurodoor.nmr.mgh.harvard.edu',
@@ -11,9 +12,7 @@ ssh_args = dict(
         local_bind_address=('localhost', 6543)
 )
 
-db_args = dict(
-    database='neurobooth', user='neuroboother', password='neuroboothrocks'
-)
+db_args = reader.read_db_secrets()
 
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')

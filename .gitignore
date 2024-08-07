@@ -10,3 +10,5 @@ doc/auto_examples/
 
 *.csv
 *.out
+
+.db.secrets.txt

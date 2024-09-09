@@ -170,7 +170,7 @@ metadata['database_table_name'] = metadata['database_table_name'].fillna(
 # question
 metadata_groups = metadata.groupby(by='matrix_group_name')
 metadata['section_header'] = metadata_groups['section_header'].transform(
-    lambda s: s.fillna(method='ffill'))
+    lambda s: s.ffill())
 is_group = ~pd.isna(metadata['section_header'])
 metadata.loc[is_group, 'question'] = (metadata['section_header'][is_group] +
                                   metadata['question'][is_group])

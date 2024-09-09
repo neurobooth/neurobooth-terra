@@ -156,10 +156,10 @@ metadata.rename({'form_name': 'redcap_form_name',
 
 is_descriptive = metadata['field_type'] == 'descriptive'
 metadata['redcap_form_description'] = metadata['field_label']
-metadata['redcap_form_description'][~is_descriptive] = None
+metadata.loc[~is_descriptive, 'redcap_form_description'] = None
 
 metadata['question'] = metadata['field_label']
-metadata['question'][is_descriptive] = None
+metadata.loc[is_descriptive, 'question'] = None
 
 if 'database_table_name' not in metadata.columns:
     metadata['database_table_name'] = np.nan
@@ -172,7 +172,7 @@ metadata_groups = metadata.groupby(by='matrix_group_name')
 metadata['section_header'] = metadata_groups['section_header'].transform(
     lambda s: s.fillna(method='ffill'))
 is_group = ~pd.isna(metadata['section_header'])
-metadata['question'][is_group] = (metadata['section_header'][is_group] +
+metadata.loc[is_group, 'question'] = (metadata['section_header'][is_group] +
                                   metadata['question'][is_group])
 
 metadata.to_csv('data_dictionary_modified.csv')

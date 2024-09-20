@@ -7,9 +7,12 @@ from numpy.testing import assert_raises
 
 from neurobooth_terra import Table, create_table, drop_table, query, list_tables
 from neurobooth_terra.postgres import execute
+import scripts.credential_reader as reader
 
-connect_str = ("dbname='neurobooth' user='neuroboother' host='localhost' "
-                "password='neuroboothrocks'")
+db_args = reader.read_db_secrets()
+connect_str = (f"dbname={db_args['database']} user={db_args['user']} host={db_args['host']} "
+               f"password={db_args['password']} ")
+
 
 def test_psql_connection():
     """Test that we can connect to the database"""

@@ -5,11 +5,10 @@
 # to fnames
 
 import psycopg2
-
+import pandas as pd
 from sshtunnel import SSHTunnelForwarder
 from neurobooth_terra import Table
 import credential_reader as reader
-import os
 
 ssh_args = dict(
         ssh_address_or_host='neurodoor.nmr.mgh.harvard.edu',
@@ -30,8 +29,7 @@ table_id = 'log_file'
 where = f"src_dirname is not null"
 
 with SSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(port=tunnel.local_bind_port,
-                          host=tunnel.local_bind_host, **db_args) as conn:
+    with psycopg2.connect(**db_args) as conn:
         
         db_table = Table(table_id, conn)
         df = pd.DataFrame()

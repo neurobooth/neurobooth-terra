@@ -46,11 +46,7 @@ def add_prefix_to_all(files):
 
 
 with SSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(
-            port=tunnel.local_bind_port,
-            host=tunnel.local_bind_host,
-            **db_args
-    ) as conn:
+    with psycopg2.connect(**db_args) as conn:
         db_table = Table(table_id, conn)
         df = db_table.query(where=where)
 

@@ -41,8 +41,7 @@ rows_subject, cols_subject = dataframe_to_tuple(
                 'birthplace'])
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(port=tunnel.local_bind_port,
-                          host=tunnel.local_bind_host, **db_args) as conn:
+    with psycopg2.connect(**db_args) as conn:
 
         table_subject = Table('subject', conn)
         rename_subject_ids(table_subject, redcap_df)

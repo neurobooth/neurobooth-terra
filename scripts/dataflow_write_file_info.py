@@ -51,8 +51,7 @@ if 'old' in sessions:
     sessions.remove('old')
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(port=tunnel.local_bind_port,
-                          host=tunnel.local_bind_host, **db_args) as conn:
+    with psycopg2.connect(**db_args) as conn:
 
         if do_create_table:
             # drop old log_file_copy table

@@ -42,8 +42,7 @@ else:
     copied_older_than = copied_older_than_days * num_secs_in_a_day # seconds
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(port=tunnel.local_bind_port,
-                          host=tunnel.local_bind_host, **db_args) as conn:
+    with psycopg2.connect(**db_args) as conn:
 
         db_table = Table(table_id, conn)
 

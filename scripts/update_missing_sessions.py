@@ -13,8 +13,7 @@ def sanitize_date(s):
 
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(port=tunnel.local_bind_port,
-                          host=tunnel.local_bind_host, **db_args) as conn:
+    with psycopg2.connect(**db_args) as conn:
 
         table_task = Table('log_task', conn)
         table_session = Table('log_session', conn)

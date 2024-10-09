@@ -89,8 +89,7 @@ if 'old' in sessions:
 
 # Copying data
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(port=tunnel.local_bind_port,
-                          host=tunnel.local_bind_host, **db_args) as conn:
+    with psycopg2.connect(**db_args) as conn:
 
         sensor_file_table = Table('log_sensor_file', conn)
         db_table = Table(table_id, conn)

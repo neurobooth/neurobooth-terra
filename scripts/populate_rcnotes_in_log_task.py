@@ -39,8 +39,7 @@ def main(db_args: Dict) -> None:
     data_dir = '/autofs/nas/neurobooth/data/'
 
     with SSHTunnelForwarder(**ssh_args) as tunnel:
-        with psycopg2.connect(port=tunnel.local_bind_port,
-                              host=tunnel.local_bind_host, **db_args) as conn:
+        with psycopg2.connect(**db_args) as conn:
             # build table dataframes
             table_log_task = Table('log_task', conn)
             table_task = Table('nb_task', conn)

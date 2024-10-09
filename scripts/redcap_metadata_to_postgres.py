@@ -187,11 +187,7 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
 )
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(
-            port=tunnel.local_bind_port,
-            host=tunnel.local_bind_host,
-            **db_args
-    ) as conn:
+    with psycopg2.connect(**db_args) as conn:
 
         # Drop views first, as they may depend on the below tables
         drop_views(conn, verbose=True)

@@ -14,6 +14,8 @@ ssh_args = dict(
 
 db_args = reader.read_db_secrets()
 
+dataflow_configs = reader.read_dataflow_configs()
+
 URL = 'https://redcap.partners.org/redcap/api/'
 API_KEY = os.environ.get('NEUROBOOTH_REDCAP_TOKEN')
 

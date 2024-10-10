@@ -9,13 +9,13 @@ from neurobooth_terra import Table, copy_table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import delete_files
 
-from config import ssh_args, db_args
+from config import ssh_args, db_args, dataflow_configs
 
 num_secs_in_a_day = 24*3600 # total number of seconds in a day - conversion factor
 
 target_dir = '/autofs/nas/neurobooth/data/' # The directory from where files will be deleted
 
-configs = json.load(open('/space/neurobooth/1/applications/neurobooth-terra/dataflow_config.json'))
+configs = dataflow_configs
 delete_threshold = configs['delete_threshold'] # float: fraction between 0 and 1 indicating % filled
 suitable_dest_dirs = configs['suitable_volumes']  # list
 if len(suitable_dest_dirs) < 1:

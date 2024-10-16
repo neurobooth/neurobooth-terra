@@ -11,7 +11,7 @@ from neurobooth_terra import Table, create_table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import copy_files
 
-from config import ssh_args, db_args
+from config import ssh_args, db_args, dataflow_configs
 
 
 # A note about setting the value of reserve_threshold in
@@ -56,7 +56,7 @@ def check_if_copied(session: str, volumes: list[str]) -> tuple[bool, str]:
     return False, ''
 
 
-configs = json.load(open('/space/neurobooth/1/applications/neurobooth-terra/dataflow_config.json'))
+configs = dataflow_configs
 suitable_volumes = configs['suitable_volumes']  # list
 reserve_threshold = configs['reserve_threshold_bytes']  # int
 

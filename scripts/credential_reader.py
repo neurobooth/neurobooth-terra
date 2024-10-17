@@ -85,6 +85,7 @@ def read_dataflow_configs(config_fpath: Optional[str] = None):
     'reserve_threshold_bytes' 
     'suitable_volumes' 
     'delete_threshold'
+    See config yaml for context on these keys
     '''
 
     if config_fpath is None:

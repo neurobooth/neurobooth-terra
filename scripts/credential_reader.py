@@ -98,11 +98,17 @@ def read_dataflow_configs(config_fpath: Optional[str] = None):
     dataflow_configs = {'reserve_threshold_bytes': dataflow_args.reserve_threshold_bytes,
                         'suitable_volumes': dataflow_args.suitable_volumes,
                         'delete_threshold': dataflow_args.delete_threshold}
+    
+    # check that all volumes in suitable volumes are actually suitable
+    for volume in dataflow_configs['suitable_volumes']:
+        if not os.path.exists(volume):
+            raise Exception(f'volume path {volume} does not exist')
 
     return dataflow_configs
 
 
 if __name__ == '__main__':
+    '''Run this script standalone to test config reading or config value validation'''
     db_args = read_db_secrets(
         config_fpath='/space/neurobooth/1/applications/unified_configs_repo/configs/terra_configs/.db.secrets.yml')
     dataflow_args = read_dataflow_configs(

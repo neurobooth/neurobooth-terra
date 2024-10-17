@@ -1,7 +1,25 @@
-from typing import Optional
-import configparser as cp
+from typing import Optional, List
 import os
-import json
+import yaml
+from pydantic import BaseModel, AnyUrl, PositiveInt, DirectoryPath, Field
+from pydantic.networks import IPvAnyAddress
+# import json
+# import configparser as cp
+
+
+class databaseArgs(BaseModel):
+    db_name: str
+    db_user: str
+    password: str
+    host: str | IPvAnyAddress | AnyUrl
+    # this allows for values such as localhost or 127.0.0.1
+    # or 192.168.xxx.xxx or <server_name>.nmr.mgh.harvard.edu
+
+
+class dataflowArgs(BaseModel):
+    reserve_threshold_bytes: PositiveInt
+    suitable_volumes: List[DirectoryPath]
+    delete_threshold: float = Field(ge=0, le=1)
 
 
 def get_terra_config_file_location() -> os.PathLike:
@@ -27,6 +45,12 @@ def get_config_file_path(config_file_name: str) -> os.PathLike:
     return config_fpath
 
 
+def load_yaml_file_into_dict(yaml_file_path):
+    with open(yaml_file_path) as yaml_file:
+        param_dict = yaml.load(yaml_file, yaml.FullLoader)
+        return param_dict
+
+
 def read_db_secrets(config_fpath: Optional[str] = None):
     """
     Returns a dictionary of database credentials with keys:
@@ -35,34 +59,58 @@ def read_db_secrets(config_fpath: Optional[str] = None):
     'password' for the pg user password
     'host' for database host
 
-    The credential file is assumed to be in at a location which
+    The credential file is assumed to be at a location which
     is defined in the TERRA_CONFIG_LOC environment variable
 
     """
 
     if config_fpath is None:
-        config_file_name = '.db.secrets.txt'
+        config_file_name = '.db.secrets.yml'
         config_fpath = get_config_file_path(config_file_name)
 
-    config = cp.ConfigParser()
-    config.read(config_fpath)
-    db_creds = config['neurobooth.terra.db']
-    credentials = {'database': db_creds['DB_Name'],
-                   'user': db_creds['User'],
-                   'password': db_creds['Password'],
-                   'host': db_creds['Host']}
+    db_config_dict = load_yaml_file_into_dict(config_fpath)
+    db_args = databaseArgs(**db_config_dict)
+    # this validates config values
+
+    credentials = {'database': db_args.db_name,
+                   'user': db_args.db_user,
+                   'password': db_args.password,
+                   'host': db_args.host}
     return credentials
 
 
 def read_dataflow_configs(config_fpath: Optional[str] = None):
-    '''Returns a dictionary of parameters that is defined
-        in the dataflow config json file. Will return a different
-        datastructure of json structure changes.'''
+    '''
+    Returns a dictionary of dataflow parameters with keys:
+    'reserve_threshold_bytes' 
+    'suitable_volumes' 
+    'delete_threshold'
+    '''
 
     if config_fpath is None:
-        config_file_name = 'dataflow_config.json'
+        config_file_name = 'dataflow_config.yml'
         config_fpath = get_config_file_path(config_file_name)
 
-    dataflow_configs = json.load(open(config_fpath))
+    dataflow_config_dict = load_yaml_file_into_dict(config_fpath)
+    dataflow_args = dataflowArgs(**dataflow_config_dict)
+    # this validates dataflow config values
+
+    dataflow_configs = {'reserve_threshold_bytes': dataflow_args.reserve_threshold_bytes,
+                        'suitable_volumes': dataflow_args.suitable_volumes,
+                        'delete_threshold': dataflow_args.delete_threshold}
+
     return dataflow_configs
+
+
+if __name__ == '__main__':
+    db_args = read_db_secrets(
+        config_fpath='/space/neurobooth/1/applications/unified_configs_repo/configs/terra_configs/.db.secrets.yml')
+    dataflow_args = read_dataflow_configs(
+        config_fpath='/space/neurobooth/1/applications/unified_configs_repo/configs/terra_configs/dataflow_config.yml')
+
+    for ky in db_args.keys():
+        print(ky, db_args[ky])
+    
+    for ky in dataflow_args.keys():
+        print(ky, dataflow_args[ky])
 

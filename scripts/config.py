@@ -5,9 +5,9 @@ import credential_reader as reader
 
 ssh_args = dict(
         ssh_address_or_host='neurodoor.nmr.mgh.harvard.edu',
-        ssh_username='mj513',
-        ssh_config_file='~/.ssh/config',
-        ssh_pkey='/local_mount/space/neurobooth/1/applications/config/id_rsa', #'~/.ssh/id_rsa',
+        # ssh_username='mj513',
+        # ssh_config_file='~/.ssh/config',
+        ssh_pkey='/local_mount/space/neurobooth/1/applications/config/id_rsa', # this is user sp1022's id_rsa
         remote_bind_address=('192.168.100.1', 5432),
         local_bind_address=('localhost', 6543)
 )

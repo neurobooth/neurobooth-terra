@@ -108,11 +108,12 @@ def read_dataflow_configs(config_fpath: Optional[str] = None):
 
 
 if __name__ == '__main__':
-    '''Run this script standalone to test config reading or config value validation'''
-    db_args = read_db_secrets(
-        config_fpath='/space/neurobooth/1/applications/unified_configs_repo/configs/terra_configs/.db.secrets.yml')
-    dataflow_args = read_dataflow_configs(
-        config_fpath='/space/neurobooth/1/applications/unified_configs_repo/configs/terra_configs/dataflow_config.yml')
+    '''Run this script standalone to test config reading or config value validation
+       Pass config file paths as command line arguments'''
+    import sys
+    
+    db_args = read_db_secrets(config_fpath=sys.argv[1])
+    dataflow_args = read_dataflow_configs(config_fpath=sys.argv[2])
 
     for ky in db_args.keys():
         print(ky, db_args[ky])

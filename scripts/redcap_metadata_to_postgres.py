@@ -36,6 +36,11 @@ from config import ssh_args, db_args, project
 # also need to define the NEUROBOOTH_REDCAP_TOKEN environment variable.
 # You will need to request for the Redcap API token from Redcap interface.
 
+# The name of the surveys and their ids should match how they are defined in
+# how redcap metadata data_dictionary.
+# Table names and how they're referred to in the dictionary are not always the
+# same:
+# for example pgic_v1 for "patient_global_impression_of_change_first_visit"
 survey_ids = {
     'consent': 99891,
     'consent_nih_sca': 99896,
@@ -71,6 +76,10 @@ survey_ids = {
     'handedness_questionnaire': 123490,
     'visual_activities_questionnaire': 139136,
     'end_of_visit_details': 127247,
+    'pgic_v1': 175962, # patient_global_impression_of_change_first_visit
+    'pgic_followup_visits': 175964, # patient_global_impression_of_change_since_last_time_point
+    'cortical_basal_ganglia_functional_scale': 175965,
+    'psp_staging': 133558,
 }
 
 # TODOs

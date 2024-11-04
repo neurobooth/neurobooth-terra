@@ -357,12 +357,11 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
                 if col.startswith(indicator_column+'___'):
                     mapping[col] = col.split('___')[1]
             except:
-                error_text = f'Could not split column: {col} for indicator column: {indicator_column}\n \
-                                Is the combine-checkbox-option-into-single-column \
-                                under Redcap survey unchecked??'
-                raise IndicatorColumnError(error_text)
+                raise IndicatorColumnError('Could not split column: {col} for indicator column: {indicator_column}')
         if len(mapping) == 0:
-            raise ValueError(f'No column found starting with {indicator_column}')
+            error_text = f'Please confirm that the combine-checkbox-option-into-single-column' \
+                            'under Redcap survey is unchecked.\n'
+            raise ValueError(f'No column found starting with {indicator_column}\n{error_text}')
         df = combine_indicator_columns(df, mapping, indicator_column)
 
     rows = list()

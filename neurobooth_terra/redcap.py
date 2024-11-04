@@ -15,6 +15,15 @@ import pandas as pd
 from pandas.api.types import infer_dtype
 
 
+class RedcapError(Exception):
+    '''Base class for Redcap-api related errors'''
+    pass
+
+class IndicatorColumnError(RedcapError):
+    '''Captures errors with splitting indicator columns'''
+    pass
+
+
 def iter_interval(wait=60, exit_after=np.inf):
     """Run redcap service in a loop.
 
@@ -344,8 +353,14 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
     for indicator_column in indicator_columns:
         mapping = dict()  # {race___1: 1, race___2: 2}
         for col in df.columns:
-            if col.startswith(indicator_column+'___'):
-                mapping[col] = col.split('___')[1]
+            try:
+                if col.startswith(indicator_column+'___'):
+                    mapping[col] = col.split('___')[1]
+            except:
+                error_text = f'Could not split column: {col} for indicator column: {indicator_column}\n \
+                                Is the combine-checkbox-option-into-single-column \
+                                under Redcap survey unchecked??'
+                raise IndicatorColumnError(error_text)
         if len(mapping) == 0:
             raise ValueError(f'No column found starting with {indicator_column}')
         df = combine_indicator_columns(df, mapping, indicator_column)

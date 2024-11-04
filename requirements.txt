@@ -3,3 +3,5 @@ pandas
 PyCap
 psycopg2
 sshtunnel
+pyyaml
+pydantic

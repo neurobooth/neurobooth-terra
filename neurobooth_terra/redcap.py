@@ -344,8 +344,11 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
     for indicator_column in indicator_columns:
         mapping = dict()  # {race___1: 1, race___2: 2}
         for col in df.columns:
-            if col.startswith(indicator_column):
-                mapping[col] = col.split('___')[1]
+            try:
+                if col.startswith(indicator_column+'___'):
+                    mapping[col] = col.split('___')[1]
+            except Exception as e:
+                raise IndicatorColumnError('Could not split column: {col} for indicator column: {indicator_column}') from e
         if len(mapping) == 0:
             raise ValueError(f'No column found starting with {indicator_column}')
         df = combine_indicator_columns(df, mapping, indicator_column)

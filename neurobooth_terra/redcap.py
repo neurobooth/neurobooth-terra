@@ -356,8 +356,8 @@ def dataframe_to_tuple(df, df_columns, fixed_columns=None,
             try:
                 if col.startswith(indicator_column+'___'):
                     mapping[col] = col.split('___')[1]
-            except:
-                raise IndicatorColumnError('Could not split column: {col} for indicator column: {indicator_column}')
+            except Exception as e:
+                raise IndicatorColumnError('Could not split column: {col} for indicator column: {indicator_column}') from e
         if len(mapping) == 0:
             error_text = f'Please confirm that the combine-checkbox-option-into-single-column' \
                             'under Redcap survey is unchecked.\n'

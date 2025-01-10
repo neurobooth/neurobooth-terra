@@ -80,7 +80,7 @@ survey_ids = {
     'pgic_followup_visits': 175964, # patient_global_impression_of_change_since_last_time_point
     'cortical_basal_ganglia_functional_scale': 175965,
     'psp_staging': 133558,
-    'baseline_data': 184473
+    'baseline_data': 184345,
 }
 
 # TODOs

@@ -206,10 +206,11 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
 
         # for table_id, table_info in table_infos.items():
         for table_id, _ in survey_ids.items():
+            
             table_info = table_infos[table_id]
             print(f'Overwriting table {table_id}')
             drop_table('rc_' + table_id, conn)
-            primary_keys = ['subject_id', 'redcap_event_name']
+            
             # ------
             # As we re-consent participants, consent tables such as 'consent_nih_sca'
             # and 'participant_and_consent_information' get duplicate rows for
@@ -218,10 +219,12 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             # redcap_event_name] are the same across these rows.
             # 
             # To resolve this, the redcap_repeat_instance column is also added as a primary key
+            primary_keys = ['subject_id', 'redcap_event_name']
             consent_tables = ['participant_and_consent_information', 'consent_nih_sca']
             if table_id in consent_tables:
                 primary_keys = ['subject_id', 'redcap_event_name', 'redcap_repeat_instance']
             # ------
+            
             table = create_table('rc_' + table_id, conn, table_info['columns']+table_info['indicator_columns'],
                                  table_info['dtypes']+(['smallint[]']*len(table_info['indicator_columns'])),
                                  primary_key=primary_keys)

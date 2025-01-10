@@ -13,7 +13,7 @@ SELECT
     dem.redcap_event_name,
     (regexp_match(REPLACE(dem.redcap_event_name, 'enrollment', 'v1'), 'v(\d+)_arm_\d+'))[1]::int AS redcap_sequence_num,
 	(regexp_match(REPLACE(dem.redcap_event_name, 'enrollment', 'v1'), 'v\d+_arm_(\d+)'))[1]::int AS redcap_study_arm,
-    pinfo.test_subject_boolean,
+    bdata.test_subject_boolean,
     CASE
         WHEN dem.demographic_complete = 2 THEN TRUE
         ELSE FALSE
@@ -152,6 +152,8 @@ SELECT
 FROM rc_demographic dem
 RIGHT OUTER JOIN rc_participant_and_consent_information pinfo
     ON dem.subject_id = pinfo.subject_id  -- Should by a many-to-one join
+RIGHT OUTER JOIN rc_baseline_data bdata
+    ON dem.subject_id = bdata.subject_id
 LEFT OUTER JOIN subject subj
     ON pinfo.subject_id = subj.subject_id
 ORDER BY

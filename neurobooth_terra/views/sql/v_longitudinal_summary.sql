@@ -27,7 +27,7 @@ WITH latest_diagnosis AS (
 		MAX(visit.neurobooth_visit_dates) AS last_visit,
 		MAX(visit.neurobooth_visit_dates) - MIN(visit.neurobooth_visit_dates) AS total_days
 	FROM rc_visit_dates visit
-	JOIN rc_participant_and_consent_information subj_info
+	JOIN rc_baseline_data subj_info
 		ON visit.subject_id = subj_info.subject_id
 	WHERE subj_info.test_subject_boolean = FALSE
 	GROUP BY

@@ -153,6 +153,12 @@ def extract_field_annotation(s):
     if pd.isna(field_annot):
         return s
 
+    # field annotations are generally separated by a space
+    # But special annotations that are function or action tags
+    # in redcap speak have a syntax and cannot have other
+    # annotations following them separated by space.
+    # Those have to go in the next line.
+    # This replace handles those cases
     field_annot.replace("\n"," ")
     fields = field_annot.split(' ')
     fois = list()

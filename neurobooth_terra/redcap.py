@@ -153,6 +153,7 @@ def extract_field_annotation(s):
     if pd.isna(field_annot):
         return s
 
+    field_annot.replace("\n"," ")
     fields = field_annot.split(' ')
     fois = list()
     for field in fields:

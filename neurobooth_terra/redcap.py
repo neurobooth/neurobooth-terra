@@ -161,7 +161,7 @@ def extract_field_annotation(s):
     # This replace handles those cases
     field_annot.replace("\n"," ")
     # sanitize spaces in field annotation
-    " ".join(field_annot.split())
+    field_annot = " ".join(field_annot.split())
 
     fields = field_annot.split(' ')
     fois = list()

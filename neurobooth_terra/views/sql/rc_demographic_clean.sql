@@ -48,7 +48,7 @@ SELECT
                 SELECT dd.response_array->>x::text FROM rc_data_dictionary dd
                 WHERE dd.database_table_name = 'demographic' AND dd.field_name = 'race'
         ) END
-        FROM UNNEST(dem.race) as x
+        FROM UNNEST(bdata.race) as x
     ) AS race,
     ARRAY(
         SELECT CASE
@@ -60,9 +60,9 @@ SELECT
         FROM UNNEST(dem.ancestry) as x
     ) AS ancestry,
     CASE
-        WHEN dem.ethnicity = 3 THEN NULL
+        WHEN bdata.ethnicity = 3 THEN NULL
         ELSE ( -- Look up from the data dictionary
-            SELECT dd.response_array->>dem.ethnicity::text FROM rc_data_dictionary dd
+            SELECT dd.response_array->>bdata.ethnicity::text FROM rc_data_dictionary dd
             WHERE dd.database_table_name = 'demographic' AND dd.field_name = 'ethnicity'
         )
     END AS ethnicity,

@@ -8,11 +8,11 @@ This example demonstrates how to create table from Redcap.
 
 # Authors: Mainak Jas <mjas@harvard.mgh.edu>
 
-import os
 from warnings import warn
 
 import numpy as np
 import pandas as pd
+import datetime
 
 from redcap import RedcapError
 
@@ -187,11 +187,14 @@ metadata.to_csv('data_dictionary_modified.csv')
 
 table_infos = get_tables_structure(metadata, include_surveys=survey_ids.keys())
 
+# adding last_updated column to data_dictionary
+metadata['last_updated'] = datetime.datetime.now()
 metadata = metadata.reset_index()
 rows_metadata, cols_metadata = dataframe_to_tuple(
     metadata, df_columns=['field_name', 'redcap_form_name',
                           'database_table_name', 'redcap_form_description',
-                          'feature_of_interest', 'question', 'response_array']
+                          'feature_of_interest', 'question', 'response_array',
+                          'last_updated']
 )
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
@@ -200,6 +203,11 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
         # Drop views first, as they may depend on the below tables
         drop_views(conn, verbose=True)
 
+        # Unlike other tables, data_dictionary is not dropped.
+        # Instead the rows are only ever updated.
+        # This means all the old variables are still retained in
+        # the table - latest variables are evident by last_updated
+        # timestamp column
         table_metadata = Table('rc_data_dictionary', conn)
         table_metadata.insert_rows(rows_metadata, cols_metadata,
                                    on_conflict='update')

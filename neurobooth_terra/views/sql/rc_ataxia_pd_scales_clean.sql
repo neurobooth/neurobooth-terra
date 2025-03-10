@@ -55,7 +55,7 @@ SELECT
         WHEN scales.bars_oculomotor > 95 THEN NULL
         ELSE CAST(scales.bars_oculomotor AS FLOAT) / 10
     END AS bars_oculomotor,
-    scales.bars_total_score AS bars_total, -- division by 10 is done within REDCap
+    scales.bars_total, -- division by 10 is done within REDCap
 
     -- ========================================
     -- BARS Comments
@@ -118,7 +118,7 @@ SELECT
         WHEN scales.sara_heel_shin_left_8 > 95 THEN NULL
         ELSE scales.sara_heel_shin_left_8
     END AS sara_heel_shin_left,
-    scales.sara_total_score,
+    scales.sara_total,
 
     -- ========================================
     -- SARA Comments
@@ -330,7 +330,7 @@ SELECT
     END AS updrs_tremor_constancy_of_rest_tremor,
     scales.updrs_dyskinesia_boolean AS updrs_dyskinesia,
     scales.updrs_dyskinesia_interfere,
-    scales.updrs_total_score,
+    scales.updrs_total,
 
     -- ========================================
     -- UPDRS Comments

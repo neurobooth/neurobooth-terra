@@ -14,6 +14,7 @@ VIEWS = [  # Below list should be in intended order of view creation
     'v_scale_micars',                              # Depends on rc_ataxia_pd_scales_clean
     'v_scale_updrs',                               # Depends on rc_ataxia_pd_scales_clean
     'v_scale_uhdrs',                               # Depends on rc_ataxia_pd_scales_clean
+    'booth_query_krzysztof'
 ]
 
 

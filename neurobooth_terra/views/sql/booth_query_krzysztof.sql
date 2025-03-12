@@ -1,3 +1,4 @@
+CREATE OR REPLACE VIEW booth_query_krzysztof AS
 WITH vd_dist AS (
     -- Figure out which demographic dates are closest (distance = 1)
     SELECT

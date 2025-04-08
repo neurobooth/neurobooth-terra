@@ -482,7 +482,7 @@ class Table:
         data = execute(self.conn, self.cursor, cmd, fetch=True)
         df = pd.DataFrame(data, columns=include_columns)
         pk = self.primary_key[0]
-        if pk in df.columns:
+        if len(pk) and pk in df.columns:
             df = df.set_index(pk)
         return df
 

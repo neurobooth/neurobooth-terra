@@ -483,8 +483,8 @@ class Table:
         df = pd.DataFrame(data, columns=include_columns)
         if len(self.primary_key):
             pk = self.primary_key[0]
-        if pk in df.columns:
-            df = df.set_index(pk)
+            if pk in df.columns:
+                df = df.set_index(pk)
         return df
 
     def delete_row(self, where=None):

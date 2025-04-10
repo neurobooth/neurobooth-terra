@@ -158,14 +158,38 @@ def extract_field_annotation(s):
     # in redcap speak have a syntax and cannot have other
     # annotations following them separated by space.
     # Those have to go in the next line.
-    # This replace handles those cases
+
+    # Previously we used to parse field annotations by splitting
+    # on space. As we now use complex action equations, it is no
+    # longer possible to split field annotations by space.
+    # Therefore going forward we separate field annotations by a
+    # pipe character '|' and use it to split and parse the
+    # annotations
+    fields = field_annot.split('|')
+
+    # Next, we still have to take care of annotations that have to
+    # be in a new line.
+    # This 'replace' handles those cases
     field_annot.replace("\n"," ")
-    # sanitize spaces in field annotation
+    
+    # The split on '|' and replacing new line characters with space
+    # introduces a lot of extra white space in parsed annotations.
+    # The next line sanitize spaces in field annotation, converting
+    # multiple spaces into a single space
     field_annot = " ".join(field_annot.split())
 
-    fields = field_annot.split(' ')
     fois = list()
     for field in fields:
+        
+        # removing leading/trailing whitespace introduced due to
+        # the split on '|'
+        field = field.strip()
+
+        # bunch of field will be nulls - skipping them
+        if not field:
+            continue
+
+        # Action annotations starting with @ are retained as is
         if field.startswith('@'):
             continue
 

@@ -244,6 +244,8 @@ def map_dtypes(s):
         s['database_dtype'] = dtype_mapping[redcap_dtype]
     elif redcap_dtype == 'text':
         s['database_dtype'] = text_dtype_mapping.get(text_validation, 'text')
+    else:
+        raise RedcapError(f'UNKNOWN datatype found: {redcap_dtype}')
 
     s['python_dtype'] = python_dtype_mapping[s['database_dtype']]
 

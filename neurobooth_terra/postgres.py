@@ -1,4 +1,5 @@
 # Authors: Mainak Jas <mjas@mgh.harvard.edu>
+#        : Siddharth Patel <spatel136@mgh.harvard.edu>
 
 import pandas as pd
 
@@ -480,9 +481,10 @@ class Table:
 
         data = execute(self.conn, self.cursor, cmd, fetch=True)
         df = pd.DataFrame(data, columns=include_columns)
-        pk = self.primary_key[0]
-        if pk in df.columns:
-            df = df.set_index(pk)
+        if len(self.primary_key):
+            pk = self.primary_key[0]
+            if pk in df.columns:
+                df = df.set_index(pk)
         return df
 
     def delete_row(self, where=None):
@@ -531,3 +533,33 @@ def list_tables(conn):
 
     table_ids = [table[1] for table in tables]
     return table_ids
+
+
+def list_views(conn):
+    """List SQL Views in the database
+
+    Parameters
+    ----------
+    conn : instance of psycopg2.Postgres
+        The connection object
+
+    Returns
+    -------
+    view_ids : list of str
+        The names of SQL views
+    """
+
+    query_views_cmd = """
+    SELECT *
+    FROM pg_catalog.pg_views
+    WHERE schemaname != 'pg_catalog' AND 
+        schemaname != 'information_schema';
+    """
+    cursor = conn.cursor()
+    cursor.execute(query_views_cmd)
+
+    views = cursor.fetchall()
+    cursor.close()
+
+    view_ids = [view[1] for view in views]
+    return view_ids

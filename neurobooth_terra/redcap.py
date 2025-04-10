@@ -217,7 +217,7 @@ def map_dtypes(s):
     dtype_mapping = {'calc': 'double precision', 'checkbox': 'smallint[]',
                      'dropdown': 'smallint', 'notes': 'text',
                      'radio': 'smallint', 'yesno': 'boolean',
-                     'file': 'varchar(255)'}
+                     'file': 'varchar(255)', 'slider':'smallint'}
     text_dtype_mapping = {'date_mdy': 'date', 'email': 'varchar(255)',
                           'datetime_seconds_ymd': 'timestamp',
                           'datetime_seconds_mdy': 'timestamp',

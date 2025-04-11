@@ -99,23 +99,16 @@ with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
             
             table_info = table_infos[table_id]
             print(f'Overwriting table {table_id}')
-            drop_table('rc_NB-WEAR_' + table_id, conn)
+            drop_table('wear_' + table_id, conn)
 
             primary_keys = ['subject_id', 'redcap_event_name']
-            table = create_table('rc_NB-WEAR_' + table_id, conn,
+            table = create_table('wear_' + table_id, conn,
                                  table_info['columns']+table_info['indicator_columns'],
                                  table_info['dtypes']+(['smallint[]']*len(table_info['indicator_columns'])),
                                  primary_key=primary_keys)
             df = fetch_survey(wearables_project, survey_name=table_id,
                               survey_id=survey_ids[table_id])
             df = df.rename(columns={'record_id': 'subject_id'})
-
-            complete_col = [col for col in df.columns if
-                            col.endswith('complete')]
-            if len(complete_col) == 0:
-                warn(f'Skipping {table_id} because of missing complete col')
-                continue
-            df = df[df[complete_col[0]] == 2]
 
             report_cols = set([col.split('___')[0] for col in df.columns])
             extra_cols = report_cols - (set(table_info['columns']) |

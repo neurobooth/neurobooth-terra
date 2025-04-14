@@ -80,7 +80,7 @@ def fetch_survey(project, survey_name, survey_id, index=None, cast_dtype=True):
         The pandas dataframe.
     """
     print(f'Fetching report {survey_name} from Redcap')
-    data = project.export_reports(report_id=survey_id)
+    data = project.export_reports(report_id=survey_id) # export_report (singular) for latest ver of pycap
     if 'error' in data:
         raise ValueError(data['error'])
 

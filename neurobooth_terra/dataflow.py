@@ -257,8 +257,14 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     # and is_finished as False. In the next run, update_copystatus will
     # remove these lines from the db table as show_unfinished flag will be
     # set to true
+    # rsync sets directory and file permissions to 777, we want it to be 750
+    # to protect data visibility. There we add an explicit chmod flag with 
+    # desired permissions. Note that the -a flag includes -p flag which stands
+    # for permissions and therefore rsync knows to look for explicit permissions
+    # as defined by chmod if provided.
     out = subprocess.run(["rsync", src_dir, dest_dir, '-a',
-                          "--out-format=%i %n%L %t"],
+                          "--out-format=%i %n%L %t",
+                          "--chmod=Du=rwx,Dg=rx,Do=,Fu=rw,Fg=r,Fo="],
                          capture_output=True)
 
     t2 = time.time()

@@ -257,11 +257,12 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
     # and is_finished as False. In the next run, update_copystatus will
     # remove these lines from the db table as show_unfinished flag will be
     # set to true
-    # rsync sets directory and file permissions to 777, we want it to be 750
-    # to protect data visibility. Therefore we add an explicit chmod flag with 
-    # desired permissions. Note that the -a flag includes -p flag which stands
-    # for preserve permissions and therefore rsync copies 777 over from NAS.
-    # An explicit chmod rectifies this when provided.
+    # rsync sets directory and file permissions to 777, we want directory perms
+    # to be 750 and file perms to be 640 to protect data visibility. Therefore
+    # we add an explicit chmod flag with desired permissions. Note that the -a
+    # flag includes -p flag which stands for preserve permissions which is the
+    # reason why rsync copies 777 over from NAS. An explicit chmod rectifies
+    # this when provided.
     out = subprocess.run(["rsync", src_dir, dest_dir, '-a',
                           "--out-format=%i %n%L %t",
                           "--chmod=Du=rwx,Dg=rx,Do=,Fu=rw,Fg=r,Fo="],

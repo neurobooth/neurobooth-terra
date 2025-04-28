@@ -113,6 +113,22 @@ def drop_table(table_id, conn):
     cursor.close()
 
 
+def drop_view(view_id, conn):
+    """Drop view.
+
+    Parameters
+    ----------
+    view_id : str
+        The view ID
+    conn : instance of psycopg2.Postgres
+        The connection object
+    """
+    cursor = conn.cursor()
+    cmd = f'DROP VIEW IF EXISTS "{view_id}" CASCADE;'
+    execute(conn, cursor, cmd)
+    cursor.close()
+
+
 def copy_table(src_table_id, target_table_id, conn):
     """Copy a table.
 

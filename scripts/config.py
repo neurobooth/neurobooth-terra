@@ -22,4 +22,4 @@ if API_KEY is None:
     raise ValueError('Please define the environment variable NEUROBOOTH_REDCAP_TOKEN first')
 
 project = Project(URL, API_KEY, lazy=True)
-wearables_project = Project(URL, NB_WEAR_API_KEY) # no lazy=True in latest version of pycap
+wearables_project = Project(URL, NB_WEAR_API_KEY, lazy=True)

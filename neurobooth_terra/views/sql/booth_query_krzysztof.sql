@@ -94,7 +94,7 @@ SELECT
         WHEN 0 = ANY(clin.primary_diagnosis_id_at_visit) THEN TRUE
         ELSE FALSE
     END AS is_control,
-    LEFT(clin.remote_sca_id, -2) AS remote_sca_id,  -- removes the .0 from the end
+    LEFT(baseline.adult_remote_id, -2) AS remote_sca_id,  -- removes the .0 from the end
     -- BARS
     scales.bars_gait,
     scales.bars_heel_shin_right,

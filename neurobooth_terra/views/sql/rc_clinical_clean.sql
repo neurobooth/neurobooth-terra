@@ -110,7 +110,6 @@ SELECT
     -- Participation in Other Studies
     -- ========================================
     clin.neuropheno_id,
-    clin.adult_remote_id AS remote_sca_id,
     clin.harvard_biomarker_boolean,
     clin.biobank_boolean,
     1 = ANY(clin.drug_trial_past_or_present) AS drug_trial_present,

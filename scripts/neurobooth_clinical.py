@@ -4,7 +4,13 @@ import pandas as pd
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 import numpy as np
-from database_utils import get_table_from_database, get_table_from_query, create_new_table
+
+import neurobooth_terra
+from neurobooth_terra import list_tables, Table
+
+import psycopg2
+from sshtunnel import SSHTunnelForwarder
+from config import ssh_args, db_args
 
 def get_closest_clinical_info(df_participant, start_time, date_format, date_column_name):
     # TODO: handle missing visit_date, meaning visit_date = NULL
@@ -950,6 +956,32 @@ def map_dtype(dtype):
     dtype_str = str(dtype)
     return dtype_mapping.get(dtype_str, "TEXT")  # default to TEXT if unknown
 
+def create_new_table(table_name, df, list_dtypes):
+    with SSHTunnelForwarder(**ssh_args) as tunnel:
+        with psycopg2.connect(**db_args) as conn:
+            
+            list_nb_tables = neurobooth_terra.list_tables(conn)
+            if table_name in list_nb_tables:
+                neurobooth_terra.drop_table(table_name, conn)
+
+            neurobooth_terra.create_table(table_name, conn, df.columns, list_dtypes, primary_key=['patient_id', 'session_date'])
+            Table(table_name, conn).insert_rows(df.to_records(index=False).tolist(), df.columns)
+
+def get_table_from_database(table_name):
+    with SSHTunnelForwarder(**ssh_args) as tunnel:
+        with psycopg2.connect(**db_args) as conn:
+            df = Table(table_name, conn).query()
+
+    return df
+
+def get_table_from_query(query, list_column_names):
+    with SSHTunnelForwarder(**ssh_args) as tunnel:
+        with psycopg2.connect(**db_args) as conn:
+            df = neurobooth_terra.query(conn, query, list_column_names)
+
+    return df
+
+
 if __name__ == '__main__':
     df_subject_id_session_date = get_table_from_query('SELECT subject_id, date from log_session', ['subject_id', 'date'])
     df_patients = get_table_from_query('SELECT subject_id from rc_baseline_data WHERE test_subject_boolean=False', ['subject_id'])
@@ -989,6 +1021,13 @@ if __name__ == '__main__':
 
     pd_clinical_info.to_csv('neurobooth_clinical.csv', index=False)
     # pd_clinical_info.to_csv('_clinical_info.csv', index=False)
+
+    list_nb_tables = neurobooth_terra.list_tables(conn)
+    if table_name in list_nb_tables:
+        neurobooth_terra.drop_table(table_name, conn)
+
+    neurobooth_terra.create_table(table_name, conn, df.columns, list_dtypes, primary_key=['patient_id', 'session_date'])
+    Table(table_name, conn).insert_rows(df.to_records(index=False).tolist(), df.columns)
 
     create_new_table('neurobooth_clinical', pd_clinical_info, list_dtypes)
     # pd_missing_clinical_info = pd.DataFrame.from_dict(all_missing_clinical_info)

@@ -13,20 +13,15 @@ from sshtunnel import SSHTunnelForwarder
 from config import ssh_args, db_args
 
 def get_closest_clinical_info(df_participant, start_time, date_format, date_column_name):
-    # TODO: handle missing visit_date, meaning visit_date = NULL
     if len(df_participant):
-        # try:
         if isinstance(df_participant, pd.Series):
             df_participant = df_participant.to_frame().T
         
         datetime_object = datetime.strptime(start_time, date_format)
         visit_date_object = pd.to_datetime(df_participant[date_column_name], format = date_format)
         df_participant['date_diff'] = abs(visit_date_object - datetime_object)
-        # closest_row = df_participant.loc[df_participant['date_diff'].idxmin()]
         closest_row = df_participant[df_participant['date_diff']==df_participant['date_diff'].min()]
         return closest_row
-        # except:
-            # return []
     else:
         return []
 
@@ -127,28 +122,12 @@ def get_clinical_information(primary_diagnosis, subject_ID, date):
     completion_time_name = 'end_time_' + '_'.join(table_name.split('_')[1:])
     closest_neuro_qol_positive_affect_and_wellbeing_short_form = get_closest_clinical_info(df_current_neuro_qol_positive_affect_and_wellbeing_short_form, date, date_format, completion_time_name)
 
-    # # Using database query
-    # This table is empty because this short form was not administered
-    # table_name = 'rc_neuro_qol_satisfaction_social_roles_short_form'
-    # df_neuro_qol_satisfaction_social_roles_short_form = get_table_from_database(table_name)
-    # df_current_neuro_qol_satisfaction_social_roles_short_form = df_neuro_qol_satisfaction_social_roles_short_form.loc[str(subject_ID)]
-    # completion_time_name = 'end_time_' + '_'.join(table_name.split('_')[1:])
-    # closest_neuro_qol_satisfaction_social_roles_short_form = get_closest_clinical_info(df_current_neuro_qol_satisfaction_social_roles_short_form, date, date_format, completion_time_name)
-
     # Using database query
     table_name = 'rc_neuro_qol_sleep_disturbance_short_form'
     df_neuro_qol_sleep_disturbance_short_form = get_table_from_database(table_name)
     df_current_neuro_qol_sleep_disturbance_short_form = df_neuro_qol_sleep_disturbance_short_form.loc[str(subject_ID)]
     completion_time_name = 'end_time_' + '_'.join(table_name.split('_')[1:])
     closest_neuro_qol_sleep_disturbance_short_form = get_closest_clinical_info(df_current_neuro_qol_sleep_disturbance_short_form, date, date_format, completion_time_name)
-
-    # # Using database query
-    # table_name = 'rc_neuro_qol_stigma_short_form'
-    # This table is empty because this short form was not administered
-    # df_neuro_qol_stigma_short_form = get_table_from_database(table_name)
-    # df_current_neuro_qol_stigma_short_form = df_neuro_qol_stigma_short_form.loc[str(subject_ID)]
-    # completion_time_name = 'end_time_' + '_'.join(table_name.split('_')[1:])
-    # closest_neuro_qol_stigma_short_form = get_closest_clinical_info(df_current_neuro_qol_stigma_short_form, date, date_format, completion_time_name)
 
     # Using database query
     table_name = 'rc_neuro_qol_ue_short_form'
@@ -174,9 +153,7 @@ def get_clinical_information(primary_diagnosis, subject_ID, date):
     add_clinical_flag(closest_neuro_qol_le_short_form, 'neuro_qol_le_short_form', dict_clinical_info)
     add_clinical_flag(closest_neuro_qol_participate_social_roles_short_form, 'neuro_qol_participate_social_roles_short_form', dict_clinical_info)
     add_clinical_flag(closest_neuro_qol_positive_affect_and_wellbeing_short_form, 'neuro_qol_positive_affect_and_wellbeing_short_form', dict_clinical_info)
-    # add_clinical_flag(closest_neuro_qol_satisfaction_social_roles_short_form, 'neuro_qol_satisfaction_social_roles_short_form', dict_clinical_info)
     add_clinical_flag(closest_neuro_qol_sleep_disturbance_short_form, 'neuro_qol_sleep_disturbance_short_form', dict_clinical_info)
-    # add_clinical_flag(closest_neuro_qol_stigma_short_form, 'neuro_qol_stigma_short_form', dict_clinical_info)
     add_clinical_flag(closest_neuro_qol_ue_short_form, 'neuro_qol_ue_short_form', dict_clinical_info)
     
     if len(closest_ataxia_pd_scales_clean):        
@@ -189,7 +166,6 @@ def get_clinical_information(primary_diagnosis, subject_ID, date):
         dict_clinical_info.update(closest_dysarthria_impact_scale.to_dict())
 
     pd_clinical_info = pd.DataFrame.from_dict(dict_clinical_info)
-    # pd_clinical_info.to_csv('test_clinical.csv')
 
     return pd_clinical_info
 
@@ -245,16 +221,12 @@ def populate_clinical_information(patient_ID, date, df_demographic, df_clinical,
 
     if isinstance(df_current_clinical, pd.DataFrame):
         df_current_clinical = get_closest_clinical_info(df_current_clinical, date, date_format, 'end_time_clinical')
-        # df_current_clinical = df_current_clinical[df_current_clinical['redcap_sequence_num'] == '1']
     elif isinstance(df_current_clinical, pd.Series):
-        # df_current_clinical = pd.DataFrame(df_current_clinical)
         df_current_clinical = df_current_clinical.to_frame().T
 
     dict_clinical_info['patient_id'] = patient_ID
     dict_clinical_info['session_date'] = date
     df_relative_delta = relativedelta(datetime.strptime(date, date_format).date(), df_current_demographic.iloc[0]['date_of_birth'])
-    # dict_clinical_info['date_of_birth'] = df_current_demographic.iloc[0]['date_of_birth']
-    # dict_clinical_info['age_at_NB_session'] = (datetime.strptime(date, date_format).date() - date_time_string).days // 365.2425
     dict_clinical_info['age_at_NB_session'] = round(df_relative_delta.years + df_relative_delta.months/12 + df_relative_delta.days/365)
 
     current_age_first_contact = df_current_demographic.iloc[0]['age_first_contact']
@@ -281,12 +253,6 @@ def populate_clinical_information(patient_ID, date, df_demographic, df_clinical,
         dict_clinical_info['age_primary_diagnosis'] = round(df_relative_delta.years + df_relative_delta.months/12 + df_relative_delta.days/365)
     else:
         dict_clinical_info['age_primary_diagnosis'] = None
-
-    # dict_clinical_info['year_primary_diagnosis'] = df_current_clinical.iloc[0]['year_primary_diagnosis']
-
-    # dict_clinical_info['age_primary_diagnosis'] = df_current_clinical.iloc[0]['year_primary_diagnosis']
-    # dict_clinical_info['primary_diagnosis_at_visit'] = pd.Series(list(df_clinical.iloc[0]['primary_diagnosis_at_visit']), index=[str(patient_ID)])
-    # dict_clinical_info['latest_primary_diagnosis'] = pd.Series(list(df_clinical.iloc[0]['latest_primary_diagnosis']), index=[str(patient_ID)])
 
     dict_clinical_info['primary_diagnosis_at_visit'] = pd.Series(list(df_current_clinical.iloc[0]['primary_diagnosis_at_visit'])).iloc[0]
     dict_clinical_info['latest_primary_diagnosis'] = pd.Series(list(df_current_clinical.iloc[0]['latest_primary_diagnosis'])).iloc[0]
@@ -335,8 +301,6 @@ def get_specific_clinical_information(df_demographic, df_clinical, df_ataxia_pd_
     all_missing_clinical_info = []
 
     for patient_ID, date in zip(list_patient_IDs, list_session_dates):
-        # if patient_ID != 100677:
-        #     continue
         dict_clinical_info = populate_clinical_information(patient_ID, date, df_demographic, df_clinical, dict_clinical_info_tables, list_clinical_table_names, date_format, all_missing_clinical_info)
         if dict_clinical_info:
             report_clinical_info.append(dict_clinical_info)
@@ -381,9 +345,6 @@ def convert_to_clean(x):
         return x
 
 def convert_rc_ataxia_pd_scales(df_rc_ataxia_pd_scales):
-    # print(df_rc_ataxia_pd_scales)
-    # print(df_rc_ataxia_pd_scales.iloc[26]['in_person_boolean_ataxia_pd_scales'])
-
     df_rc_ataxia_pd_scales_clean = pd.DataFrame()
     df_rc_ataxia_pd_scales_clean.index = df_rc_ataxia_pd_scales.index
     df_rc_ataxia_pd_scales_clean['redcap_event_name'] = df_rc_ataxia_pd_scales['redcap_event_name']
@@ -396,7 +357,6 @@ def convert_rc_ataxia_pd_scales(df_rc_ataxia_pd_scales):
     df_rc_ataxia_pd_scales_clean['in_person_boolean'] = df_rc_ataxia_pd_scales['in_person_boolean_ataxia_pd_scales'].apply(convert_boolean)
     
     # TODO: df_rc_ataxia_pd_scales_clean['rater_name']
-
     df_rc_ataxia_pd_scales_clean['comments_ataxia_pd_scales'] = df_rc_ataxia_pd_scales['comments_ataxia_pd_scales']
     df_rc_ataxia_pd_scales_clean['bars_performed_boolean'] = df_rc_ataxia_pd_scales['ataxia_pd_assessments_performed'].apply(is_assessment_performed, assessment=1)
 
@@ -493,8 +453,6 @@ def convert_rc_ataxia_pd_scales(df_rc_ataxia_pd_scales):
     for column_uhdrs in columns_uhdrs:
         df_rc_ataxia_pd_scales_clean['_'.join([column_uhdrs.split('_')[:-1] if any([char.isdigit() for char in column_uhdrs.split('_')[-1]]) else column_uhdrs.split('_')][0])] = df_rc_ataxia_pd_scales[column_uhdrs]
     
-    # df_rc_ataxia_pd_scales_clean.to_csv('test_clinical.csv')
-
     return df_rc_ataxia_pd_scales_clean
 
 def double_check_latest_diagnosis(df_rc_clinical, row, primary_diag_set, key):
@@ -515,15 +473,12 @@ def convert_diagnosis(row, df_rc_data_dictionary, key, df_rc_clinical=None):
     for diagnosis in row[key]:
         if diagnosis == 5:
             double_check_latest_diagnosis(df_rc_clinical, row, primary_diag_set, 'other_dementia')
-            # primary_diag_set.add(row['other_dementia'])
         elif diagnosis == 13:
             double_check_latest_diagnosis(df_rc_clinical, row, primary_diag_set, 'other_neuropathy')
-            # primary_diag_set.add(row['other_neuropathy'])
         elif diagnosis == 23:
             double_check_latest_diagnosis(df_rc_clinical, row, primary_diag_set, 'other_ataxia')
         elif diagnosis == 24:
             double_check_latest_diagnosis(df_rc_clinical, row, primary_diag_set, 'other_primary_diagnosis')
-            # primary_diag_set.add(row['other_primary_diagnosis'])
         else:
             primary_diag_set.add(df_rc_data_dictionary.loc['primary_diagnosis']['response_array'][str(int(diagnosis))])
 
@@ -534,7 +489,6 @@ def check_latest_primary_diagnosis_id(x, df_rc_clinical):
     if isinstance(current_rc_clinical, pd.Series):
         return set(current_rc_clinical['primary_diagnosis'])
     elif isinstance(current_rc_clinical, pd.DataFrame):
-        # print(current_rc_clinical.sort_values(by=['date_enrolled'], ascending=False).iloc[0]['primary_diagnosis'])
         return set(current_rc_clinical.sort_values(by=['date_enrolled'], ascending=False).iloc[0]['primary_diagnosis'])
 
 def convert_past_or_present(x, flag):
@@ -566,7 +520,6 @@ def convert_rc_clinical(df_rc_clinical, df_rc_baseline_data, df_rc_data_dictiona
     df_rc_clinical_clean['date_enrolled'] = df_rc_clinical['date_enrolled']
     df_rc_clinical_clean['start_time_clinical'] = df_rc_clinical['start_time_clinical']
     df_rc_clinical_clean['end_time_clinical'] = df_rc_clinical['end_time_clinical']
-    # df_rc_clinical_clean['neurologist'] =
     df_rc_clinical_clean['height'] = df_rc_clinical['height']
     df_rc_clinical_clean['weight'] = df_rc_clinical['weight']
     df_rc_clinical_clean['primary_diagnosis_at_visit'] = df_rc_clinical.apply(lambda row: convert_diagnosis(row, df_rc_data_dictionary=df_rc_data_dictionary, key='primary_diagnosis'), axis=1)
@@ -630,9 +583,6 @@ def check_age_first_contact(x, df_rc_participant_and_consent_information):
         if isinstance(row, pd.DataFrame):
             row = row[row['current_instance_participant_and_consent_information']==1].iloc[0]
         
-        # print(row['subject_age_first_contact'])
-        # if str(x) == 100386:
-        #     sys.exit()
         return row['subject_age_first_contact']
     except:
         return np.nan
@@ -733,10 +683,7 @@ def convert_rc_demographic(df_rc_demographic, df_rc_baseline_data, df_rc_partici
     df_rc_demographic_clean['smartphone_ease_of_usage'] = df_rc_demographic['smartphone_ease_of_usage']
     df_rc_demographic_clean['internet_access_boolean'] = df_rc_demographic['internet_access_boolean']
     df_rc_demographic_clean['primary_language'] = df_rc_demographic['primary_language'].apply(convert_ID_to_string, df_rc_data_dictionary=df_rc_data_dictionary, key='primary_language')
-    # df_rc_demographic_clean['primary_language_dialect']
     df_rc_demographic_clean['first_language'] = df_rc_demographic['first_language'].apply(convert_ID_to_string, df_rc_data_dictionary=df_rc_data_dictionary, key='first_language')
-    # df_rc_demographic_clean['first_language_dialect']
-    # df_rc_demographic_clean['additional_languages']
     df_rc_demographic_clean['zipcode'] = df_rc_demographic['zipcode']
     df_rc_demographic_clean['education'] = df_rc_demographic['education'].apply(convert_ID_to_string, df_rc_data_dictionary=df_rc_data_dictionary, key='education')
     df_rc_demographic_clean['employment'] = df_rc_demographic['employment'].apply(convert_ID_to_string, df_rc_data_dictionary=df_rc_data_dictionary, key='employment')
@@ -786,7 +733,6 @@ def check_longitudinal(x, df_rc_visit_dates):
             last_visit = current_longitudinal['neurobooth_visit_dates'].iloc[-1]
             date_format = "%Y-%m-%d"
             total_days = compute_time_delta_in_days(first_visit, last_visit, date_format)
-            # print(current_rc_clinical.sort_values(by=['date_enrolled'], ascending=False).iloc[0]['primary_diagnosis'])
         return [num_visits, first_visit, last_visit, total_days]
     except:
         return [np.nan, np.nan, np.nan, np.nan]
@@ -1019,16 +965,4 @@ if __name__ == '__main__':
         else:
             list_dtypes.append(map_dtype(dtype))
 
-    pd_clinical_info.to_csv('neurobooth_clinical.csv', index=False)
-    # pd_clinical_info.to_csv('_clinical_info.csv', index=False)
-
-    list_nb_tables = neurobooth_terra.list_tables(conn)
-    if table_name in list_nb_tables:
-        neurobooth_terra.drop_table(table_name, conn)
-
-    neurobooth_terra.create_table(table_name, conn, df.columns, list_dtypes, primary_key=['patient_id', 'session_date'])
-    Table(table_name, conn).insert_rows(df.to_records(index=False).tolist(), df.columns)
-
     create_new_table('neurobooth_clinical', pd_clinical_info, list_dtypes)
-    # pd_missing_clinical_info = pd.DataFrame.from_dict(all_missing_clinical_info)
-    # pd_missing_clinical_info.to_csv(os.path.join(output_folder, date_now + '_missing_clinical_info.csv'), index=False)

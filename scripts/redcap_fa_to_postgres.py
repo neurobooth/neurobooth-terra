@@ -54,7 +54,7 @@ metadata_fields = ['field_label', 'form_name', 'section_header',
                    'required_field', 'matrix_group_name', 'field_annotation',
                    'text_validation_type_or_show_slider_number']
 metadata = metadata[metadata_fields]
-metadata.to_csv('wearables_data_dictionary.csv')
+metadata.to_csv('fa_data_dictionary.csv')
 print('[Done]')
 
 
@@ -94,8 +94,8 @@ is_group = ~pd.isna(metadata['section_header'])
 metadata.loc[is_group, 'question'] = (metadata['section_header'][is_group] +
                                   metadata['question'][is_group])
 
-metadata.to_csv('wearables_data_dictionary_modified.csv')
-
+metadata.to_csv('fa_data_dictionary_modified.csv')
+print(metadata)
 table_infos = get_tables_structure(metadata, include_surveys=survey_ids.keys())
 
 

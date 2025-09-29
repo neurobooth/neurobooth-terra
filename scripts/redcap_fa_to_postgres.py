@@ -1,6 +1,6 @@
 """
 ======================================
-Ingest tables from Neurobooth:Wearables REDCap project into Postgres
+Ingest tables from FA REDCap project into Postgres
 ======================================
 """
 

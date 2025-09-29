@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 import os
 import yaml
 from pydantic import BaseModel, AnyUrl, PositiveInt, DirectoryPath, Field
@@ -12,6 +12,10 @@ class databaseArgs(BaseModel):
     host: str | IPvAnyAddress | AnyUrl
     # this allows for values such as localhost or 127.0.0.1
     # or 192.168.xxx.xxx or <server_name>.nmr.mgh.harvard.edu
+    ssh_address_or_host: str # Eg. neurodoor.nmr.mgh.harvard.edu
+    ssh_pkey: str # should be path-to-file
+    remote_bind_address: Tuple[str, int] # Eg. ('192.168.100.1', 5432),
+    local_bind_address: Tuple[str, int] # Eg. ('localhost', 6543)
 
 
 class dataflowArgs(BaseModel):
@@ -70,11 +74,21 @@ def read_db_secrets(config_fpath: Optional[str] = None):
     db_args = databaseArgs(**db_config_dict)
     # this validates config values
 
-    credentials = {'database': db_args.db_name,
+    db_args_dict = {'database': db_args.db_name,
                    'user': db_args.db_user,
                    'password': db_args.password,
                    'host': db_args.host}
-    return credentials
+    
+    ssh_args_dict= {'ssh_address_or_host': db_args.ssh_address_or_host,
+                    'ssh_pkey': db_args.ssh_pkey,
+                    'remote_bind_address': db_args.remote_bind_address,
+                    'local_bind_address': db_args.local_bind_address}
+    
+    secrets = {}
+    secrets['db_args'] = db_args_dict
+    secrets['ssh_args']= ssh_args_dict
+
+    return secrets
 
 
 def read_dataflow_configs(config_fpath: Optional[str] = None):

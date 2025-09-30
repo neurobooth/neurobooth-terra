@@ -22,12 +22,11 @@ from neurobooth_terra.redcap import (map_dtypes,
                                      fetch_survey,
                                      subselect_table_structure,
                                     )
-from neurobooth_terra import create_table, drop_table
+from neurobooth_terra import Table, create_table, drop_table
 
 
 survey_ids = {
     'enrollment_and_consent_information': 197330,
-    'subject': 197331,
     'baseline_data': 205252,
     'clinical': 205300,
     'visit_dates': 205301,
@@ -66,12 +65,10 @@ for column in ['section_header', 'field_label']:
 metadata = metadata.apply(map_dtypes, axis=1)
 metadata = metadata.apply(extract_field_annotation, axis=1)
 metadata = metadata.apply(get_response_array, axis=1)
-metadata.rename({#'form_name': 'redcap_form_name',
+metadata.rename({'form_name': 'redcap_form_name',
                  'FOI': 'feature_of_interest', 'DB': 'in_database',
                  'T': 'database_table_name',
                  'redcap_event_name': 'event_name'}, axis=1, inplace=True)
-
-metadata['redcap_form_name'] = 'neurobooth_wearables_subjects_remote_behavior'
 
 is_descriptive = metadata['field_type'] == 'descriptive'
 metadata['redcap_form_description'] = metadata['field_label']
@@ -95,7 +92,6 @@ metadata.loc[is_group, 'question'] = (metadata['section_header'][is_group] +
                                   metadata['question'][is_group])
 
 metadata.to_csv('fa_data_dictionary_modified.csv')
-print(metadata)
 table_infos = get_tables_structure(metadata, include_surveys=survey_ids.keys())
 
 
@@ -112,14 +108,23 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
     with psycopg2.connect(**db_args) as conn:
 
+        # Unlike other tables, data_dictionary is not dropped.
+        # Instead the rows are only ever updated.
+        # This means all the old variables are still retained in
+        # the table - latest variables are evident by last_updated
+        # timestamp column
+        table_metadata = Table('rc_data_dictionary', conn)
+        table_metadata.insert_rows(rows_metadata, cols_metadata,
+                                   on_conflict='update')
+
         for table_id, _ in survey_ids.items():
             
             table_info = table_infos[table_id]
             print(f'Overwriting table {table_id}')
-            drop_table('wear_' + table_id, conn)
+            drop_table('rc_' + table_id, conn)
 
             primary_keys = ['subject_id', 'redcap_event_name']
-            table = create_table('wear_' + table_id, conn,
+            table = create_table('rc_' + table_id, conn,
                                  table_info['columns']+table_info['indicator_columns'],
                                  table_info['dtypes']+(['smallint[]']*len(table_info['indicator_columns'])),
                                  primary_key=primary_keys)

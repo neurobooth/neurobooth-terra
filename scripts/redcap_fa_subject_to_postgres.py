@@ -53,7 +53,8 @@ def fetch_subject_table(project_name: str, survey_id: int):
     return rows_subject, cols_subject, redcap_df
 
 
-def update_database_table(rows_subject, cols_subject, redcap_df) -> None:
+def update_database_table(rows_subject, cols_subject, redcap_df,
+                          ssh_args=ssh_args, db_args=db_args) -> None:
     """ Updates subject table in database
     """
     with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
@@ -97,6 +98,10 @@ def main():
     rows_subject, cols_subject, redcap_df = fetch_subject_table(project_name, survey_id)
     update_database_table(rows_subject, cols_subject, redcap_df)
 
+    # update subject table in FA_study database as well if running for FA project
+    if 'fa' in project_name:
+        db_args['database'] = 'FA_study'
+        update_database_table(rows_subject, cols_subject, redcap_df, db_args=db_args)
 
 
 if __name__ == '__main__':

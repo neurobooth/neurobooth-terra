@@ -938,7 +938,7 @@ if __name__ == '__main__':
                             'rc_neuro_qol_depression_short_form', 'rc_neuro_qol_emotional_dyscontrol_short_form', 
                             'rc_neuro_qol_fatigue_short_form', 'rc_neuro_qol_le_short_form',
                             'rc_neuro_qol_participate_social_roles_short_form', 'rc_neuro_qol_positive_affect_and_wellbeing_short_form',
-                            'rc_neuro_qol_sleep_disturbance_short_form', 'rc_neuro_qol_ue_short_form']
+                            'rc_neuro_qol_sleep_disturbance_short_form', 'rc_neuro_qol_ue_short_form', 'rc_prom_ataxia']
 
     list_columns_to_remove = []
     date_format = "%Y-%m-%d"

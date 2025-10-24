@@ -1,6 +1,7 @@
 from typing import Optional, List, Tuple
 import os
 import yaml
+import socket
 from pydantic import BaseModel, AnyUrl, PositiveInt, DirectoryPath, Field
 from pydantic.networks import IPvAnyAddress
 
@@ -24,11 +25,24 @@ class dataflowArgs(BaseModel):
     delete_threshold: float = Field(ge=0, le=1)
 
 
+def get_server_hostname() -> str:
+    '''gets the name of the server on which the script is being run'''
+    try:
+        hostname = socket.gethostname().split('.')[0]
+        return hostname
+    except Exception as e:
+        raise Exception('Something went wrong in trying to get hostname')
+
+
 def get_terra_config_file_location() -> os.PathLike:
     '''Reads an environment variable and returns location of config files'''
     terra_config_file_location = os.environ.get('TERRA_CONFIG_LOC')
     if terra_config_file_location is None:
         raise Exception('got None when retreiving TERRA_CONFIG_LOC environment variable')
+
+    config_environment = os.path.join('environments', get_server_hostname())
+    terra_config_file_location = os.path.join(terra_config_file_location, config_environment)
+    validate_config_fpath(terra_config_file_location)
     return terra_config_file_location
 
 
@@ -137,3 +151,4 @@ if __name__ == '__main__':
     for ky in dataflow_args.keys():
         print(ky, dataflow_args[ky])
 
+    print(get_server_hostname())

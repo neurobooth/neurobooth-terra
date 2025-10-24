@@ -61,6 +61,12 @@ def read_db_secrets(config_fpath: Optional[str] = None):
     'password' for the pg user password
     'host' for database host
 
+    Returns a second dictionary of SSH arguments with keys:
+    'ssh_address_or_host'
+    'ssh_pkey'
+    'remote_bind_address'
+    'local_bind_address'
+
     The credential file is assumed to be at a location which
     is defined in the TERRA_CONFIG_LOC environment variable
 
@@ -83,12 +89,8 @@ def read_db_secrets(config_fpath: Optional[str] = None):
                     'ssh_pkey': db_args.ssh_pkey,
                     'remote_bind_address': db_args.remote_bind_address,
                     'local_bind_address': db_args.local_bind_address}
-    
-    secrets = {}
-    secrets['db_args'] = db_args_dict
-    secrets['ssh_args']= ssh_args_dict
 
-    return secrets
+    return db_args_dict, ssh_args_dict
 
 
 def read_dataflow_configs(config_fpath: Optional[str] = None):
@@ -125,12 +127,13 @@ if __name__ == '__main__':
        Pass config file paths as command line arguments'''
     import sys
     
-    db_args = read_db_secrets(config_fpath=sys.argv[1])
+    db_args, ssh_args = read_db_secrets(config_fpath=sys.argv[1])
     dataflow_args = read_dataflow_configs(config_fpath=sys.argv[2])
 
     for ky in db_args.keys():
         print(ky, db_args[ky])
-    
+    for ky in ssh_args.keys():
+        print(ky, ssh_args[ky])
     for ky in dataflow_args.keys():
         print(ky, dataflow_args[ky])
 

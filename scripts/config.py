@@ -3,10 +3,7 @@ import os
 from redcap import Project
 import credential_reader as reader
 
-secrets = reader.read_db_secrets()
-
-db_args = secrets['db_args']
-ssh_args = secrets['ssh_args']
+db_args, ssh_args = reader.read_db_secrets()
 
 dataflow_configs = reader.read_dataflow_configs()
 

@@ -31,7 +31,7 @@ def get_server_hostname() -> str:
         hostname = socket.gethostname().split('.')[0]
         return hostname
     except Exception as e:
-        raise Exception('Something went wrong in trying to get hostname')
+        print(f'Encountered exception when trying to get server hostname: {e}')
 
 
 def get_terra_config_file_location() -> os.PathLike:

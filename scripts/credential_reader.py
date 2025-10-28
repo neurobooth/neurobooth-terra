@@ -40,7 +40,7 @@ def get_terra_config_file_location() -> os.PathLike:
     if terra_config_file_location is None:
         raise Exception('got None when retreiving TERRA_CONFIG_LOC environment variable')
 
-    config_environment = os.path.join('environments', get_server_hostname())
+    config_environment = get_server_hostname()
     terra_config_file_location = os.path.join(terra_config_file_location, config_environment)
     validate_config_fpath(terra_config_file_location)
     return terra_config_file_location

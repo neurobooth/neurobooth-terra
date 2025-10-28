@@ -1,6 +1,7 @@
 from typing import Optional, List, Tuple
 import os
 import yaml
+import socket
 from pydantic import BaseModel, AnyUrl, PositiveInt, DirectoryPath, Field
 from pydantic.networks import IPvAnyAddress
 
@@ -24,11 +25,24 @@ class dataflowArgs(BaseModel):
     delete_threshold: float = Field(ge=0, le=1)
 
 
+def get_server_hostname() -> str:
+    '''gets the name of the server on which the script is being run'''
+    try:
+        hostname = socket.gethostname().split('.')[0]
+        return hostname
+    except Exception as e:
+        print(f'Encountered exception when trying to get server hostname: {e}')
+
+
 def get_terra_config_file_location() -> os.PathLike:
     '''Reads an environment variable and returns location of config files'''
     terra_config_file_location = os.environ.get('TERRA_CONFIG_LOC')
     if terra_config_file_location is None:
         raise Exception('got None when retreiving TERRA_CONFIG_LOC environment variable')
+
+    config_environment = os.path.join('environments', get_server_hostname())
+    terra_config_file_location = os.path.join(terra_config_file_location, config_environment)
+    validate_config_fpath(terra_config_file_location)
     return terra_config_file_location
 
 
@@ -61,6 +75,12 @@ def read_db_secrets(config_fpath: Optional[str] = None):
     'password' for the pg user password
     'host' for database host
 
+    Returns a second dictionary of SSH arguments with keys:
+    'ssh_address_or_host'
+    'ssh_pkey'
+    'remote_bind_address'
+    'local_bind_address'
+
     The credential file is assumed to be at a location which
     is defined in the TERRA_CONFIG_LOC environment variable
 
@@ -83,12 +103,8 @@ def read_db_secrets(config_fpath: Optional[str] = None):
                     'ssh_pkey': db_args.ssh_pkey,
                     'remote_bind_address': db_args.remote_bind_address,
                     'local_bind_address': db_args.local_bind_address}
-    
-    secrets = {}
-    secrets['db_args'] = db_args_dict
-    secrets['ssh_args']= ssh_args_dict
 
-    return secrets
+    return db_args_dict, ssh_args_dict
 
 
 def read_dataflow_configs(config_fpath: Optional[str] = None):
@@ -125,12 +141,14 @@ if __name__ == '__main__':
        Pass config file paths as command line arguments'''
     import sys
     
-    db_args = read_db_secrets(config_fpath=sys.argv[1])
+    db_args, ssh_args = read_db_secrets(config_fpath=sys.argv[1])
     dataflow_args = read_dataflow_configs(config_fpath=sys.argv[2])
 
     for ky in db_args.keys():
         print(ky, db_args[ky])
-    
+    for ky in ssh_args.keys():
+        print(ky, ssh_args[ky])
     for ky in dataflow_args.keys():
         print(ky, dataflow_args[ky])
 
+    print(get_server_hostname())

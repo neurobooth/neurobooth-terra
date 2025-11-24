@@ -26,8 +26,8 @@ from neurobooth_terra import Table, create_table, drop_table
 
 
 survey_ids = {
-    'enrollment_and_consent_information': 197330,
-    'baseline_data': 205252,
+    'baseline_data': 197330,
+    'demographic': 205252,
     'clinical': 205300,
     'visit_dates': 205301,
     'presession_survey': 205302,

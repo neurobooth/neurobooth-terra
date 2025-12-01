@@ -4,10 +4,9 @@
 
 import os
 import shutil
-import json
 import psycopg2
 
-from neurobooth_terra import Table, create_table
+from neurobooth_terra import Table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import copy_files
 
@@ -56,9 +55,8 @@ def check_if_copied(session: str, volumes: list[str]) -> tuple[bool, str]:
     return False, ''
 
 
-configs = dataflow_configs
-suitable_volumes = configs['suitable_volumes']  # list
-reserve_threshold = configs['reserve_threshold_bytes']  # int
+suitable_volumes: list = dataflow_configs['suitable_volumes']
+reserve_threshold: int = dataflow_configs['reserve_threshold_bytes']
 
 
 # ---- Printing disk usage statistics ---- #
@@ -72,7 +70,7 @@ print(f'\nreserve_threshold set at {reserve_threshold/TERRABYTE:.2f} TB\n')
 # ---------------------------------------- #
 
 
-src_dir = '/autofs/nas/neurobooth/data/'
+src_dir = dataflow_configs['NAS']
 table_id = 'log_file'
 dry_run = False
 

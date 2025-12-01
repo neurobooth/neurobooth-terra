@@ -8,7 +8,7 @@ from neurobooth_terra import Table, create_table, drop_table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import write_files
 
-from config import ssh_args, db_args
+from config import ssh_args, db_args, dataflow_configs
 
 
 # get deduplicated log_sensor_file table from database
@@ -38,7 +38,7 @@ def _dedup_log_sensor_file(sensor_file_df):
 
 do_create_table = False
 write_table = True
-dest_dir = '/autofs/nas/neurobooth/data/'
+dest_dir = dataflow_configs['NAS']
 table_id = 'log_file'
 
 # get all sessions living in NAS

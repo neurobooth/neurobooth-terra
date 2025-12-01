@@ -1,7 +1,3 @@
-# Authors: Mainak Jas <mjas@harvard.mgh.edu>
-#        : Siddharth Patel <spatel@phmi.partners.org>
-
-
 import os
 import shutil
 import psycopg2

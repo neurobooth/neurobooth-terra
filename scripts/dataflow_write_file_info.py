@@ -1,8 +1,5 @@
-# Authors: Mainak Jas <mjas@harvard.mgh.edu>
-#        : Siddharth Patel <spatel@phmi.partners.org>
-
-import psycopg2
 import os
+import psycopg2
 
 from neurobooth_terra import Table, create_table, drop_table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder

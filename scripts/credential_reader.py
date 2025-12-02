@@ -22,7 +22,7 @@ class databaseArgs(BaseModel):
 class dataflowArgs(BaseModel):
     reserve_threshold_bytes: PositiveInt
     suitable_volumes: List[DirectoryPath]
-    free_volume_threshold: PositiveInt
+    free_volume_threshold: int
     NAS: DirectoryPath
     delete_threshold: float = Field(ge=0, le=1)
 

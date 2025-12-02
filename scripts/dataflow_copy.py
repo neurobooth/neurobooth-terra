@@ -34,7 +34,7 @@ def get_volume_to_fill(volumes: list, threshold: int) -> str:
         if stats.free > threshold:
             vol_disk_usage[vol] = stats.used
 
-    if len(vol_disk_usage) <= 1:
+    if len(vol_disk_usage) <= dataflow_configs['free_volume_threshold']:
         raise ValueError(f'Only {len(vol_disk_usage)} available volume left, aborting copy till more volumes are added')
 
     return max(vol_disk_usage, key=vol_disk_usage.get)

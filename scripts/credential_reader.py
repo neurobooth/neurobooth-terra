@@ -22,6 +22,8 @@ class databaseArgs(BaseModel):
 class dataflowArgs(BaseModel):
     reserve_threshold_bytes: PositiveInt
     suitable_volumes: List[DirectoryPath]
+    free_volume_threshold: int
+    NAS: DirectoryPath
     delete_threshold: float = Field(ge=0, le=1)
 
 
@@ -126,6 +128,8 @@ def read_dataflow_configs(config_fpath: Optional[str] = None):
 
     dataflow_configs = {'reserve_threshold_bytes': dataflow_args.reserve_threshold_bytes,
                         'suitable_volumes': dataflow_args.suitable_volumes,
+                        'free_volume_threshold': dataflow_args.free_volume_threshold,
+                        'NAS': dataflow_args.NAS,
                         'delete_threshold': dataflow_args.delete_threshold}
     
     # check that all volumes in suitable volumes are actually suitable

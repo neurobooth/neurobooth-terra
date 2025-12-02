@@ -1,13 +1,8 @@
-# Authors: Mainak Jas <mjas@harvard.mgh.edu>
-#        : Siddharth Patel <spatel@phmi.partners.org>
-
-
 import os
 import shutil
-import json
 import psycopg2
 
-from neurobooth_terra import Table, create_table
+from neurobooth_terra import Table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import copy_files
 
@@ -39,7 +34,7 @@ def get_volume_to_fill(volumes: list, threshold: int) -> str:
         if stats.free > threshold:
             vol_disk_usage[vol] = stats.used
 
-    if len(vol_disk_usage) <= 1:
+    if len(vol_disk_usage) <= dataflow_configs['free_volume_threshold']:
         raise ValueError(f'Only {len(vol_disk_usage)} available volume left, aborting copy till more volumes are added')
 
     return max(vol_disk_usage, key=vol_disk_usage.get)
@@ -56,23 +51,22 @@ def check_if_copied(session: str, volumes: list[str]) -> tuple[bool, str]:
     return False, ''
 
 
-configs = dataflow_configs
-suitable_volumes = configs['suitable_volumes']  # list
-reserve_threshold = configs['reserve_threshold_bytes']  # int
+suitable_volumes: list = dataflow_configs['suitable_volumes']
+reserve_threshold: int = dataflow_configs['reserve_threshold_bytes']
 
 
 # ---- Printing disk usage statistics ---- #
 TERRABYTE = 1024**4  # 1TB = 1024 bytes ** 4
 print("Disk Usage Statistics\n")
-print("Volume\t\t\t\t\tTotal (TB)\tUsed (TB)\tAvailable (TB)")
+print(f"{'Volume':>35}{'Total (TB)':>20}{'Used (TB)':>20}{'Available (TB)':>20}")
 for vol in suitable_volumes:
     stats = shutil.disk_usage(vol)
-    print(f'{vol}\t\t{stats.total/TERRABYTE:.2f}\t\t{stats.used/TERRABYTE:.2f}\t\t{stats.free/TERRABYTE:.2f}')
+    print(f'{str(vol):>35}{str(round(stats.total/TERRABYTE, 2)):>20}{str(round(stats.used/TERRABYTE, 2)):>20}{str(round(stats.free/TERRABYTE, 2)):>20}')
 print(f'\nreserve_threshold set at {reserve_threshold/TERRABYTE:.2f} TB\n')
 # ---------------------------------------- #
 
 
-src_dir = '/autofs/nas/neurobooth/data/'
+src_dir = dataflow_configs['NAS']
 table_id = 'log_file'
 dry_run = False
 

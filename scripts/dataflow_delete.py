@@ -1,25 +1,22 @@
-# Authors: Mainak Jas <mjas@harvard.mgh.edu>
-#        : Siddharth Patel <spatel@phmi.partners.org>
-
 import shutil
-import json
 import psycopg2
 
-from neurobooth_terra import Table, copy_table
+from neurobooth_terra import Table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import delete_files
 
 from config import ssh_args, db_args, dataflow_configs
 
+
 num_secs_in_a_day = 24*3600 # total number of seconds in a day - conversion factor
 
-target_dir = '/autofs/nas/neurobooth/data/' # The directory from where files will be deleted
+target_dir = dataflow_configs['NAS'] # The directory from where files will be deleted
 
-configs = dataflow_configs
-delete_threshold = configs['delete_threshold'] # float: fraction between 0 and 1 indicating % filled
-suitable_dest_dirs = configs['suitable_volumes']  # list
+delete_threshold: float  = dataflow_configs['delete_threshold'] # float: fraction between 0 and 1 indicating % filled
+suitable_dest_dirs: list = dataflow_configs['suitable_volumes']
 if len(suitable_dest_dirs) < 1:
     raise ValueError(f'No destination directories provided')
+
 
 dry_run = False
 table_id = 'log_file' # log_file if target_dir is 'neurobooth/data', log_file_copy for testing

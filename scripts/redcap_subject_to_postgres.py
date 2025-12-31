@@ -9,7 +9,7 @@ from neurobooth_terra.redcap import (fetch_survey, dataframe_to_tuple,
 from neurobooth_terra.postgres import Table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 
-from config import ssh_args, db_args
+from config import ssh_args, rc_db_args
 
 ############################################
 ### --- Subject table survey numbers --- ###
@@ -54,7 +54,7 @@ def fetch_subject_table(project_name: str, survey_id: int):
 
 
 def update_database_table(rows_subject, cols_subject, redcap_df,
-                          ssh_args=ssh_args, db_args=db_args) -> None:
+                          ssh_args=ssh_args, db_args=rc_db_args) -> None:
     """ Updates subject table in database
     """
     with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:

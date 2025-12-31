@@ -7,7 +7,8 @@ from pydantic.networks import IPvAnyAddress
 
 
 class databaseArgs(BaseModel):
-    db_name: str
+    rc_db_name: str  # name of database that stores redcap data
+    log_db_name: str # name of database that stores system log data
     db_user: str
     password: str
     host: str | IPvAnyAddress | AnyUrl
@@ -71,7 +72,7 @@ def load_yaml_file_into_dict(yaml_file_path):
 
 def read_db_secrets(config_fpath: Optional[str] = None):
     """
-    Returns a dictionary of database credentials with keys:
+    Returns two dictionaries of database credentials with keys:
     'database' for the name of the postgres database
     'user' for the pg username
     'password' for the pg user password
@@ -96,7 +97,12 @@ def read_db_secrets(config_fpath: Optional[str] = None):
     db_args = databaseArgs(**db_config_dict)
     # this validates config values
 
-    db_args_dict = {'database': db_args.db_name,
+    rc_db_args_dict = {'database': db_args.rc_db_name,
+                   'user': db_args.db_user,
+                   'password': db_args.password,
+                   'host': db_args.host}
+
+    log_db_args_dict = {'database': db_args.log_db_name,
                    'user': db_args.db_user,
                    'password': db_args.password,
                    'host': db_args.host}
@@ -106,7 +112,7 @@ def read_db_secrets(config_fpath: Optional[str] = None):
                     'remote_bind_address': db_args.remote_bind_address,
                     'local_bind_address': db_args.local_bind_address}
 
-    return db_args_dict, ssh_args_dict
+    return rc_db_args_dict, log_db_args_dict, ssh_args_dict
 
 
 def read_dataflow_configs(config_fpath: Optional[str] = None):

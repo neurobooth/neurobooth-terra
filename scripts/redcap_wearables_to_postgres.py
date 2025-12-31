@@ -13,7 +13,7 @@ import datetime
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 import psycopg2
 
-from config import ssh_args, db_args, wearables_project
+from config import ssh_args, rc_db_args, wearables_project
 from neurobooth_terra.redcap import (map_dtypes,
                                      extract_field_annotation,
                                      get_response_array,
@@ -93,7 +93,7 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
 )
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(**db_args) as conn:
+    with psycopg2.connect(**rc_db_args) as conn:
 
         for table_id, _ in survey_ids.items():
             

@@ -28,7 +28,7 @@ import psycopg2
 
 from neurobooth_terra import Table, create_table, drop_table
 from neurobooth_terra.views.views import create_views, drop_views
-from config import ssh_args, db_args, project
+from config import ssh_args, rc_db_args, project
 
 
 # ------
@@ -198,7 +198,7 @@ rows_metadata, cols_metadata = dataframe_to_tuple(
 )
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(**db_args) as conn:
+    with psycopg2.connect(**rc_db_args) as conn:
 
         # Drop views first, as they may depend on the below tables
         drop_views(conn, verbose=True)

@@ -6,7 +6,7 @@ from neurobooth_terra import Table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import copy_files
 
-from config import ssh_args, db_args, dataflow_configs
+from config import ssh_args, log_db_args, dataflow_configs
 
 
 # A note about setting the value of reserve_threshold in
@@ -83,7 +83,7 @@ if 'old' in sessions:
 
 # Copying data
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(**db_args) as conn:
+    with psycopg2.connect(**log_db_args) as conn:
 
         sensor_file_table = Table('log_sensor_file', conn)
         db_table = Table(table_id, conn)

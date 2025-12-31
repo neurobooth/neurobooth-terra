@@ -36,7 +36,7 @@ def _dedup_log_sensor_file(sensor_file_df):
 do_create_table = False
 write_table = True
 dest_dir = dataflow_configs['NAS']
-table_id = 'log_file_copy'
+table_id = 'log_file'
 
 # get all sessions living in NAS
 sessions = []

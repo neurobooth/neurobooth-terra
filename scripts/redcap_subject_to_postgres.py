@@ -100,8 +100,8 @@ def main():
 
     # update subject table in FA_study database as well if running for FA project
     if 'fa' in project_name:
-        db_args['database'] = 'FA_study'
-        update_database_table(rows_subject, cols_subject, redcap_df, db_args=db_args)
+        rc_db_args['database'] = 'FA_study'
+        update_database_table(rows_subject, cols_subject, redcap_df, db_args=rc_db_args)
 
 
 if __name__ == '__main__':

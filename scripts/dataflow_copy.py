@@ -58,10 +58,10 @@ reserve_threshold: int = dataflow_configs['reserve_threshold_bytes']
 # ---- Printing disk usage statistics ---- #
 TERRABYTE = 1024**4  # 1TB = 1024 bytes ** 4
 print("Disk Usage Statistics\n")
-print(f"{'Volume':>35}{'Total (TB)':>20}{'Used (TB)':>20}{'Available (TB)':>20}")
+print(f"{'Volume':_>45}{'Total (TB)':_>20}{'Used (TB)':_>20}{'Available (TB)':_>20}")
 for vol in suitable_volumes:
     stats = shutil.disk_usage(vol)
-    print(f'{str(vol):>35}{str(round(stats.total/TERRABYTE, 2)):>20}{str(round(stats.used/TERRABYTE, 2)):>20}{str(round(stats.free/TERRABYTE, 2)):>20}')
+    print(f'{str(vol):_>45}{str(round(stats.total/TERRABYTE, 2)):_>20}{str(round(stats.used/TERRABYTE, 2)):_>20}{str(round(stats.free/TERRABYTE, 2)):_>20}')
 print(f'\nreserve_threshold set at {reserve_threshold/TERRABYTE:.2f} TB\n')
 # ---------------------------------------- #
 

@@ -10,7 +10,8 @@ from neurobooth_terra import list_tables, Table
 
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
-from config import ssh_args, db_args
+from config import ssh_args
+from config import rc_db_args as db_args
 
 def get_closest_clinical_info(df_participant, start_time, date_format, date_column_name):
     if len(df_participant):

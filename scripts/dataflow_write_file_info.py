@@ -5,7 +5,7 @@ from neurobooth_terra import Table, create_table, drop_table
 from neurobooth_terra.fixes import OptionalSSHTunnelForwarder
 from neurobooth_terra.dataflow import write_files
 
-from config import ssh_args, db_args, dataflow_configs
+from config import ssh_args, log_db_args, dataflow_configs
 
 
 # get deduplicated log_sensor_file table from database
@@ -48,7 +48,7 @@ if 'old' in sessions:
     sessions.remove('old')
 
 with OptionalSSHTunnelForwarder(**ssh_args) as tunnel:
-    with psycopg2.connect(**db_args) as conn:
+    with psycopg2.connect(**log_db_args) as conn:
 
         if do_create_table:
             # drop old log_file_copy table

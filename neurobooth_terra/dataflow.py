@@ -86,6 +86,13 @@ def write_files(sensor_file_df, db_table, dest_dir_session):
 def _do_files_match(src_dirname, dest_dirname, fname):
     """Compare two files using a hash."""
 
+    # First confirm that file at destination dir exists.
+    # In case the file at destination dir does not exist - can happen due to
+    # interrupted file transfer or incorrect order of write/copy operation -
+    # then return false
+    if not os.path.exists(os.path.join(dest_dirname, os.path.split(fname)[-1])):
+        return False
+
     # bag and avi files are large and uneditable, hence their hashes are not
     # checked explicitly - instead if the file size and last modified date is
     # the same, function returns true

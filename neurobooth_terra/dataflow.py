@@ -204,14 +204,26 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
                 date_copied = this_out.split(' ')[-2]
                 time_verified = this_out.split(' ')[-1]
             
-            # query log_sensor_file table for this specific file
-            df = sensor_file_table.query(
-                where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
+            # Query log_sensor_file JOINed with log_task. Incomplete tasks
+            # (cancelled or crashed before _perform_task completed) have
+            # log_sensor_file rows written by ACQ at device-start time but
+            # log_task.task_id is NULL. Skip those so we don't transfer
+            # orphaned files.
+            cursor = sensor_file_table.conn.cursor()
+            cursor.execute(
+                """
+                SELECT lsf.log_sensor_file_id
+                FROM log_sensor_file lsf
+                JOIN log_task lt ON lsf.log_task_id = lt.log_task_id
+                WHERE lsf.sensor_file_path @> ARRAY[%s]
+                  AND lt.task_id IS NOT NULL
+                """,
+                (fname,),
+            )
+            rows = cursor.fetchall()
 
-            # TODO: If query returns empty, check the log_task table for txt/csv file
-
-            if len(df.log_sensor_file_id) > 0:
-                log_sensor_file_id = df.log_sensor_file_id[0]
+            if rows:
+                log_sensor_file_id = rows[0][0]
             else:
                 # files with these extensions are not tracked yet
                 untracked_extensions = ['xdf', 'txt', 'csv', 'jittered', 'asc', 'log']

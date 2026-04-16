@@ -204,26 +204,26 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
                 date_copied = this_out.split(' ')[-2]
                 time_verified = this_out.split(' ')[-1]
             
-            # Query log_sensor_file JOINed with log_task. Incomplete tasks
-            # (cancelled or crashed before _perform_task completed) have
-            # log_sensor_file rows written by ACQ at device-start time but
-            # log_task.task_id is NULL. Skip those so we don't transfer
-            # orphaned files.
-            cursor = sensor_file_table.conn.cursor()
-            cursor.execute(
-                """
-                SELECT lsf.log_sensor_file_id
-                FROM log_sensor_file lsf
-                JOIN log_task lt ON lsf.log_task_id = lt.log_task_id
-                WHERE lsf.sensor_file_path @> ARRAY[%s]
-                  AND lt.task_id IS NOT NULL
-                """,
-                (fname,),
-            )
-            rows = cursor.fetchall()
+            # Query log_sensor_file for this file, excluding rows whose
+            # parent log_task is incomplete (cancelled or crashed before
+            # _perform_task completed — neurobooth-os writes log_sensor_file
+            # rows at device-start time, so orphans exist with log_task.task_id
+            # IS NULL). The subquery piggybacks on Table.query()'s WHERE
+            # clause so we don't have to reach past the Table wrapper.
+            #
+            # NOTE: fname is interpolated into SQL via f-string here, matching
+            # the pre-existing pattern in this function. This is only safe
+            # because fname comes from rsync's controlled output over our own
+            # session directories. Do not adopt this pattern for user input.
+            df = sensor_file_table.query(
+                where=(f"sensor_file_path @> ARRAY['{fname}'] "
+                       f"AND log_task_id IN "
+                       f"(SELECT log_task_id FROM log_task "
+                       f"WHERE task_id IS NOT NULL)")
+            ).reset_index()
 
-            if rows:
-                log_sensor_file_id = rows[0][0]
+            if len(df.log_sensor_file_id) > 0:
+                log_sensor_file_id = df.log_sensor_file_id[0]
             else:
                 # files with these extensions are not tracked yet
                 untracked_extensions = ['xdf', 'txt', 'csv', 'jittered', 'asc', 'log']

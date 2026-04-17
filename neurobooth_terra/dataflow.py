@@ -204,11 +204,23 @@ def copy_files(src_dir, dest_dir, db_table, sensor_file_table):
                 date_copied = this_out.split(' ')[-2]
                 time_verified = this_out.split(' ')[-1]
             
-            # query log_sensor_file table for this specific file
+            # Query log_sensor_file for this file, excluding rows whose
+            # parent log_task is incomplete (cancelled or crashed before
+            # _perform_task completed — neurobooth-os writes log_sensor_file
+            # rows at device-start time, so orphans exist with log_task.task_id
+            # IS NULL). The subquery piggybacks on Table.query()'s WHERE
+            # clause so we don't have to reach past the Table wrapper.
+            #
+            # NOTE: fname is interpolated into SQL via f-string here, matching
+            # the pre-existing pattern in this function. This is only safe
+            # because fname comes from rsync's controlled output over our own
+            # session directories. Do not adopt this pattern for user input.
             df = sensor_file_table.query(
-                where=f"sensor_file_path @> ARRAY['{fname}']").reset_index()
-
-            # TODO: If query returns empty, check the log_task table for txt/csv file
+                where=(f"sensor_file_path @> ARRAY['{fname}'] "
+                       f"AND log_task_id IN "
+                       f"(SELECT log_task_id FROM log_task "
+                       f"WHERE task_id IS NOT NULL)")
+            ).reset_index()
 
             if len(df.log_sensor_file_id) > 0:
                 log_sensor_file_id = df.log_sensor_file_id[0]

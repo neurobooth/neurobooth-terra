@@ -28,16 +28,16 @@ from config import ssh_args, log_db_args, dataflow_configs
 def get_volume_to_fill(volumes: list, threshold: int) -> str:
     ''' Return the most empty volume that is below reserve_threshold
     '''
-    vol_disk_usage = {}
+    vol_free_space = {}
     for vol in volumes:
         stats = shutil.disk_usage(vol)
         if stats.free > threshold:
-            vol_disk_usage[vol] = stats.used
+            vol_free_space[vol] = stats.free
 
-    if len(vol_disk_usage) <= dataflow_configs['free_volume_threshold']:
-        raise ValueError(f'Only {len(vol_disk_usage)} available volume left, aborting copy till more volumes are added')
+    if len(vol_free_space) <= dataflow_configs['free_volume_threshold']:
+        raise ValueError(f'Only {len(vol_free_space)} available volume left, aborting copy till more volumes are added')
 
-    return min(vol_disk_usage, key=vol_disk_usage.get)
+    return max(vol_free_space, key=vol_free_space.get)
 
 
 def check_if_copied(session: str, volumes: list[str]) -> tuple[bool, str]:
